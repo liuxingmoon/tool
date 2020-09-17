@@ -12,51 +12,53 @@ def cancelpoweroff_time():
 def poweroff_time1():
     timebox = editbox.get()#获取到输入框的信息
     w1,w2,w3,w4,w5,w6,w7 = "","","","","","",""#初始化为空
-    if flags[0].get() == 1:
-        if(flags[1].get() == flags[2].get() == flags[3].get() == flags[4].get() == flags[5].get() ==flags[6].get() == 0):
+    flagsID = []
+    for n in flags:
+        flagsID.append(n.get())
+    print(flagsID)
+    if (flagsID[0] == 1):
+        if(flagsID[1] == flagsID[2] == flagsID[3] == flagsID[4] == flagsID[5] ==flagsID[6] == 0):
             w1 = "M"
         else:
             w1 = "M,"
-    if flags[1].get() == 1:
-        if(flags[2].get() == flags[3].get() == flags[4].get() == flags[5].get() ==flags[6].get() == 0):
+    if flagsID[1] == 1:
+        if(flagsID[2] == flagsID[3] == flagsID[4] == flagsID[5] ==flagsID[6] == 0):
             w2 = "T"
         else:
             w2 = "T,"
-    if flags[2].get() == 1:
-        if(flags[3].get() == flags[4].get() == flags[5].get() ==flags[6].get() == 0):
+    if flagsID[2] == 1:
+        if(flagsID[3] == flagsID[4] == flagsID[5] ==flagsID[6] == 0):
             w3 = "w"
         else:
             w3 = "w,"
-    if flags[3].get() == 1:
-        if(flags[4].get() == flags[5].get() ==flags[6].get() == 0):
+    if flagsID[3] == 1:
+        if(flagsID[4] == flagsID[5] ==flagsID[6] == 0):
             w4 = "Th"
         else:
             w4 = "Th,"
-    if flags[4].get() == 1:
+    if flagsID[4] == 1:
         w5 = "F"
-        if(flags[5].get() ==flags[6].get() == 0):
+        if(flagsID[5] ==flagsID[6] == 0):
             w5 = "F"
         else:
             w5 = "F,"
-    if flags[5].get() == 1:
-        if(flags[6].get() == 0):
+    if flagsID[5] == 1:
+        if(flagsID[6] == 0):
             w6 = "S"
         else:
             w6 = "S,"
-    if flags[6].get() == 1:
+    if flagsID[6] == 1:
         w7 = "Su"            
     print(timebox,w1,w2,w3,w4,w5,w6,w7)
-    sub.Popen(r'at %s /every:%s%s%s%s%s%s%s shutdown -f -s -t 3600' %(timebox,w1,w2,w3,w4,w5,w6,w7))
+    sub.Popen(r'at %s /every:%s,%s,%s,%s,%s,%s,%s shutdown -f -s -t 00' %(timebox,w1,w2,w3,w4,w5,w6,w7),shell=True)
 
 def cancelpoweroff_time1():
     sub.Popen(r'at /yes /delete',shell=True)
     
 
-        
-
 def start():
     global listbox
-    root = tk.Tk()
+    root = tk.Toplevel()
     root.title('定时关机')
     title = tk.Label(root,text='定时关机').grid(row=0,column=2)
 
@@ -106,14 +108,13 @@ def start():
                     compound='left',width=15)
     timeoff_text.pack()
 
-    global timebox,editbox
+    global timebox,editbox,flags
     editbox = tk.Entry(timebox_frame1)
     editbox.pack(padx=20,pady=20)
     editbox.delete(0,'end')#删除输入框的内容
     editbox.insert(0,'00:00')#插入文本
     timebox = editbox.get()#获取到输入框的信息
 
-    global flags
     flags=[]#未选中为0，选中为1
     timelist1 = ['星期一','星期二','星期三','星期四','星期五','星期六','星期日']
     for timelist in timelist1:

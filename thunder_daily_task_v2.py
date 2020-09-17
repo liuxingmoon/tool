@@ -5,6 +5,7 @@ from thunder.phone_sign_in_v2 import Thunder as t
 
 def start():
     # 分隔符
+    global log
     log = open(r'E:\log\thunder_logging.txt', 'a')
     log.write('===========================================\n')
     # 开始执行操作

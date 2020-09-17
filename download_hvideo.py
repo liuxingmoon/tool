@@ -21,7 +21,7 @@ hidstop = config.get("download","hidstop")
 
 #下载单个视频
 def download_video(url):
-    html = G().get_html(url,'utf-8')#获取网页信息
+    html = G().get_html(url)#获取网页信息
     soup = bs(html,'html.parser')
     video_info = str(soup.find_all('video'))#获取视频信息
     src = re.search("http.{1,100}m3u8",video_info)#获取视频下载地址
@@ -56,5 +56,6 @@ def start():
     ids = g.multenterbox(msg='输入起始和结束的页面数字',title='伊人AV',fields=['起始页面','结束页面'],values=[hidstart,hidstop])
     config.set("download", "hidstart", ids[0])
     config.set("download", "hidstop", ids[1])
-    download_videos(r'https://www.yrcr1.com/se/zipaishipin/',int(ids[0]),int(ids[1]))
+    config.write(open("Config.ini", "w"))  # 保存到Config.ini
+    download_videos(r'https://www.yrcr3.com/play-30-',int(ids[0]),int(ids[1]))
 

@@ -1,0 +1,30 @@
+# https://travis-ci.org/0xHJK/music-dl
+language: python
+
+install:
+  - pip install pytest-cov codecov
+  - make install
+
+jobs:
+  include:
+    - stage: test
+      script:
+        - make test
+        - make ci
+      python: '3.5'
+    - stage: test
+      script:
+        - make test
+        - make ci
+      python: '3.6'
+    - stage: test
+      script:
+        - make test
+        - make ci
+      python: '3.7'
+      dist: xenial
+    - stage: coverage
+      python: '3.6'
+      script:
+        - make coverage
+        - codecov

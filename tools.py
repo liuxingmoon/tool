@@ -11,13 +11,20 @@ import subprocess
 import download_hvideo as avyrdl
 import thunder_daily_task_v2 as tdtask
 import lotteryDraw as lottery
-import coc_script as coc
+import coc
 import poweroff
 import translate
 import translate_url
 from PIL import ImageGrab
-from pynput.keyboard import  Listener
-import screenShot
+from pynput.keyboard import Key, Listener
+import thunder_sign_in
+import IP_query,stock
+import novel
+import wuxia_getpos as pos
+import wifi
+import threading
+import inspect
+import ctypes
 
 root = tk.Tk()
 root.title('流梦星璃')
@@ -33,7 +40,7 @@ autoclick_text = tk.Label(root,#放在框架1里面
 autoclick_text.grid(row=1,column=1,padx=10,pady=10)
 '''
 #开启鼠标连点
-autoclick_bt = tk.Button(root,text='连点"`"',command=ak.start,width=15)
+autoclick_bt = tk.Button(root,text='连点"!"',command=ak.start,width=15)
 autoclick_bt.grid(row=1,column=1,
               padx=10,pady=10)
 
@@ -112,19 +119,6 @@ thundertask_text.grid(row=5,column=1,padx=10,pady=10)
 thundertask_bt = tk.Button(root,text='迅雷任务',command=tdtask.start,width=15)
 thundertask_bt.grid(row=3,column=1,
               padx=10,pady=10)
-#抽奖
-'''
-lottery_text = tk.Label(root,#放在框架1里面
-                text = '点击直播抽奖',
-                justify='left',#左对齐
-                padx=5,
-                pady=20,
-                compound='left',width=15)
-lottery_text.grid(row=6,column=1,padx=10,pady=10)
-'''
-lottery_bt = tk.Button(root,text='抽奖',command=lottery.start,width=15)
-lottery_bt.grid(row=4,column=1,
-              padx=10,pady=10)
 
 #部落冲突
 '''
@@ -136,12 +130,19 @@ coc_text = tk.Label(root,#放在框架1里面
                 compound='left',width=15)
 coc_text.grid(row=6,column=1,padx=10,pady=10)
 '''
-coc_bt = tk.Button(root,text='部落冲突',command=coc.start,width=15)
-coc_bt.grid(row=5,column=1,
+#迅雷、芯次元签到
+thunderSign_bt = tk.Button(root,text='每日签到',command=thunder_sign_in.start,width=15)
+thunderSign_bt.grid(row=4,column=1,
               padx=10,pady=10)
+
 #定时关机
-poweroff_bt = tk.Button(root,text='定时关机',command=poweroff.start,width=15)
-poweroff_bt.grid(row=4,column=3,
+novel_bt = tk.Button(root,text='小说下载',command=novel.start,width=15)
+novel_bt.grid(row=4,column=3,
+              padx=10,pady=10)
+
+#过滤迅雷链接
+translateurl_bt = tk.Button(root,text='过滤迅雷链接',command=translate_url.start,width=15)
+translateurl_bt.grid(row=5,column=1,
               padx=10,pady=10)
 
 #翻译
@@ -149,9 +150,23 @@ translate_bt = tk.Button(root,text='翻译',command=translate.start,width=15)
 translate_bt.grid(row=5,column=3,
               padx=10,pady=10)
 
-#过滤迅雷链接
-translateurl_bt = tk.Button(root,text='过滤迅雷链接',command=translate_url.start,width=15)
-translateurl_bt.grid(row=6,column=1,
+#部落冲突脚本
+coc_bt = tk.Button(root,text='部落冲突',command=coc.start,width=15)
+coc_bt.grid(row=6,column=1,
+              padx=10,pady=10)
+
+#抽奖
+'''
+lottery_text = tk.Label(root,#放在框架1里面
+                text = '点击直播抽奖',
+                justify='left',#左对齐
+                padx=5,
+                pady=20,
+                compound='left',width=15)
+lottery_text.grid(row=6,column=1,padx=10,pady=10)
+'''
+lottery_bt = tk.Button(root,text='抽奖',command=lottery.start,width=15)
+lottery_bt.grid(row=7,column=1,
               padx=10,pady=10)
 
 #截屏~
@@ -272,10 +287,105 @@ def start():
     all_key = []
     start_listen()
 
-screenShot_bt = tk.Button(root,text='截屏',command=screenShot,width=15)
+
+#分别定义a键的信号量对象
+semaphore_flag = threading.Semaphore(0)
+#定义全局变量作为监测线程介入的开关
+s_flag = 0
+#定义全局变量作为整个程序的开关
+flag = 0
+
+def on_press_s(key):#监听`键作为开始
+    # 监听按键`
+    global s_flag
+    if str(key)=="'"+'#'+"'" and s_flag == 0:
+        print('开始',s_flag)
+        #s_flag信号量加一
+        semaphore_flag.release()
+    elif str(key)=="'"+'#'+"'" and s_flag == 1:
+        print("结束",s_flag)
+        s_flag = 0
+
+def press_s():
+    global s_flag
+    while True:
+    	#消费一个s_flag信号量
+        semaphore_flag.acquire()
+        #全局变量s_flag赋值为1，阻断监控函数的介入
+        s_flag = 1
+        MapVirtualKey = ctypes.windll.user32.MapVirtualKeyA
+        #time.sleep(0.1)
+        try:
+            screenShot()
+        except KeyboardInterrupt:
+            sys.exit()
+        #全局变量s_flag赋值为0，监控函数又可以介入了
+        s_flag = 0
+        print('自动过滤位置')
+
+def _async_raise(tid, exctype):
+    """raises the exception, performs cleanup if needed"""
+    tid = ctypes.c_long(tid)
+    if not inspect.isclass(exctype):
+        exctype = type(exctype)
+        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+    if res == 0:
+        raise ValueError("invalid thread id")
+    elif res != 1:
+        # """if it returns a number greater than one, you're in trouble,
+        # and you should call it again with exc=NULL to revert the effect"""
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+        raise SystemError("PyThreadState_SetAsyncExc failed")
+
+def stop_thread(thread):
+    _async_raise(thread.ident , SystemExit)
+
+
+
+def startscreenShot():
+    global flag,flag_switch
+    # 运行进程
+    t1 = Listener(on_press=on_press_s)
+    t1.daemon = True
+    t2 = threading.Thread(target=press_s, name='screenShot')
+    t2.daemon = True
+    if flag == 0:
+        t1.start()
+        t2.start()
+        flag = 1
+    elif flag == 1:
+        stop_thread(t1)
+        stop_thread(t2)
+        flag = 0
+    
+    
+screenShot_bt = tk.Button(root,text='截屏"#"',command=startscreenShot,width=15)
 screenShot_bt.grid(row=6,column=3,
               padx=10,pady=10)
 
+#IP地址查询
+IP_query_bt = tk.Button(root,text='IP地址查询',command=IP_query.start,width=15)
+IP_query_bt.grid(row=7,column=3,
+              padx=10,pady=10)
+
+#股票K线查询
+stock_query_bt = tk.Button(root,text='股票K线查询',command=stock.start,width=15)
+stock_query_bt.grid(row=8,column=1,
+              padx=10,pady=10)
+#定时关机
+poweroff_bt = tk.Button(root,text='定时关机',command=poweroff.start,width=15)
+poweroff_bt.grid(row=8,column=3,
+              padx=10,pady=10)
+              
+#开启过滤侠客风云传位置
+pos_bt = tk.Button(root,text='侠客位置"·"',command=pos.start,width=15)
+pos_bt.grid(row=9,column=1,
+              padx=10,pady=10)
+
+#开启wifi热点
+wifi_bt = tk.Button(root,text='wifi热点',command=wifi.start,width=15)
+wifi_bt.grid(row=9,column=3,
+              padx=10,pady=10)
 try:
     root.mainloop()
 except:

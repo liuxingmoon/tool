@@ -17,14 +17,14 @@ s_flag = 0
 #定义全局变量作为整个程序的开关
 flag = 0
 
-def on_press_s(key):#监听`键作为开始
+def on_press_s(key):#监听!键作为开始
     # 监听按键q
     global s_flag
-    if str(key)=="'"+'`'+"'" and s_flag == 0:
+    if str(key)=="'"+'!'+"'" and s_flag == 0:
         print('开始',s_flag)
         #s_flag信号量加一
         semaphore_s_flag.release()
-    elif str(key)=="'"+'`'+"'" and s_flag == 1:
+    elif str(key)=="'"+'!'+"'" and s_flag == 1:
         print("结束",s_flag)
         s_flag = 0
 

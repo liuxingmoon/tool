@@ -142,7 +142,7 @@ def start():
     all_key = []
     ####
     global root
-    root = tkinter.Tk()
+    root = tkinter.Toplevel()
     root.title('自由截屏')
     # 指定窗口的大小
     root.geometry('200x200')
