@@ -36,9 +36,9 @@ def start():
         def cocst():
             startidlist = coc_id.get().split()
             print(startidlist, type(startidlist))
-            startid = int(startidlist[0])
-            endid = int(startidlist[1])
-            coc_template.start_coc(startid,endid)
+            #startid = int(startidlist[0])
+            #endid = int(startidlist[1])
+            coc_template.start_coc(startidlist)
         def levelup_3():
             startidlist = coc_id.get().split()
             print(startidlist, type(startidlist))

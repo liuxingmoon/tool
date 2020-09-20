@@ -152,8 +152,8 @@ def getport(startid):
 # 开始
 def connect(startport):
     # 关闭模拟器连接
-    #subprocess.Popen('adb kill-server', shell=True)
-    #time.sleep(3)
+    subprocess.Popen('adb kill-server', shell=True)
+    time.sleep(3)
     # 开启模拟器连接
     subprocess.Popen('adb start-server', shell=True)
     time.sleep(3)
@@ -796,8 +796,8 @@ def wardonate(startlist):
     g.msgbox(msg='部落战捐兵完成')
 
 #启动coc
-def start_coc(startid,endid):
-    for nowid in range(startid,endid+1):
+def start_coc(startidlist):
+    for nowid in range(int(startidlist[0]),int(startidlist[-1])+1):
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (nowid)
         c().start(action, nowid,0)
         startport = getport(nowid)

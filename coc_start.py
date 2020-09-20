@@ -54,6 +54,10 @@ class Coc:
             startport = 5555
         else:
             startport = 52550 + id
+        # 关闭模拟器连接
+        subprocess.Popen('adb kill-server', shell=True)
+        time.sleep(3)
+        # 开启模拟器连接
         subprocess.Popen('adb start-server', shell=True)
         time.sleep(5)
         #多连接几次确保连接上
