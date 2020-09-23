@@ -919,7 +919,6 @@ def press_s():
         MapVirtualKey = ctypes.windll.user32.MapVirtualKeyA
         try:
             while s_flag==1:
-                print(2)
                 k.mouse_click()
                 click_short(pos['rmtree'][0], pos['rmtree'][1], startport,1)
                 click_short(pos['exitstore'][0], pos['exitstore'][1], startport,1)
@@ -955,7 +954,8 @@ def removeTree_night(startid):
     # 分别定义a键的信号量对象
     global semaphore_flag,startport
     startport = getport(startid)
-    print(startport)
+    print(int(startport),startport)
+    connect(startport)
     semaphore_flag = threading.Semaphore(0)
     # 定义全局变量作为监测线程介入的开关
     global s_flag
