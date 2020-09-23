@@ -23,10 +23,12 @@ def start():
         id_label = tk.Label(root, text='热点id')
         id_label.grid(row=0, column=1, sticky='w')  # 左对齐
         id_entry = tk.Entry(root)
+        id_entry.insert(0,'liuxing')#插入初始化文本
         id_entry.grid(row=0, column=2)
         pwd_label = tk.Label(root, text='热点密码')
         pwd_label.grid(row=1, column=1, sticky='w')  # 左对齐
         pwd_entry = tk.Entry(root)
+        pwd_entry.insert(0,'85919001')#插入初始化文本
         pwd_entry.grid(row=1, column=2)
         id_start_bt = tk.Button(root,text='开启热点', width=10, command=startWifi)
         id_start_bt.grid(row=2,column=1)
