@@ -152,15 +152,9 @@ def play(wait_time,skipids):
     print('启动模拟器完成')
     time.sleep(3)
     coc_script(startport,wait_time)
-    for n in range(3):
-        print(pos['sure'][0], pos['sure'][1])
-        click(pos['sure'][0], pos['sure'][1],startport)
-        time.sleep(1)
+    click(pos['sure'][0], pos['sure'][1],startport)
     time.sleep(5)
-    for n in range(3):
-        print(pos['start_script'][0], pos['start_script'][1])
-        click(pos['start_script'][0],pos['start_script'][1],startport)
-        time.sleep(1)
+    click(pos['start_script'][0],pos['start_script'][1],startport)
     print('启动脚本完成')
 
     #打印分割线
@@ -195,20 +189,14 @@ def play_donate(donateids):
     else:
         startport = 52550 + int(donateid_now)
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(donateid_now))
-    start(action,startport,10)
+    start(action,startport,30)
     print('启动捐兵模拟器完成')
     time.sleep(3)
-    coc_script(startport,10)
+    coc_script(startport,5)
     time.sleep(5)
-    for n in range(3):
-        print(pos['sure'][0], pos['sure'][1])
-        click(pos['sure'][0], pos['sure'][1],startport)
-        time.sleep(1)
+    click(pos['sure'][0], pos['sure'][1],startport)
     time.sleep(5)
-    for n in range(3):
-        print(pos['start_script'][0], pos['start_script'][1])
-        click(pos['start_script'][0],pos['start_script'][1],startport)
-        time.sleep(1)
+    click(pos['start_script'][0],pos['start_script'][1],startport)
     print('启动脚本完成')
     #打印分割线
     read_id = donatenames[donateid_now]
@@ -307,95 +295,104 @@ def restartdonate(donateids):
 #开始操作
 #coc
 if __name__ == "__main__":
-    #获取配置文件参数skipid,donateids,instance_num,instance_time
-    config = configparser.ConfigParser()
-    config.read(configpath, encoding="utf-8")
-    #启动id范围
-    minid = int(config.get("coc", "minid"))
-    maxid = int(config.get("coc", "maxid"))
-    donate_time = float(config.get("coc", "donate_time"))
-    donate_mode = config.get("coc", "donate_mode")
-    #跳过启动的id初始列表
-    skipidlists = config.get("coc", "skipid").split()
-    skipids = skipidlists.copy()
-    #skipids = [str(x) for x in skipids]#需要把int转换成str，不然下面会报错
-    for everyid in skipidlists:
-        if "-" in str(everyid):
-            start = everyid.split("-")[0]
-            end = everyid.split("-")[1]
-            #临时跳过列表,注意这里的元素是int
-            skiplist = range(int(start),int(end)+1)
-            skipids.extend(skiplist)
-            skipids.remove(everyid)#删除该列表
-            skipids = [str(x) for x in skipids]#需要把int转换成str，不然下面会报错
-            skipids = list(set(skipids))#去重
-    
-    #捐兵（一直运行）
-    donate_switch = config.get("coc", "donate_switch")#是否开启捐兵
-    donateids = config.get("coc", "donateids").split()#获取捐兵id的list
-    donatenames = {}
-    for donateid in donateids:
-        donateconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%s\config.ini' %(donateid)
-        with open(donateconfig,'r') as donatefile:
-            configlines = donatefile.readlines()
-            for configline in configlines:
-                if 'EmulatorTitleName' in configline:
-                    donatename = configline.split('=')[-1].rstrip('\n')
-                    donatenames[donateid] = donatename
-    print(r'当前的捐兵号和名字为: %s' %(donatenames))
-    
-    donate_num = int(config.get("coc", "donate_num"))#捐兵号的个数
-    #查看捐兵号的开关是否打开，打开就跳过该id
-    if donate_switch in ['True','1','T']:
-        skipids.extend(donateids)#添加捐兵的id到跳过id列表中
-        skipids = list(set(skipids))#去重
-    print('跳过的实例id：%s' %([x for x in skipids]))
-    
-    playnames = {}
-    for playid in range(maxid +1):
-        if playid not in skipids:
-            playconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' %(playid)
-            with open(playconfig,'r') as playfile:
-                configlines = playfile.readlines()
+    try:
+        #第一次启动时间
+        starttime_global = datetime.datetime.now()
+        #获取配置文件参数skipid,donateids,instance_num,instance_time
+        config = configparser.ConfigParser()
+        config.read(configpath, encoding="utf-8")
+        #启动id范围
+        minid = int(config.get("coc", "minid"))
+        maxid = int(config.get("coc", "maxid"))
+        donate_time = float(config.get("coc", "donate_time"))
+        donate_mode = config.get("coc", "donate_mode")
+        #跳过启动的id初始列表
+        skipidlists = config.get("coc", "skipid").split()
+        skipids = skipidlists.copy()
+        #skipids = [str(x) for x in skipids]#需要把int转换成str，不然下面会报错
+        for everyid in skipidlists:
+            if "-" in str(everyid):
+                start = everyid.split("-")[0]
+                end = everyid.split("-")[1]
+                #临时跳过列表,注意这里的元素是int
+                skiplist = range(int(start),int(end)+1)
+                skipids.extend(skiplist)
+                skipids.remove(everyid)#删除该列表
+                skipids = [str(x) for x in skipids]#需要把int转换成str，不然下面会报错
+                skipids = list(set(skipids))#去重
+        
+        #捐兵（一直运行）
+        donate_switch = config.get("coc", "donate_switch")#是否开启捐兵
+        donateids = config.get("coc", "donateids").split()#获取捐兵id的list
+        donatenames = {}
+        for donateid in donateids:
+            donateconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%s\config.ini' %(donateid)
+            with open(donateconfig,'r') as donatefile:
+                configlines = donatefile.readlines()
                 for configline in configlines:
                     if 'EmulatorTitleName' in configline:
-                        playname = configline.split('=')[-1].rstrip('\n')
-                        playnames[playid] = playname
-    print(r'当前的打资源号和名字为: %s' %(playnames))
+                        donatename = configline.split('=')[-1].rstrip('\n')
+                        donatenames[donateid] = donatename
+        print(r'当前的捐兵号和名字为: %s' %(donatenames))
         
-    #白天和夜晚运行的实例数量和时间
-    instance_num_day = int(config.get("coc", "instance_num_day"))
-    instance_time_day = float(config.get("coc", "instance_time_day"))
-    instance_num_night = int(config.get("coc", "instance_num_night"))
-    instance_time_night = float(config.get("coc", "instance_time_night"))
-    instance_num_morning = int(config.get("coc", "instance_num_morning"))
-    instance_time_morning = float(config.get("coc", "instance_time_morning"))
-    #获取时间段
-    day_time = config.get("coc", "day_time")
-    night_time = config.get("coc", "night_time")
-    morning_time = config.get("coc", "morning_time")
-    #获取当前时间判断启动持续时间
-    donatetime_start = datetime.datetime.now()
-    #首次启动捐兵号
-    for n in range(donate_num):
-        play_donate(donateids)
-    while True:
-        #关闭
-        #close()
-        #获取当前时间的参数并运行持久化运行号
-        result = instance(donate_switch,donateids)
-        #启动打资源的模拟器个数
-        instance_num = result[0]
-        #if result[2] != '凌晨':
+        donate_num = int(config.get("coc", "donate_num"))#捐兵号的个数
+        #查看捐兵号的开关是否打开，打开就跳过该id
         if donate_switch in ['True','1','T']:
-            if instance_num < donate_num:
-                instance_num = 0
-            else:
-                instance_num = instance_num - donate_num
-        #等待时间
-        instance_time = result[1]
-        restartdonate(donateids)
-        restartplay()
+            skipids.extend(donateids)#添加捐兵的id到跳过id列表中
+            skipids = list(set(skipids))#去重
+        print('跳过的实例id：%s' %([x for x in skipids]))
+        
+        playnames = {}
+        for playid in range(maxid +1):
+            if playid not in skipids:
+                playconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' %(playid)
+                with open(playconfig,'r') as playfile:
+                    configlines = playfile.readlines()
+                    for configline in configlines:
+                        if 'EmulatorTitleName' in configline:
+                            playname = configline.split('=')[-1].rstrip('\n')
+                            playnames[playid] = playname
+        print(r'当前的打资源号和名字为: %s' %(playnames))
+            
+        #白天和夜晚运行的实例数量和时间
+        instance_num_day = int(config.get("coc", "instance_num_day"))
+        instance_time_day = float(config.get("coc", "instance_time_day"))
+        instance_num_night = int(config.get("coc", "instance_num_night"))
+        instance_time_night = float(config.get("coc", "instance_time_night"))
+        instance_num_morning = int(config.get("coc", "instance_num_morning"))
+        instance_time_morning = float(config.get("coc", "instance_time_morning"))
+        #获取时间段
+        day_time = config.get("coc", "day_time")
+        night_time = config.get("coc", "night_time")
+        morning_time = config.get("coc", "morning_time")
+        #获取当前时间判断启动持续时间
+        donatetime_start = datetime.datetime.now()
+        while True:
+            #关闭
+            close()
+            #获取当前时间的参数并运行持久化运行号
+            result = instance(donate_switch,donateids)
+            #启动打资源的模拟器个数
+            instance_num = result[0]
+            #if result[2] != '凌晨':
+            if donate_switch in ['True','1','T']:
+                if instance_num < donate_num:
+                    instance_num = 0
+                else:
+                    instance_num = instance_num - donate_num
+            #等待时间
+            instance_time = result[1]
+            #首次启动捐兵号
+            for n in range(donate_num):
+                play_donate(donateids)
+            restartplay()
+            endtime_global = datetime.datetime.now()
+            runtime_global = endtime_global - starttime_global
+            #每隔一天重启一次
+            if (runtime_global.seconds / 3600) >= 24:
+                subprocess.Popen(r'shutdown /f /r /t 00',shell=True)
+    except:
+        subprocess.Popen(r'shutdown /f /r /t 00',shell=True)
 '''
         #使用线程实现重启捐兵和启动打资源分开
         thread_restartplay = threading.Thread(target=restartplay(), name='restartdonate')
