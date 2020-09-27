@@ -16,7 +16,6 @@ pos = {
   'sure':[360,935]
   }
 
-
 #日志路径
 Coclog = r'C:\Users\Administrator\Desktop\刘兴\coc\coclog.txt'
 configpath = r"D:\Program Files\Python38\works\tool\Config.ini"
