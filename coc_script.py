@@ -19,7 +19,7 @@ pos = {
 
 #日志路径
 Coclog = r'C:\Users\Administrator\Desktop\刘兴\coc\coclog.txt'
-configpath = r"D:\Program Files\Python38\works\tools\Config.ini"
+configpath = r"D:\Program Files\Python38\works\tool\Config.ini"
 ddpath = r'D:\Program Files\DundiEmu\DunDiEmu.exe'
 
 def start(action,startport,wait_time):
