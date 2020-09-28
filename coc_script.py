@@ -16,11 +16,13 @@ pos = {
   'sure':[360,935]
   }
 
-
 #日志路径
 Coclog = r'C:\Users\Administrator\Desktop\刘兴\coc\coclog.txt'
-configpath = r"D:\Program Files\Python38\works\tools\Config.ini"
+configpath = r"D:\Program Files\Python38\works\tool\Config.ini"
 ddpath = r'D:\Program Files\DundiEmu\DunDiEmu.exe'
+
+def reboot():
+    subprocess.Popen(r'shutdown /f /r /t 00',shell=True)
 
 def start(action,startport,wait_time):
     #开模拟器
@@ -56,14 +58,7 @@ def start(action,startport,wait_time):
     subprocess.Popen('adb start-server', shell=True)
     time.sleep(3)
     #重启并连接连接
-    if startport == 5555:
-        try:
-            subprocess.Popen(r'adb connect emulator-5554',shell = True)
-            subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
-        except:
-            print('连接0号模拟器')
-    else:
-        subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
+    subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
     time.sleep(3)
     '''
     if result.split()[0] == b'unable':
@@ -73,27 +68,19 @@ def start(action,startport,wait_time):
 #打开黑松鼠
 def coc_script(startport,wait_time):
     time.sleep(wait_time)
-    if startport == 5555:
-        try:
-            subprocess.Popen(r'adb -s emulator-5554 shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity',shell=True)
-            subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True)
-        except:
-            print('启动0号模拟器脚本')
-    else:
-        subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True)
+    try:
+        result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
+        text = result.stdout.readlines()#元组存储
+        if 'not found' in text:
+            reboot()
+    except:
+        reboot()
     time.sleep(10)
     
     
 #点击屏幕
 def click(x,y,startport):
-    if startport == 5555:
-        try:
-            subprocess.Popen(r'adb -s emulator-5554 shell input tap %d %d' %(x,y),shell=True)
-            subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
-        except:
-            print('启动0号模拟器脚本')
-    else:
-        subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
+    subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
     time.sleep(3)
 
 def close():
@@ -390,9 +377,9 @@ if __name__ == "__main__":
             runtime_global = endtime_global - starttime_global
             #每隔一天重启一次
             if (runtime_global.seconds / 3600) >= 24:
-                subprocess.Popen(r'shutdown /f /r /t 00',shell=True)
+                reboot()
     except:
-        subprocess.Popen(r'shutdown /f /r /t 00',shell=True)
+        reboot()
 '''
         #使用线程实现重启捐兵和启动打资源分开
         thread_restartplay = threading.Thread(target=restartplay(), name='restartdonate')
