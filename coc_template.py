@@ -783,14 +783,14 @@ def wardonate(startlist):
         click(pos['war_1'][0], pos['war_1'][1], startport)
         click(pos['war_donate'][0], pos['war_donate'][1], startport)
         #捐兵
-        for clan in range(30):
+        for clan in range(40):
             #time.sleep(1)
             click_short(pos['war_donate_trp2'][0], pos['war_donate_trp2'][1], startport,10)
             click_short(pos['war_donate_trp3'][0], pos['war_donate_trp3'][1], startport,10)
             click_short(pos['war_donate_trp1'][0], pos['war_donate_trp1'][1], startport,10)
             click(pos['war_donate_next'][0], pos['war_donate_next'][1], startport)
         #训练
-        train_donate('train_template02',startport)
+        train_donate('train_template01',startport)
         close()
     g.msgbox(msg='部落战捐兵完成')
 
