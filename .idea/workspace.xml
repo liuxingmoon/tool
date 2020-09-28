@@ -3,10 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="764151be-7248-4f18-bd88-9c11be37e098" name="默认的" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/Config.ini" afterPath="$PROJECT_DIR$/Config.ini" />
       <change beforePath="$PROJECT_DIR$/coc.py" afterPath="$PROJECT_DIR$/coc.py" />
-      <change beforePath="$PROJECT_DIR$/coc_script.py" afterPath="$PROJECT_DIR$/coc_script.py" />
       <change beforePath="$PROJECT_DIR$/coc_template.py" afterPath="$PROJECT_DIR$/coc_template.py" />
-      <change beforePath="$PROJECT_DIR$/颜色选择.txt" afterPath="$PROJECT_DIR$/颜色选择.txt" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -23,7 +22,7 @@
     <SUITE FILE_PATH="coverage/tools$test.coverage" NAME="test Coverage Results" MODIFIED="1592118820563" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/tools$coc_script3.coverage" NAME="coc_script3 Coverage Results" MODIFIED="1597945126661" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/tools$video_download.coverage" NAME="video_download Coverage Results" MODIFIED="1588585298493" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/tool$tools.coverage" NAME="tools Coverage Results" MODIFIED="1600487206591" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/tool$tools.coverage" NAME="tools Coverage Results" MODIFIED="1601312860842" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/tools$IP_query.coverage" NAME="IP_query Coverage Results" MODIFIED="1593244647985" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/tools$thunder_daily_task_v2.coverage" NAME="thunder_daily_task_v2 Coverage Results" MODIFIED="1590321458314" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/tools$lineChart.coverage" NAME="lineChart Coverage Results" MODIFIED="1589199828494" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -51,21 +50,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="coc_script2.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/coc_script2.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2717">
-              <caret line="149" column="34" lean-forward="false" selection-start-line="149" selection-start-column="34" selection-end-line="149" selection-end-column="34" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="coc.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/coc.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="418">
-              <caret line="24" column="41" lean-forward="false" selection-start-line="24" selection-start-column="25" selection-end-line="24" selection-end-column="41" />
+            <state relative-caret-position="285">
+              <caret line="15" column="27" lean-forward="true" selection-start-line="15" selection-start-column="27" selection-end-line="15" selection-end-column="27" />
               <folding>
                 <element signature="e#0#20#0" expanded="true" />
               </folding>
@@ -76,8 +65,8 @@
       <file leaf-file-name="coc_template.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/coc_template.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="194">
-              <caret line="799" column="63" lean-forward="false" selection-start-line="799" selection-start-column="63" selection-end-line="799" selection-end-column="63" />
+            <state relative-caret-position="513">
+              <caret line="384" column="55" lean-forward="true" selection-start-line="384" selection-start-column="55" selection-end-line="384" selection-end-column="55" />
               <folding>
                 <element signature="e#15#32#0" expanded="true" />
               </folding>
@@ -88,21 +77,11 @@
       <file leaf-file-name="wuxia_getpos.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wuxia_getpos.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="19">
+            <state relative-caret-position="1121">
               <caret line="72" column="22" lean-forward="false" selection-start-line="72" selection-start-column="22" selection-end-line="72" selection-end-column="22" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="coc_script3.spec" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/coc_script3.spec">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -132,7 +111,7 @@
       <file leaf-file-name="coc_removeTree.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/coc_removeTree.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="832">
+            <state relative-caret-position="544">
               <caret line="157" column="52" lean-forward="false" selection-start-line="157" selection-start-column="52" selection-end-line="157" selection-end-column="52" />
               <folding />
             </state>
@@ -150,11 +129,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>swipe('top')</find>
-      <find>swipe</find>
-      <find>swipe(</find>
-      <find>start_coc</find>
-      <find>arg</find>
       <find>wardonate</find>
       <find>com.tencent.tmgp.supercell.clashofclans/com.supercell.titan.tencent.GameAppTencent</find>
       <find>startcoc</find>
@@ -180,6 +154,11 @@
       <find>on_press_s</find>
       <find>semaphore_flag</find>
       <find>s_flag</find>
+      <find>config</find>
+      <find>convert_mode</find>
+      <find>swipeport</find>
+      <find>getport</find>
+      <find>click</find>
     </findStrings>
     <replaceStrings>
       <replace>on_press_mbt</replace>
@@ -235,9 +214,9 @@
         <option value="$PROJECT_DIR$/coc_script3.py" />
         <option value="$PROJECT_DIR$/coc_script2.py" />
         <option value="$PROJECT_DIR$/coc_start.py" />
-        <option value="$PROJECT_DIR$/coc.py" />
         <option value="$PROJECT_DIR$/AutoClick.py" />
         <option value="$PROJECT_DIR$/wuxia_getpos.py" />
+        <option value="$PROJECT_DIR$/coc.py" />
         <option value="$PROJECT_DIR$/coc_template.py" />
       </list>
     </option>
@@ -249,8 +228,8 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
+    <option name="x" value="386" />
+    <option name="y" value="231" />
     <option name="width" value="1400" />
     <option name="height" value="997" />
   </component>
@@ -457,10 +436,10 @@
       <window_info id="调试" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="14" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34310532" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3423913" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32902467" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="运行" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31304348" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15191898" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15351813" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -799,7 +778,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/wuxia_getpos.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19">
+        <state relative-caret-position="1121">
           <caret line="72" column="22" lean-forward="false" selection-start-line="72" selection-start-column="22" selection-end-line="72" selection-end-column="22" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
@@ -809,8 +788,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/coc.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="418">
-          <caret line="24" column="41" lean-forward="false" selection-start-line="24" selection-start-column="25" selection-end-line="24" selection-end-column="41" />
+        <state relative-caret-position="285">
+          <caret line="15" column="27" lean-forward="true" selection-start-line="15" selection-start-column="27" selection-end-line="15" selection-end-column="27" />
           <folding>
             <element signature="e#0#20#0" expanded="true" />
           </folding>
@@ -819,7 +798,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/coc_removeTree.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="832">
+        <state relative-caret-position="544">
           <caret line="157" column="52" lean-forward="false" selection-start-line="157" selection-start-column="52" selection-end-line="157" selection-end-column="52" />
           <folding />
         </state>
@@ -827,8 +806,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/coc_template.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="799" column="63" lean-forward="false" selection-start-line="799" selection-start-column="63" selection-end-line="799" selection-end-column="63" />
+        <state relative-caret-position="513">
+          <caret line="384" column="55" lean-forward="true" selection-start-line="384" selection-start-column="55" selection-end-line="384" selection-end-column="55" />
           <folding>
             <element signature="e#15#32#0" expanded="true" />
           </folding>

@@ -11,6 +11,7 @@ import inspect
 import ctypes
 import sys
 from pynput.keyboard import Key, Listener
+import configparser
 # coc模板
 #方法：
 
@@ -124,7 +125,17 @@ pos = {
     'train2': [600, 440],
     'gold1': [470, 130],
     'water1': [790, 280],
-    'rmtree': [640, 590]
+    'rmtree': [640, 590],
+    'script_start':[200,1070],
+    'script_item1': [130, 290],
+    'script_item2': [280, 290],
+    'script_item3': [430, 290],
+    'script_item4': [590, 290],
+    'script_switch_mode': [340, 610],
+    'script_swipetop': [340, 740],
+    'script_swipebot': [340, 1000],
+    'script_play': [340, 660],
+    'script_donate': [340, 800]
 }
 # 建立字典存储所有位置信息
 rm_pos = {}
@@ -138,6 +149,8 @@ IDcard = {
 
 }
 
+#配置文件路径
+configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
 
 #获取启动port
 def getport(startid):
@@ -170,10 +183,12 @@ def finish(startport):
     process = subprocess.Popen('adb disconnect %s' % (startport), shell=True)
     time.sleep(3)
 # 点击屏幕
-def click(x,y,startport):
-    process = subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
+def click(x,y,startport,*args):
+    subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
     print(x,y)
     time.sleep(1)
+    if len(args) > 0:
+        time.sleep(args[0])
 # 快速点击屏幕
 def click_short(x,y,startport,times):
     for n in range(times):
@@ -198,6 +213,9 @@ def swipe(drt,startport):
     elif drt == 'right':
         process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 1000 360 100 360' % (startport), shell=True)
         time.sleep(1)
+#定点滑动
+def swipeport(x1,y1,x2,y2,startport):
+    subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe %d %d %d %d' % (startport,x1,y1,x2,y2), shell=True)
 # 输入文本
 def text(text,startport):
     subprocess.Popen('adb -s 127.0.0.1:%s shell input text %s' % (startport, text), shell=True)
@@ -947,7 +965,7 @@ def stop_thread(thread):
     _async_raise(thread.ident , SystemExit)
 
 
-
+#移除夜世界树木
 def removeTree_night(startid):
     global flag,flag_switch
     # 分别定义a键的信号量对象
@@ -974,3 +992,52 @@ def removeTree_night(startid):
         stop_thread(t1)
         stop_thread(t2)
         flag = 0
+
+#切换打鱼和捐兵
+def convert_mode(startlist):
+    config = configparser.ConfigParser()
+    for nowid in startlist:
+        #读取一次配置文件
+        config.read(configpath, encoding="utf-8")
+        nowid = int(nowid)
+        action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (nowid)
+        c().start(action, nowid)
+        startport = getport(nowid)
+        connect(startport)
+        #启动黑松鼠
+        subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True)
+        #重新登录qq
+        click(pos['relogin'][0], pos['relogin'][1], startport)
+        time.sleep(10)
+        #点击模式设置
+        click(pos['script_item3'][0], pos['script_item3'][1], startport)
+        click(pos['script_switch_mode'][0], pos['script_switch_mode'][1], startport,3)
+        #滑动
+        swipeport(pos['script_swipetop'][0],pos['script_swipetop'][1],pos['script_swipebot'][0],pos['script_swipebot'][1],startport)
+        time.sleep(1)
+        #查看是否在捐兵配置中，没有就配置为捐兵
+        try:
+            status = config.get("coc", "startid%d"%(nowid))
+        except:
+            '''
+            config.set("coc", str(nowid),"donate")
+            config.write(open(configpath, "w",encoding='utf-8'))
+            '''
+            status = "donate"
+        #转换状态并保存
+        if status == "donate":
+            print("切换状态为 play")
+            status = "play"
+            #切换为打资源
+            click(pos['script_play'][0], pos['script_play'][1], startport,3)
+            click(pos['script_start'][0], pos['script_start'][1], startport)
+        else:
+            status = "donate"
+        #保存当前状态
+        config.set("coc", "startid%d"%(nowid),status)
+        config.write(open(configpath, "w",encoding='utf-8'))
+
+        
+        
+        
+        
