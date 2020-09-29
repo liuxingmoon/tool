@@ -58,7 +58,11 @@ def start(action,startport,wait_time):
     subprocess.Popen('adb start-server', shell=True)
     time.sleep(3)
     #重启并连接连接
-    subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
+    if startport == 5555:
+        subprocess.Popen(r'adb connect emulator-5554',shell = True)
+        subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
+    else:
+        subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
     time.sleep(3)
     '''
     if result.split()[0] == b'unable':
@@ -69,8 +73,13 @@ def start(action,startport,wait_time):
 def coc_script(startport,wait_time):
     time.sleep(wait_time)
     try:
-        result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
-        text = result.stdout.readlines()#元组存储
+        if startport == 5555:
+            subprocess.Popen(r'adb -s emulator-5554 shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity',shell=True)
+            result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
+            text = result.stdout.readlines()#元组存储
+        else:
+            result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
+            text = result.stdout.readlines()#元组存储
         if 'not found' in text:
             with open(Coclog,'a') as Coclogfile:
                 Coclogfile.write('出现bug重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
@@ -84,6 +93,8 @@ def coc_script(startport,wait_time):
     
 #点击屏幕
 def click(x,y,startport):
+    if startport == 5555:
+        subprocess.Popen(r'adb -s emulator-5554 shell input tap %d %d' %(x,y),shell=True)
     subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
     time.sleep(3)
 
