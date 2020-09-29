@@ -17,7 +17,7 @@ pos = {
   }
 
 #日志路径
-Coclog = r'C:\Users\Administrator\Desktop\刘兴\coc\coclog.txt'
+Coclog = r'D:\Program Files\Python38\works\tool\coclog.txt'
 configpath = r"D:\Program Files\Python38\works\tool\Config.ini"
 ddpath = r'D:\Program Files\DundiEmu\DunDiEmu.exe'
 
@@ -72,8 +72,12 @@ def coc_script(startport,wait_time):
         result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
         text = result.stdout.readlines()#元组存储
         if 'not found' in text:
+            with open(Coclog,'a') as Coclogfile:
+                Coclogfile.write('出现bug重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             reboot()
     except:
+        with open(Coclog,'a') as Coclogfile:
+            Coclogfile.write('出现bug重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         reboot()
     time.sleep(10)
     
@@ -84,7 +88,7 @@ def click(x,y,startport):
     time.sleep(3)
 
 def close():
-    subprocess.Popen('taskkill /f /t /im DunDiEmu.exe & taskkill /f /t /im DdemuHandle.exe',shell=True)
+    subprocess.Popen('taskkill /f /t /im DunDiEmu.exe & taskkill /f /t /im DdemuHandle.exe & taskkill /f /t /im adb.exe',shell=True)
     time.sleep(3)
 
 #等待
@@ -377,8 +381,12 @@ if __name__ == "__main__":
             runtime_global = endtime_global - starttime_global
             #每隔一天重启一次
             if (runtime_global.seconds / 3600) >= 24:
+                with open(Coclog,'a') as Coclogfile:
+                    Coclogfile.write('运行时间超过一天重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
                 reboot()
     except:
+        with open(Coclog,'a') as Coclogfile:
+            Coclogfile.write('出现bug重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         reboot()
 '''
         #使用线程实现重启捐兵和启动打资源分开
