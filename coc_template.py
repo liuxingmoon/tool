@@ -134,6 +134,7 @@ pos = {
     'script_item2': [280, 290],
     'script_item3': [430, 290],
     'script_item4': [590, 290],
+    'script_canceltroop': [1200, 135],
     'script_switch_mode': [340, 610],
     'script_swipetop': [340, 740],
     'script_swipebot': [340, 1000],
@@ -435,7 +436,7 @@ def cancel_troop(startport):
     click(pos['trainning'][0], pos['trainning'][1], startport)
     print('取消兵种')
     click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport)
-    click_short(pos[train_troopid][0], pos[train_troopid][1], startport, 400)
+    click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 400)
     click(pos['exitstore'][0], pos['exitstore'][1], startport)
 
 #启动coc
