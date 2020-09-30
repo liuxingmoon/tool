@@ -220,6 +220,7 @@ def swipe(drt,startport):
 #定点滑动
 def swipeport(x1,y1,x2,y2,startport):
     subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe %d %d %d %d' % (startport,x1,y1,x2,y2), shell=True)
+    time.sleep(3)
 # 输入文本
 def text(text,startport):
     subprocess.Popen('adb -s 127.0.0.1:%s shell input text %s' % (startport, text), shell=True)
@@ -1015,18 +1016,13 @@ def removeTree_night(startid):
 def start_script(startport,*args):
     connect(startport)
     # 启动黑松鼠
-    subprocess.Popen(
-        r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' % (startport),
-        shell=True)
-    # 重新登录qq
-    click(pos['relogin'][0], pos['relogin'][1], startport)
+    subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' % (startport),shell=True)
     time.sleep(10)
     # 点击模式设置
     click(pos['script_item3'][0], pos['script_item3'][1], startport)
     click(pos['script_switch_mode'][0], pos['script_switch_mode'][1], startport, 3)
     # 滑动
-    swipeport(pos['script_swipetop'][0], pos['script_swipetop'][1], pos['script_swipebot'][0],
-              pos['script_swipebot'][1], startport)
+    swipeport(pos['script_swipetop'][0], pos['script_swipetop'][1], pos['script_swipebot'][0],pos['script_swipebot'][1], startport)
     time.sleep(1)
     if len(args) > 0:
         if args[0] == "donate":
@@ -1045,7 +1041,8 @@ def convert_mode(startlist):
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (nowid)
         c().start(action, nowid)
         startport = getport(nowid)
-
+        # 重新登录qq
+        click(pos['relogin'][0], pos['relogin'][1], startport)
         #查看是否在捐兵配置中，没有就配置为捐兵
         try:
             status = config.get("coc", "startid%d"%(nowid))
