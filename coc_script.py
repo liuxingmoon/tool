@@ -31,24 +31,7 @@ def start(action,startport,wait_time):
     #打印当前时间
     print(r'当前的时间为：%s' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
     #确保模拟器进程已经启动
-    '''
-    while True:
-        result = subprocess.Popen('tasklist|findstr DunDiEmu.exe',shell = True,stdout=subprocess.PIPE).stdout.readline().split()[0]
-        print (result)
-        if result == b'DunDiEmu.exe':
-            time.sleep(3)
-            break
-    
-    #确保最小化
-    for n in range(2):
-        try:
-            wnd = win32gui.FindWindow(u'Qt5QWindowIcon', None)  # 获取窗口句柄
-            win32gui.CloseWindow(wnd)  # 窗口最小化
-            wndcoc = win32gui.FindWindow(None, u'coc_script3')  # 获取窗口句柄
-            win32gui.CloseWindow(wndcoc)  # 窗口最小化
-        except :
-            break
-    '''
+
     #等待系统开机
     time.sleep(40)
     # 关闭模拟器连接
