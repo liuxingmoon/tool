@@ -11,6 +11,7 @@ import inspect
 import ctypes
 import sys
 from pynput.keyboard import Key, Listener
+import configparser
 # coc模板
 #方法：
 
@@ -88,9 +89,12 @@ pos = {
     'trainningitem2': [370, 45],
     'trainningitem3': [590, 45],
     'trainningitem4': [810, 45],
+    'trainningitem5': [1030, 45],
     'train_troop01': [130, 440],
-    'train_template01': [130, 330],
+    'train_template00': [1130, 180],
+    'train_template01': [1130, 330],
     'train_template02': [1130, 480],
+    'train_template03': [1130, 630],
     'attack_troop01': [200, 655],
     'attack_troop02': [300, 655],
     'attack_troop03': [400, 655],
@@ -124,7 +128,18 @@ pos = {
     'train2': [600, 440],
     'gold1': [470, 130],
     'water1': [790, 280],
-    'rmtree': [640, 590]
+    'rmtree': [640, 590],
+    'script_start':[200,1070],
+    'script_item1': [130, 290],
+    'script_item2': [280, 290],
+    'script_item3': [430, 290],
+    'script_item4': [590, 290],
+    'script_canceltroop': [1200, 135],
+    'script_switch_mode': [340, 610],
+    'script_swipetop': [340, 740],
+    'script_swipebot': [340, 1000],
+    'script_play': [340, 660],
+    'script_donate': [340, 800]
 }
 # 建立字典存储所有位置信息
 rm_pos = {}
@@ -138,6 +153,8 @@ IDcard = {
 
 }
 
+#配置文件路径
+configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
 
 #获取启动port
 def getport(startid):
@@ -170,10 +187,12 @@ def finish(startport):
     process = subprocess.Popen('adb disconnect %s' % (startport), shell=True)
     time.sleep(3)
 # 点击屏幕
-def click(x,y,startport):
-    process = subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
+def click(x,y,startport,*args):
+    subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
     print(x,y)
     time.sleep(1)
+    if len(args) > 0:
+        time.sleep(args[0])
 # 快速点击屏幕
 def click_short(x,y,startport,times):
     for n in range(times):
@@ -198,6 +217,9 @@ def swipe(drt,startport):
     elif drt == 'right':
         process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 1000 360 100 360' % (startport), shell=True)
         time.sleep(1)
+#定点滑动
+def swipeport(x1,y1,x2,y2,startport):
+    subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe %d %d %d %d' % (startport,x1,y1,x2,y2), shell=True)
 # 输入文本
 def text(text,startport):
     subprocess.Popen('adb -s 127.0.0.1:%s shell input text %s' % (startport, text), shell=True)
@@ -205,24 +227,24 @@ def text(text,startport):
 # 返回
 def back(startport):
     print('back')
-    process = subprocess.Popen('adb -s 127.0.0.1:%s shell input keyevent 4' % (startport), shell=True)
+    subprocess.Popen('adb -s 127.0.0.1:%s shell input keyevent 4' % (startport), shell=True)
     time.sleep(3)
 # HOME
 def home(startport):
-    process = subprocess.Popen('adb -s 127.0.0.1:%s shell input keyevent 3' % (startport), shell=True)
+    subprocess.Popen('adb -s 127.0.0.1:%s shell input keyevent 3' % (startport), shell=True)
     time.sleep(3)
 # HOME
 def menu(startport):
-    process = subprocess.Popen('adb -s 127.0.0.1:%s shell input keyevent 82' % (startport), shell=True)
+    subprocess.Popen('adb -s 127.0.0.1:%s shell input keyevent 82' % (startport), shell=True)
     time.sleep(3)
 
 # 熄灭
 def interest(startport):
-    process = subprocess.Popen('adb -s 127.0.0.1:%s shell input keyevent 223' % (startport), shell=True)
+    subprocess.Popen('adb -s 127.0.0.1:%s shell input keyevent 223' % (startport), shell=True)
     time.sleep(3)
 # 点亮
 def light(startport):
-    process = subprocess.Popen('adb -s 127.0.0.1:%s shell input keyevent 224' % (startport), shell=True)
+    subprocess.Popen('adb -s 127.0.0.1:%s shell input keyevent 224' % (startport), shell=True)
     time.sleep(3)
 # 静音
 def silence(startport):
@@ -395,12 +417,26 @@ def train(train_troopid,num,startport):
     click(pos['exitstore'][0], pos['exitstore'][1], startport)
 
 #训练捐兵
-def train_donate(train_template,startport):
+def train_template(train_template,startport):
     click(pos['trainning'][0], pos['trainning'][1], startport)
+    #12本上
+    click(pos['trainningitem5'][0], pos['trainningitem5'][1], startport)
+    swipe('top', startport)
+    click(pos[train_template][0], pos[train_template][1], startport)
+    click(pos[train_template][0], pos[train_template][1], startport)
+    #12本以下
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport)
     swipe('top', startport)
     click(pos[train_template][0], pos[train_template][1], startport)
     click(pos[train_template][0], pos[train_template][1], startport)
+    click(pos['exitstore'][0], pos['exitstore'][1], startport)
+
+#取消所有的兵种
+def cancel_troop(startport):
+    click(pos['trainning'][0], pos['trainning'][1], startport)
+    print('取消兵种')
+    click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport)
+    click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 400)
     click(pos['exitstore'][0], pos['exitstore'][1], startport)
 
 #启动coc
@@ -783,14 +819,14 @@ def wardonate(startlist):
         click(pos['war_1'][0], pos['war_1'][1], startport)
         click(pos['war_donate'][0], pos['war_donate'][1], startport)
         #捐兵
-        for clan in range(30):
+        for clan in range(40):
             #time.sleep(1)
             click_short(pos['war_donate_trp2'][0], pos['war_donate_trp2'][1], startport,10)
             click_short(pos['war_donate_trp3'][0], pos['war_donate_trp3'][1], startport,10)
             click_short(pos['war_donate_trp1'][0], pos['war_donate_trp1'][1], startport,10)
             click(pos['war_donate_next'][0], pos['war_donate_next'][1], startport)
-        #训练
-        train_donate('train_template02',startport)
+        #训练部落战兵种
+        train_template('train_template01',startport)
         close()
     g.msgbox(msg='部落战捐兵完成')
 
@@ -947,7 +983,7 @@ def stop_thread(thread):
     _async_raise(thread.ident , SystemExit)
 
 
-
+#移除夜世界树木
 def removeTree_night(startid):
     global flag,flag_switch
     # 分别定义a键的信号量对象
@@ -974,3 +1010,74 @@ def removeTree_night(startid):
         stop_thread(t1)
         stop_thread(t2)
         flag = 0
+
+#启动黑松鼠
+def start_script(startport,*args):
+    connect(startport)
+    # 启动黑松鼠
+    subprocess.Popen(
+        r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' % (startport),
+        shell=True)
+    # 重新登录qq
+    click(pos['relogin'][0], pos['relogin'][1], startport)
+    time.sleep(10)
+    # 点击模式设置
+    click(pos['script_item3'][0], pos['script_item3'][1], startport)
+    click(pos['script_switch_mode'][0], pos['script_switch_mode'][1], startport, 3)
+    # 滑动
+    swipeport(pos['script_swipetop'][0], pos['script_swipetop'][1], pos['script_swipebot'][0],
+              pos['script_swipebot'][1], startport)
+    time.sleep(1)
+    if len(args) > 0:
+        if args[0] == "donate":
+            click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
+        elif args[0] == "play":
+            click(pos['script_play'][0], pos['script_play'][1], startport, 3)
+    click(pos['script_start'][0], pos['script_start'][1], startport)
+
+#切换打鱼和捐兵
+def convert_mode(startlist):
+    config = configparser.ConfigParser()
+    for nowid in startlist:
+        #读取一次配置文件
+        config.read(configpath, encoding="utf-8")
+        nowid = int(nowid)
+        action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (nowid)
+        c().start(action, nowid)
+        startport = getport(nowid)
+
+        #查看是否在捐兵配置中，没有就配置为捐兵
+        try:
+            status = config.get("coc", "startid%d"%(nowid))
+        except:
+            config.set("coc", "startid%d"%(nowid),"donate")
+            config.write(open(configpath, "w",encoding='utf-8'))
+            status = "donate"
+        #转换状态并保存
+        if status == "donate":
+            print("切换状态为 play")
+            status = "play"
+            #切换为打资源
+            start_script(startport,status)
+        else:
+            print("切换状态为 donate")
+            status = "donate"
+            click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
+            #启动coc
+            startcoc(startport)
+            #取消训练中的兵种
+            cancel_troop(startport)
+            #造捐兵兵种
+            train_template('train_template03', startport)
+            #切换为捐兵
+            home(startport)
+            start_script(startport,status)
+
+        #保存当前状态
+        config.set("coc", "startid%d"%(nowid),status)
+        config.write(open(configpath, "w",encoding='utf-8'))
+
+        
+        
+        
+        

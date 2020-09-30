@@ -13,6 +13,10 @@ def start():
             startidlist = coc_id.get().split()
             print(startidlist,type(startidlist))
             coc_template.wardonate(startidlist)
+        def convert_mode():
+            startidlist = coc_id.get().split()
+            print(startidlist,type(startidlist))
+            coc_template.convert_mode(startidlist)
         def cocStart():
             startid = getinfo()  # 获取输入框信息
             coc_start.start(startid)
@@ -88,6 +92,10 @@ def start():
         # 部落冲突砍树
         cocremoveN_bt = tk.Button(root, text='夜世界砍树@', command=cocRTN, width=15)
         cocremoveN_bt.grid(row=4, column=3,
+                          padx=10, pady=10)
+        #切换捐兵/打资源状态
+        convert_mode_bt = tk.Button(root, text='切换状态', command=convert_mode, width=15)
+        convert_mode_bt.grid(row=5, column=1,
                           padx=10, pady=10)
 
         root.mainloop()
