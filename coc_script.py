@@ -17,7 +17,7 @@ pos = {
   }
 
 #日志路径
-Coclog = r'C:\Users\Administrator\Desktop\刘兴\coc\coclog.txt'
+Coclog = r'D:\Program Files\Python38\works\tool\coclog.txt'
 configpath = r"D:\Program Files\Python38\works\tool\Config.ini"
 ddpath = r'D:\Program Files\DundiEmu\DunDiEmu.exe'
 
@@ -31,24 +31,7 @@ def start(action,startport,wait_time):
     #打印当前时间
     print(r'当前的时间为：%s' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
     #确保模拟器进程已经启动
-    '''
-    while True:
-        result = subprocess.Popen('tasklist|findstr DunDiEmu.exe',shell = True,stdout=subprocess.PIPE).stdout.readline().split()[0]
-        print (result)
-        if result == b'DunDiEmu.exe':
-            time.sleep(3)
-            break
-    
-    #确保最小化
-    for n in range(2):
-        try:
-            wnd = win32gui.FindWindow(u'Qt5QWindowIcon', None)  # 获取窗口句柄
-            win32gui.CloseWindow(wnd)  # 窗口最小化
-            wndcoc = win32gui.FindWindow(None, u'coc_script3')  # 获取窗口句柄
-            win32gui.CloseWindow(wndcoc)  # 窗口最小化
-        except :
-            break
-    '''
+
     #等待系统开机
     time.sleep(40)
     # 关闭模拟器连接
@@ -58,7 +41,11 @@ def start(action,startport,wait_time):
     subprocess.Popen('adb start-server', shell=True)
     time.sleep(3)
     #重启并连接连接
-    subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
+    if startport == 5555:
+        subprocess.Popen(r'adb connect emulator-5554',shell = True)
+        subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
+    else:
+        subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
     time.sleep(3)
     '''
     if result.split()[0] == b'unable':
@@ -69,22 +56,33 @@ def start(action,startport,wait_time):
 def coc_script(startport,wait_time):
     time.sleep(wait_time)
     try:
-        result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
-        text = result.stdout.readlines()#元组存储
+        if startport == 5555:
+            subprocess.Popen(r'adb -s emulator-5554 shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity',shell=True)
+            result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
+            text = result.stdout.readlines()#元组存储
+        else:
+            result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
+            text = result.stdout.readlines()#元组存储
         if 'not found' in text:
+            with open(Coclog,'a') as Coclogfile:
+                Coclogfile.write('出现bug重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             reboot()
     except:
+        with open(Coclog,'a') as Coclogfile:
+            Coclogfile.write('出现bug重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         reboot()
     time.sleep(10)
     
     
 #点击屏幕
 def click(x,y,startport):
+    if startport == 5555:
+        subprocess.Popen(r'adb -s emulator-5554 shell input tap %d %d' %(x,y),shell=True)
     subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
     time.sleep(3)
 
 def close():
-    subprocess.Popen('taskkill /f /t /im DunDiEmu.exe & taskkill /f /t /im DdemuHandle.exe',shell=True)
+    subprocess.Popen('taskkill /f /t /im DunDiEmu.exe & taskkill /f /t /im DdemuHandle.exe & taskkill /f /t /im adb.exe',shell=True)
     time.sleep(3)
 
 #等待
@@ -377,8 +375,12 @@ if __name__ == "__main__":
             runtime_global = endtime_global - starttime_global
             #每隔一天重启一次
             if (runtime_global.seconds / 3600) >= 24:
+                with open(Coclog,'a') as Coclogfile:
+                    Coclogfile.write('运行时间超过一天重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
                 reboot()
     except:
+        with open(Coclog,'a') as Coclogfile:
+            Coclogfile.write('出现bug重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         reboot()
 '''
         #使用线程实现重启捐兵和启动打资源分开

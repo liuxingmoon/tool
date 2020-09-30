@@ -427,6 +427,7 @@ def train_template(train_template,startport):
     click(pos[train_template][0], pos[train_template][1], startport)
     #12本以下
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport)
+    click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport)
     swipe('top', startport)
     click(pos[train_template][0], pos[train_template][1], startport)
     click(pos[train_template][0], pos[train_template][1], startport)
@@ -1017,13 +1018,13 @@ def start_script(startport,*args):
     connect(startport)
     # 启动黑松鼠
     subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' % (startport),shell=True)
-    time.sleep(10)
+    time.sleep(20)
     # 点击模式设置
-    click(pos['script_item3'][0], pos['script_item3'][1], startport)
+    click(pos['script_item3'][0], pos['script_item3'][1], startport, 3)
     click(pos['script_switch_mode'][0], pos['script_switch_mode'][1], startport, 3)
     # 滑动
     swipeport(pos['script_swipetop'][0], pos['script_swipetop'][1], pos['script_swipebot'][0],pos['script_swipebot'][1], startport)
-    time.sleep(1)
+    time.sleep(5)
     if len(args) > 0:
         if args[0] == "donate":
             click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
