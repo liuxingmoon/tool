@@ -8,7 +8,7 @@ import click,requests,prettytable,Crypto
 
 
 def songCmd(song):
-    cmd = r'python "E:\Program Files\Python\Python38\works\tools\music-dl\music-dl" -o "E:\System\Downloads\music"'
+    cmd = r'python "E:\Program Files\Python\Python38\works\tool\music-dl\music-dl" -o "E:\System\Downloads\music"'
     s = subprocess.Popen(cmd,stdin=subprocess.PIPE, stdout=subprocess.PIPE,universal_newlines=True, shell = True)
     s.stdin.write(song + '\n')#下载所有
     time.sleep(3)

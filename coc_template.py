@@ -138,6 +138,7 @@ pos = {
     'script_switch_mode': [340, 610],
     'script_swipetop': [340, 740],
     'script_swipebot': [340, 1000],
+    'boat': [800, 300],
     'script_play': [340, 660],
     'script_donate': [340, 800]
 }
@@ -438,8 +439,8 @@ def cancel_troop(startport):
     click(pos['trainning'][0], pos['trainning'][1], startport)
     print('取消兵种')
     click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport)
-    click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 400)
-    click(pos['exitstore'][0], pos['exitstore'][1], startport)
+    click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 800)
+    click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
 
 #启动coc
 def startcoc(startport,*args):
@@ -1063,6 +1064,14 @@ def convert_mode(startlist):
             click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
             #启动coc
             startcoc(startport)
+            #等待1分
+            timewait(1,startport)
+            #夜世界切换
+            #归到右上角
+            swipe('top',startport)
+            swipe('right',startport)
+            #船
+            click(pos['boat'][0], pos['boat'][1], startport, 3)
             #取消训练中的兵种
             cancel_troop(startport)
             #造捐兵兵种
