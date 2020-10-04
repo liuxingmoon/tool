@@ -8,6 +8,7 @@ import win32gui
 from win32.lib import win32con
 import datetime
 import threading
+import coc_template
 
 #元素坐标
 pos = {
@@ -55,22 +56,19 @@ def start(action,startport,wait_time):
 #打开黑松鼠
 def coc_script(startport,wait_time):
     time.sleep(wait_time)
-    try:
-        if startport == 5555:
-            subprocess.Popen(r'adb -s emulator-5554 shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity',shell=True)
-            result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
-            text = result.stdout.readlines()#元组存储
-        else:
-            result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
-            text = result.stdout.readlines()#元组存储
-        if 'not found' in text:
-            with open(Coclog,'a') as Coclogfile:
-                Coclogfile.write('出现bug重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
-            reboot()
-    except:
+    if startport == 5555:
+        subprocess.Popen(r'adb -s emulator-5554 shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity',shell=True)
+        result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
+        text = result.stdout.readlines()#元组存储
+    else:
+        result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
+        text = result.stdout.readlines()#元组存储
+    '''
+    if 'not found' in text:
         with open(Coclog,'a') as Coclogfile:
             Coclogfile.write('出现bug重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         reboot()
+    '''
     time.sleep(10)
     
     
@@ -215,7 +213,7 @@ def instance(donate_switch,donateids):
             print('持久运行号开始运行！')
         else:
             print('没有持久运行号需要运行！')
-        return [instance_num_day,instance_time_day,'白天']
+        return [instance_num_day,instance_time_day,'白天',donate_status]
 
 #关闭指定id窗口          
 def handle_window_play(hwnd,extra):
@@ -290,6 +288,7 @@ if __name__ == "__main__":
         minid = int(config.get("coc", "minid"))
         maxid = int(config.get("coc", "maxid"))
         donate_time = float(config.get("coc", "donate_time"))
+        #捐兵模式：一直捐兵（A)，还是半捐
         donate_mode = config.get("coc", "donate_mode")
         #跳过启动的id初始列表
         skipidlists = config.get("coc", "skipid").split()
@@ -319,8 +318,11 @@ if __name__ == "__main__":
                         donatename = configline.split('=')[-1].rstrip('\n')
                         donatenames[donateid] = donatename
         print(r'当前的捐兵号和名字为: %s' %(donatenames))
-        
-        donate_num = int(config.get("coc", "donate_num"))#捐兵号的个数
+        #获取捐兵的数量
+        if donate_mode == "A":
+            donate_num = len(donateids)
+        else:
+            donate_num = int(config.get("coc", "donate_num"))#捐兵号的个数
         #查看捐兵号的开关是否打开，打开就跳过该id
         if donate_switch in ['True','1','T']:
             skipids.extend(donateids)#添加捐兵的id到跳过id列表中
@@ -353,13 +355,15 @@ if __name__ == "__main__":
         #获取当前时间判断启动持续时间
         donatetime_start = datetime.datetime.now()
         while True:
+            #获取捐兵号的状态（当前是在捐兵还是在打资源）
+            config.read(configpath, encoding="utf-8")
+            donate_status = config.get("coc", "donate_status")
             #关闭
             close()
             #获取当前时间的参数并运行持久化运行号
             result = instance(donate_switch,donateids)
             #启动打资源的模拟器个数
             instance_num = result[0]
-            #if result[2] != '凌晨':
             if donate_switch in ['True','1','T']:
                 if instance_num < donate_num:
                     instance_num = 0
@@ -367,9 +371,34 @@ if __name__ == "__main__":
                     instance_num = instance_num - donate_num
             #等待时间
             instance_time = result[1]
-            #首次启动捐兵号
+            #现在时间
+            donate_time = result[2]
+            #凌晨切换捐兵状态为打资源
+            if (donate_time == '凌晨') and (donate_status == 'donate'):
+                coc_template.convert_mode(donateids,donate_status)
+                with open(Coclog,'a') as Coclogfile:
+                    Coclogfile.write('凌晨切换捐兵状态为打资源,切换时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+                #关闭
+                close()
+                donate_status = 'play'
+                config.read(configpath, encoding="utf-8")
+                config.set("coc", "donate_status", donate_status)#只能存储str类型数据
+                config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+            #早上切换打资源状态为捐兵
+            elif (donate_time != '凌晨') and (donate_status == 'play'):
+                coc_template.convert_mode(donateids,donate_status)
+                with open(Coclog,'a') as Coclogfile:
+                    Coclogfile.write('早上切换打资源状态为捐兵,切换时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+                #关闭
+                close()
+                donate_status = 'donate'
+                config.read(configpath, encoding="utf-8")
+                config.set("coc", "donate_status", donate_status)#只能存储str类型数据
+                config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+            #启动捐兵号
             for n in range(donate_num):
                 play_donate(donateids)
+            #启动打资源号
             restartplay()
             endtime_global = datetime.datetime.now()
             runtime_global = endtime_global - starttime_global

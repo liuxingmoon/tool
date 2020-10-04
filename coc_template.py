@@ -155,7 +155,7 @@ IDcard = {
 }
 
 #配置文件路径
-configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
+configpath = r"D:\Program Files\Python38\works\tool\Config.ini"
 
 #获取启动port
 def getport(startid):
@@ -420,26 +420,26 @@ def train(train_troopid,num,startport):
 
 #训练捐兵
 def train_template(train_template,startport):
-    click(pos['trainning'][0], pos['trainning'][1], startport)
-    #12本上
-    click(pos['trainningitem5'][0], pos['trainningitem5'][1], startport)
-    swipe('top', startport)
-    click(pos[train_template][0], pos[train_template][1], startport)
-    click(pos[train_template][0], pos[train_template][1], startport)
+    click(pos['trainning'][0], pos['trainning'][1], startport,3)
     #12本以下
-    click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport)
-    click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport)
+    click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
     swipe('top', startport)
+    click(pos[train_template][0], pos[train_template][1], startport,3)
     click(pos[train_template][0], pos[train_template][1], startport)
+    #12本上
+    click(pos['trainningitem5'][0], pos['trainningitem5'][1], startport,3)
+    swipe('top', startport)
+    click(pos[train_template][0], pos[train_template][1], startport,3)
     click(pos[train_template][0], pos[train_template][1], startport)
-    click(pos['exitstore'][0], pos['exitstore'][1], startport)
+    #关闭
+    click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
 
 #取消所有的兵种
 def cancel_troop(startport):
     click(pos['trainning'][0], pos['trainning'][1], startport)
     print('取消兵种')
     click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport)
-    click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 800)
+    click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 600)
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
 
 #启动coc
@@ -1034,7 +1034,7 @@ def start_script(startport,*args):
     click(pos['script_start'][0], pos['script_start'][1], startport)
 
 #切换打鱼和捐兵
-def convert_mode(startlist):
+def convert_mode(startlist,*args):
     config = configparser.ConfigParser()
     for nowid in startlist:
         #读取一次配置文件
@@ -1047,44 +1047,47 @@ def convert_mode(startlist):
         click(pos['relogin'][0], pos['relogin'][1], startport)
         #查看是否在捐兵配置中，没有就配置为捐兵
         try:
-            status = config.get("coc", "startid%d"%(nowid))
+            if len(args) > 0:
+                status = args[0]
+                statusnow = config.get("coc", "startid%d"%(nowid))
+            else:
+                status = config.get("coc", "startid%d"%(nowid))
+                statusnow = config.get("coc", "startid%d"%(nowid))
         except:
             config.set("coc", "startid%d"%(nowid),"donate")
             config.write(open(configpath, "w",encoding='utf-8'))
             status = "donate"
         #转换状态并保存
-        if status == "donate":
-            print("切换状态为 play")
-            status = "play"
-            #切换为打资源
-            start_script(startport,status)
+        if status == statusnow:
+            if status == "donate":
+                print("切换状态为 play")
+                status = "play"
+                #切换为打资源
+                start_script(startport,status)
+            else:
+                print("切换状态为 donate")
+                status = "donate"
+                click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
+                #启动coc
+                startcoc(startport)
+                #等待1分
+                timewait(1,startport)
+                #夜世界切换
+                #归到右上角
+                swipe('top',startport)
+                swipe('right',startport)
+                #船
+                click(pos['boat'][0], pos['boat'][1], startport, 5)
+                #取消训练中的兵种
+                cancel_troop(startport)
+                #造捐兵兵种
+                train_template('train_template03', startport)
+                #切换为捐兵
+                home(startport)
+                start_script(startport,status)
         else:
-            print("切换状态为 donate")
-            status = "donate"
-            click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
-            #启动coc
-            startcoc(startport)
-            #等待1分
-            timewait(1,startport)
-            #夜世界切换
-            #归到右上角
-            swipe('top',startport)
-            swipe('right',startport)
-            #船
-            click(pos['boat'][0], pos['boat'][1], startport, 3)
-            #取消训练中的兵种
-            cancel_troop(startport)
-            #造捐兵兵种
-            train_template('train_template03', startport)
-            #切换为捐兵
-            home(startport)
-            start_script(startport,status)
-
+            status = statusnow
+            close()
         #保存当前状态
         config.set("coc", "startid%d"%(nowid),status)
         config.write(open(configpath, "w",encoding='utf-8'))
-
-        
-        
-        
-        
