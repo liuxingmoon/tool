@@ -856,8 +856,8 @@ def wardonate(startlist):
 
 #启动coc
 def start_coc(startidlist):
-    for nowid in range(int(startidlist[0]),int(startidlist[-1])+1):
-        action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (nowid)
+    for nowid in startidlist:
+        action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(nowid))
         c().start(action, nowid,0)
         startport = getport(nowid)
         connect(startport)
