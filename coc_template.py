@@ -76,6 +76,7 @@ pos = {
     'enter': [640, 630],
     'war': [50, 440],
     'war_1': [360, 280],
+    'war_2': [590, 320],
     'war_donate': [480, 550],
     'war_donate_last': [340, 570],
     'war_donate_next': [950, 570],
@@ -816,7 +817,9 @@ def wardonate(startlist):
         time.sleep(10)
         startcoc(startport,1)#最小化
         cancel(startport)
+        #进入部落战界面
         click(pos['war'][0], pos['war'][1], startport)
+        #部落战第一个开始捐兵
         swipe('top', startport)
         swipe('top', startport)
         click(pos['war_1'][0], pos['war_1'][1], startport)
@@ -830,8 +833,26 @@ def wardonate(startlist):
             click(pos['war_donate_next'][0], pos['war_donate_next'][1], startport)
         #训练部落战兵种
         train_template('train_template01',startport)
+        
+        #进入部落战界面
+        click(pos['war'][0], pos['war'][1], startport)
+        #部落战第二个开始捐兵
+        swipe('top', startport)
+        swipe('top', startport)
+        click(pos['war_2'][0], pos['war_2'][1], startport)
+        click(pos['war_donate'][0], pos['war_donate'][1], startport)
+        #捐兵
+        for clan in range(39):
+            #time.sleep(1)
+            click_short(pos['war_donate_trp2'][0], pos['war_donate_trp2'][1], startport,10)
+            click_short(pos['war_donate_trp3'][0], pos['war_donate_trp3'][1], startport,10)
+            click_short(pos['war_donate_trp1'][0], pos['war_donate_trp1'][1], startport,10)
+            click(pos['war_donate_next'][0], pos['war_donate_next'][1], startport)
+        #训练部落战兵种
+        train_template('train_template01',startport)
+        #关闭
         close()
-    g.msgbox(msg='部落战捐兵完成')
+    #g.msgbox(msg='部落战捐兵完成')
 
 #启动coc
 def start_coc(startidlist):
@@ -1085,6 +1106,9 @@ def convert_mode(startlist,*args):
                 #切换为捐兵
                 home(startport)
                 start_script(startport,status)
+            #暂停几秒钟保存切换后状态
+            time.sleep(5)
+            close()
         else:
             status = statusnow
             close()

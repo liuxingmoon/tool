@@ -63,12 +63,10 @@ def coc_script(startport,wait_time):
     else:
         result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
         text = result.stdout.readlines()#元组存储
-    '''
     if 'not found' in text:
         with open(Coclog,'a') as Coclogfile:
             Coclogfile.write('出现bug重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         reboot()
-    '''
     time.sleep(10)
     
     
@@ -91,8 +89,9 @@ def timewait(min):
 def getport(startid,skipids):
     #每启动一个模拟器，需要关闭一个
     global closeplayid
+    #关闭id
     closeplayid = startid - 6 - instance_num
-    win32gui.EnumWindows(handle_window_play,None)
+    #win32gui.EnumWindows(handle_window_play,None)
     #获取启动端口
     if startid == 0:
         #如果恰好既是第一个id，又是要跳过的id，或者是捐兵id，需要往下id+1
@@ -195,7 +194,7 @@ def instance(donate_switch,donateids):
     # 当前时间
     now_time = datetime.datetime.now()
     # 判断当前时间是否在范围时间内
-    if now_time >= day_time_end or now_time < night_time_end:
+    if now_time >= night_time_end or now_time < morning_time_end:
         print('目前处于晚上,可以执行 %d 实例, %d 分钟，可以运行捐兵实例' %(instance_num_night,instance_time_night*60))
         #付费捐兵号(晚上运行启动)
         if donate_switch in ['True','1','T']:
@@ -203,10 +202,10 @@ def instance(donate_switch,donateids):
         else:
             print('没有持久运行号需要运行！')
         return [instance_num_night,instance_time_night,'晚上']
-    elif now_time >= night_time_end and now_time < morning_time_end:
+    elif now_time >= morning_time_end and now_time < day_time_end:
         print('目前处于凌晨,可以执行 %d 实例, %d 分钟，不需要运行捐兵实例' %(instance_num_morning,instance_time_morning*60))
         return [instance_num_morning,instance_time_morning,'凌晨']
-    else:
+    elif now_time >= day_time_end and now_time < night_time_end:
         print('目前处于白天,可以执行%d实例,%d分钟' %(instance_num_day,instance_time_day*60))
         #付费捐兵号(白天运行启动)
         if donate_switch in ['True','1','T']:
@@ -291,8 +290,11 @@ if __name__ == "__main__":
         #捐兵模式：一直捐兵（A)，还是半捐
         donate_mode = config.get("coc", "donate_mode")
         #跳过启动的id初始列表
-        skipidlists = config.get("coc", "skipid").split()
+        skipidlists = config.get("coc", "skipids").split()
         skipids = skipidlists.copy()
+        warids = config.get("coc", "warids").split()
+        skipids.extend(warids)#添加部落战控制的id到跳过id列表中
+        skipids = list(set(skipids))#去重
         #skipids = [str(x) for x in skipids]#需要把int转换成str，不然下面会报错
         for everyid in skipidlists:
             if "-" in str(everyid):
@@ -373,7 +375,7 @@ if __name__ == "__main__":
             instance_time = result[1]
             #现在时间
             donate_time = result[2]
-            #凌晨切换捐兵状态为打资源
+            #凌晨切换捐兵状态为打资源，顺便做一次部落战捐兵
             if (donate_time == '凌晨') and (donate_status == 'donate'):
                 coc_template.convert_mode(donateids,donate_status)
                 with open(Coclog,'a') as Coclogfile:
@@ -384,12 +386,14 @@ if __name__ == "__main__":
                 config.read(configpath, encoding="utf-8")
                 config.set("coc", "donate_status", donate_status)#只能存储str类型数据
                 config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+                #部落战捐兵
+                coc_template.wardonate(warids)
             #早上切换打资源状态为捐兵
             elif (donate_time != '凌晨') and (donate_status == 'play'):
                 coc_template.convert_mode(donateids,donate_status)
                 with open(Coclog,'a') as Coclogfile:
                     Coclogfile.write('早上切换打资源状态为捐兵,切换时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
-                #关闭
+                #关闭 
                 close()
                 donate_status = 'donate'
                 config.read(configpath, encoding="utf-8")
