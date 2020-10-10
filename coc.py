@@ -1,6 +1,7 @@
 import tkinter as tk
 import coc_start
 import coc_template
+import configparser
 
 def start():
     try:
@@ -38,7 +39,14 @@ def start():
             endid = int(startidlist[1])
             coc_template.resource(startid,endid)
         def cocst():
-            startidlist = coc_id.get().split()
+            info = coc_id.get()
+            #不写就打开部落战id
+            if info == "":
+                config = configparser.ConfigParser()
+                config.read("Config.ini", encoding="utf-8")
+                startidlist = config.get("coc", "warids").split()
+            else:
+                startidlist = info.split()
             print(startidlist, type(startidlist))
             #startid = int(startidlist[0])
             #endid = int(startidlist[1])

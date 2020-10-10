@@ -155,7 +155,7 @@ IDcard = {
 }
 
 #配置文件路径
-configpath = r"D:\Program Files\Python38\works\tool\Config.ini"
+configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
 
 #获取启动port
 def getport(startid):
