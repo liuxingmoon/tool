@@ -858,8 +858,8 @@ def wardonate(startlist):
 def start_coc(startidlist):
     for nowid in startidlist:
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(nowid))
-        c().start(action, nowid,0)
-        startport = getport(nowid)
+        c().start(action, int(nowid),0)
+        startport = getport(int(nowid))
         connect(startport)
         #重新登录qq
         click(pos['relogin'][0], pos['relogin'][1], startport)

@@ -18,7 +18,7 @@ import translate_url
 from PIL import ImageGrab
 from pynput.keyboard import Key, Listener
 import thunder_sign_in
-import IP_query,stock
+import netmask,stock
 import novel
 import wuxia_getpos as pos
 import wifi
@@ -364,8 +364,8 @@ screenShot_bt.grid(row=6,column=3,
               padx=10,pady=10)
 
 #IP地址查询
-IP_query_bt = tk.Button(root,text='IP地址查询',command=IP_query.start,width=15)
-IP_query_bt.grid(row=7,column=3,
+netmask_bt = tk.Button(root,text='掩码IP查询',command=netmask.start,width=15)
+netmask_bt.grid(row=7,column=3,
               padx=10,pady=10)
 
 #股票K线查询

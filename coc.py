@@ -11,7 +11,14 @@ def start():
             print(info,type(info))
             return info
         def wardonate():
-            startidlist = coc_id.get().split()
+            info = coc_id.get()
+            #不写就打开部落战id
+            if info == "":
+                config = configparser.ConfigParser()
+                config.read("Config.ini", encoding="utf-8")
+                startidlist = config.get("coc", "warids").split()
+            else:
+                startidlist = info.split()
             print(startidlist,type(startidlist))
             coc_template.wardonate(startidlist)
         def convert_mode():
