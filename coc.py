@@ -2,6 +2,7 @@ import tkinter as tk
 import coc_start
 import coc_template
 import configparser
+import os
 
 def start():
     try:
@@ -47,11 +48,42 @@ def start():
             coc_template.resource(startid,endid)
         def cocst():
             info = coc_id.get()
-            #不写就打开部落战id
+            config = configparser.ConfigParser()
+            config.read("Config.ini", encoding="utf-8")
             if info == "":
-                config = configparser.ConfigParser()
-                config.read("Config.ini", encoding="utf-8")
+                # 不写就打开部落战id
                 startidlist = config.get("coc", "warids").split()
+            elif info in ['a','A','all','ALL']:
+                #有All代表启动所有的
+                os.chdir(r'D:\Program Files\DundiEmu\DundiData\avd')
+                emulist = os.listdir()
+                emulist.remove('vboxData')
+                #选出模拟器的启动id
+                emunum = []
+                for emu in emulist:
+                    emunum.append(int(emu.replace('dundi', '')))
+                #排序
+                emunum.sort()
+                startidlist = emunum
+            elif info in ['p','P','play','PLAY']:
+                #P代表启动除了捐兵号，跳过号以及部落战号剩下的play号
+                os.chdir(r'D:\Program Files\DundiEmu\DundiData\avd')
+                emulist = os.listdir()
+                emulist.remove('vboxData')
+                #选出模拟器的启动id
+                emunum = []
+                for emu in emulist:
+                    emunum.append(int(emu.replace('dundi', '')))
+                skipids = config.get("coc", "skipids").split()
+                warids = config.get("coc", "warids").split()
+                donateids = config.get("coc", "donateids").split()
+                skipids.extend(warids)  # 添加部落战控制的id到跳过id列表中
+                skipids.extend(donateids)  # 添加捐兵控制的id到跳过id列表中
+                skipids = [int(x) for x in skipids] # 转换str型为int
+                #删除所有在emunum而也在skipids的
+                startidlist = [x for x in emunum if x not in skipids]
+                #排序
+                startidlist.sort()
             else:
                 startidlist = info.split()
             print(startidlist, type(startidlist))
