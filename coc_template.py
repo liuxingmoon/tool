@@ -832,13 +832,13 @@ def wardonate(startlist):
             click_short(pos['war_donate_trp1'][0], pos['war_donate_trp1'][1], startport,10)
             click(pos['war_donate_next'][0], pos['war_donate_next'][1], startport)
         #训练部落战兵种
-        train_template('train_template01',startport)
+        #train_template('train_template01',startport)
         
         #进入部落战界面
         click(pos['war'][0], pos['war'][1], startport)
         #部落战第二个开始捐兵
-        swipe('top', startport)
-        swipe('top', startport)
+        for n in range(10):
+            swipe('top', startport)
         click(pos['war_2'][0], pos['war_2'][1], startport)
         click(pos['war_donate'][0], pos['war_donate'][1], startport)
         #捐兵
