@@ -1,4 +1,4 @@
-#coding:utf-8
+#coding=utf-8
 import subprocess
 import time
 import easygui as g
@@ -137,7 +137,7 @@ def play(wait_time,skipids):
     click(pos['sure'][0], pos['sure'][1],startport)
     time.sleep(5)
     click(pos['start_script'][0],pos['start_script'][1],startport)
-    print('启动脚本完成')
+    print('启动打资源脚本完成')
 
     #打印分割线
     read_id = playnames[startid]
@@ -148,6 +148,40 @@ def play(wait_time,skipids):
     config.set("coc", "startid", str(startid + 1))#只能存储str类型数据
     config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
 
+#付费捐兵号
+def play_donate_for_paid(donateids):
+    #获取上一次运行的捐兵id
+    global donateid_now
+    donateid_now = config.get("coc", "donateid_for_paid_now")#str
+    #获取即将运行的捐兵index
+    if donateid_now in donateids:
+        donateindex = donateids.index(donateid_now)
+    else:
+        donateindex = -1
+    #获取即将运行的捐兵id
+    if (donateindex == len(donateids) - 1) or (donateindex == -1):
+        donateid_now = donateids[0]
+    else:
+        donateid_now = donateids[donateindex + 1]
+    #写入config
+    config.set("coc", "donateid_for_paid_now", donateid_now)#只能存储str类型数据
+    config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+    if int(donateid_now) == 0:
+        startport = 5555
+    else:
+        startport = 52550 + int(donateid_now)
+    action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(donateid_now))
+    start(action,startport,30)
+    print('启动付费捐兵模拟器完成')
+    time.sleep(3)
+    coc_script(startport,5)
+    time.sleep(5)
+    click(pos['sure'][0], pos['sure'][1],startport)
+    time.sleep(5)
+    click(pos['start_script'][0],pos['start_script'][1],startport)
+    print('启动付费捐兵脚本完成')
+
+    
 #捐兵号
 def play_donate(donateids):
     #获取上一次运行的捐兵id
@@ -179,7 +213,7 @@ def play_donate(donateids):
     click(pos['sure'][0], pos['sure'][1],startport)
     time.sleep(5)
     click(pos['start_script'][0],pos['start_script'][1],startport)
-    print('启动脚本完成')
+    print('启动自用捐兵脚本完成')
     #打印分割线
     read_id = donatenames[donateid_now]
     print(r'============================= %s 实例启动完成 ===============================' %(read_id))
@@ -309,7 +343,11 @@ if __name__ == "__main__":
         
         #捐兵（一直运行）
         donate_switch = config.get("coc", "donate_switch")#是否开启捐兵
+        donateids_for_paid = config.get("coc", "donateids_for_paid").split()#获取付费捐兵id的list
         donateids = config.get("coc", "donateids").split()#获取捐兵id的list
+        #在捐兵列表中去除付费捐兵的list
+        donateids = [x for x in donateids if x not in donateids_for_paid]
+        
         donatenames = {}
         for donateid in donateids:
             donateconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%s\config.ini' %(donateid)
@@ -377,6 +415,7 @@ if __name__ == "__main__":
             donate_time = result[2]
             #凌晨切换捐兵状态为打资源，顺便做一次部落战捐兵
             if (donate_time == '凌晨') and (donate_status == 'donate'):
+                coc_template.convert_mode(donateids_for_paid,donate_status)
                 coc_template.convert_mode(donateids,donate_status)
                 with open(Coclog,'a') as Coclogfile:
                     Coclogfile.write('凌晨切换捐兵状态为打资源,切换时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
@@ -390,6 +429,7 @@ if __name__ == "__main__":
                 coc_template.wardonate(warids)
             #早上切换打资源状态为捐兵
             elif (donate_time != '凌晨') and (donate_status == 'play'):
+                coc_template.convert_mode(donateids_for_paid,donate_status)
                 coc_template.convert_mode(donateids,donate_status)
                 with open(Coclog,'a') as Coclogfile:
                     Coclogfile.write('早上切换打资源状态为捐兵,切换时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
@@ -399,6 +439,11 @@ if __name__ == "__main__":
                 config.read(configpath, encoding="utf-8")
                 config.set("coc", "donate_status", donate_status)#只能存储str类型数据
                 config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+            
+            #启动付费捐兵号
+            donateids_for_paid_num = len(donateids_for_paid)
+            for n in range(donateids_for_paid_num):
+                play_donate_for_paid(donateids_for_paid)
             #启动捐兵号
             for n in range(donate_num):
                 play_donate(donateids)
@@ -407,7 +452,9 @@ if __name__ == "__main__":
             endtime_global = datetime.datetime.now()
             runtime_global = endtime_global - starttime_global
             #每隔一天重启一次
-            if (runtime_global.seconds / 3600) >= 24:
+            runtime = int(runtime_global.seconds / 3600)
+            print(r'当前脚本已运行 %d 个小时!' %(runtime))
+            if runtime >= 23:
                 with open(Coclog,'a') as Coclogfile:
                     Coclogfile.write('运行时间超过一天重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
                 reboot()
