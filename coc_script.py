@@ -14,6 +14,7 @@ import coc_template
 pos = {
   'coc_script':[500,680],
   'start_script':[200,1070],
+  'login_wandoujia': [640, 500],
   'sure':[360,935]
   }
 
@@ -71,11 +72,14 @@ def coc_script(startport,wait_time):
     
     
 #点击屏幕
-def click(x,y,startport):
+def click(x,y,startport,*args):
     if startport == 5555:
         subprocess.Popen(r'adb -s emulator-5554 shell input tap %d %d' %(x,y),shell=True)
     subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
+    print(x,y)
     time.sleep(3)
+    if len(args) > 0:
+        time.sleep(args[0])
 
 def close():
     subprocess.Popen('taskkill /f /t /im DunDiEmu.exe & taskkill /f /t /im DdemuHandle.exe & taskkill /f /t /im adb.exe',shell=True)
@@ -138,6 +142,9 @@ def play(wait_time,skipids):
     time.sleep(5)
     click(pos['start_script'][0],pos['start_script'][1],startport)
     print('启动打资源脚本完成')
+    if startport == 52555:#如果是星陨，尝试点击登录 
+        time.sleep(20)
+        click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
 
     #打印分割线
     read_id = playnames[startid]
@@ -179,6 +186,9 @@ def play_donate_for_paid(donateids):
     click(pos['sure'][0], pos['sure'][1],startport)
     time.sleep(5)
     click(pos['start_script'][0],pos['start_script'][1],startport)
+    if startport == 52555:#如果是星陨，尝试点击登录 
+        time.sleep(20)
+        click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
     print('启动付费捐兵脚本完成')
 
     
@@ -213,6 +223,9 @@ def play_donate(donateids):
     click(pos['sure'][0], pos['sure'][1],startport)
     time.sleep(5)
     click(pos['start_script'][0],pos['start_script'][1],startport)
+    if startport == 52555:#如果是星陨，尝试点击登录 
+        time.sleep(20)
+        click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
     print('启动自用捐兵脚本完成')
     #打印分割线
     read_id = donatenames[donateid_now]

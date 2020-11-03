@@ -33,6 +33,7 @@ pos = {
     'register': [760, 545],
     'store': [1200, 635],
     'relogin': [500, 825],
+    'login_wandoujia': [640, 500],
     'store_build': [300, 100],
     'storeitem1': [330, 260],
     'storeitem2': [540, 260],
@@ -468,6 +469,8 @@ def startcoc(startport,*args):
     time.sleep(30)
     click(pos['exitstore'][0], pos['exitstore'][1], startport)
     click(pos['cancel'][0], pos['cancel'][1], startport)
+    if startport == 52555:#如果是星陨，尝试点击登录 
+        click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
 
 #重启coc
 def restartcoc(startport):
