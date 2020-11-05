@@ -9,6 +9,7 @@ from win32.lib import win32con
 import datetime
 import threading
 import coc_template
+import os
 
 #元素坐标
 pos = {
@@ -332,7 +333,8 @@ if __name__ == "__main__":
         config.read(configpath, encoding="utf-8")
         #启动id范围
         minid = int(config.get("coc", "minid"))
-        maxid = int(config.get("coc", "maxid"))
+        maxid = len(os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\')) - 2
+        #maxid = int(config.get("coc", "maxid"))
         donate_time = float(config.get("coc", "donate_time"))
         #捐兵模式：一直捐兵（A)，还是半捐
         donate_mode = config.get("coc", "donate_mode")
@@ -371,6 +373,8 @@ if __name__ == "__main__":
                         donatename = configline.split('=')[-1].rstrip('\n')
                         donatenames[donateid] = donatename
         print(r'当前的捐兵号和名字为: %s' %(donatenames))
+        #获取付费捐兵号数量
+        donateids_for_paid_num = len(donateids_for_paid)
         #获取捐兵的数量
         if donate_mode == "A":
             donate_num = len(donateids)
@@ -421,7 +425,7 @@ if __name__ == "__main__":
                 if instance_num < donate_num:
                     instance_num = 0
                 else:
-                    instance_num = instance_num - donate_num
+                    instance_num = instance_num - donate_num - donateids_for_paid_num
             #等待时间
             instance_time = result[1]
             #现在时间
@@ -454,7 +458,7 @@ if __name__ == "__main__":
                 config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
             
             #启动付费捐兵号
-            donateids_for_paid_num = len(donateids_for_paid)
+            
             for n in range(donateids_for_paid_num):
                 play_donate_for_paid(donateids_for_paid)
             #启动捐兵号

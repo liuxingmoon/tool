@@ -39,21 +39,28 @@ def start():
                     tmpmask = [''.join(bin_arr[i * 8:i * 8 + 8]) for i in range(4)]
                     tmpmask = [str(int(tmpstr, 2)) for tmpstr in tmpmask]
                     mask = '.'.join(tmpmask)
-                g.msgbox(msg=mask)
-
-
+                n = 32 - int(info)
+                ip_nums = int(math.pow(2,n))
+                ip_nums_useable = ip_nums - 2
+                ip_nums_useable_ali = ip_nums - 4
+                g.msgbox(msg='%d位\n掩码为：%s\n可用ip数为%d\n阿里云可用ip数为%d' %(int(info),mask,ip_nums_useable,ip_nums_useable_ali))
             else:#如果返回不全是数字（掩码）
                 mask = info.split('.')
-                len = 0
+                length = 0
                 x = 0
                 #计算掩码长度
                 for x in range(4):
                     mask[x] = int(mask[x])#转换成int
                     if (255 & mask[x]) == 255:#如果结果为255，说明这8位全为1，掩码长度加8
-                        len += 8
+                        length += 8
                     else:#如果不为255，说明此8位不是全为1，255-maxk[x] +1= 256-maxk[x]，计算以2为底的log值，用8减去log值，就是此8位1的个数
-                        len += (8-math.log(256-mask[x],2))
-                g.msgbox(msg=int(len))
+                        length += (8-math.log(256-mask[x],2))
+                n = 32 - int(length)
+                ip_nums = int(math.pow(2, n))
+                ip_nums_useable = ip_nums - 2
+                ip_nums_useable_ali = ip_nums - 4
+                g.msgbox(msg='%d位\n掩码为：%s\n可用ip数为%d\n阿里云可用ip数为%d' % (int(length),info, ip_nums_useable, ip_nums_useable_ali))
+                #g.msgbox(msg=int(length))
 
         root = tk.Tk()
         root.title('掩码计算+公网ip地址地理分析')

@@ -37,8 +37,14 @@ def start():
             startid = getinfo()  # 获取输入框信息
             coc_template.removeTree_night(startid)
         def cocNS():
-            startid = getinfo()  # 获取输入框信息
+            startid = coc_id.get()  # 获取输入框信息
+            #输入框为空自动定义为最大id
+            if startid == "":
+                startid = len(os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\')) - 2
             name = coc_newid.get()
+            #自动定义名称为startid - 6
+            if name == "":
+                name = '0' + str(int(startid) - 6)
             coc_template.register(name,startid)
         def cocRC():
             startidlist = coc_id.get().split()
@@ -84,6 +90,10 @@ def start():
                 startidlist = [x for x in emunum if x not in skipids]
                 #排序
                 startidlist.sort()
+            elif info in ['s', 'S', 'skip', 'SKIP']:
+                skipids = config.get("coc", "skipids").split()
+                #删除0和26
+                startidlist = [x for x in skipids if x not in ['0','26']]
             else:
                 startidlist = info.split()
             print(startidlist, type(startidlist))

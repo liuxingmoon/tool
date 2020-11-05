@@ -152,7 +152,19 @@ IDcard = {
     '01':['蒋芳馨',230811197604235589],
     '02':['谢慧月',131022198204225442],
     '03':['卫寒凝',429006198902135782],
-    '04':['常芳懿',150626198306245680]
+    '04':['常芳懿',150626198306245680],
+    '05':['严慧秀',340207198703162947],
+    '06':['窦涵菡',431000198806214487],
+    '07':['苗和怡',410728198503202745],
+    '08':['顾虹影',411327198706254249],
+    '09':['岑红旭',320125198809105266],
+    '10':['雷飞雪',522635197808272243],
+    '11':['元含玉',150627198605144122],
+    '12':['方晗蕾',512001197707215487],
+    '13':['华安娜',421126199005228725],
+    '14':['康安卉',420684198104136143],
+    '15':['尤芳蕤',320281197302185262],
+    '16':['毕晴',340802197202137707]
 
 }
 
@@ -581,10 +593,10 @@ def register(name,startid):
     #click(pos['name'][0],pos['name'][1],startport)
     #text(IDcard['01'][0])
     #注册身份证
-    g.msgbox(msg=IDcard['04'][0])
+    g.msgbox(msg=IDcard['15'][0])
     click(pos['idcard'][0], pos['idcard'][1],startport)
     time.sleep(1)
-    text(IDcard['04'][1],startport)
+    text(IDcard['15'][1],startport)
     time.sleep(2)
     click(pos['register'][0], pos['register'][1],startport)
     time.sleep(15)
@@ -737,7 +749,7 @@ def register(name,startid):
     time.sleep(5)
     click(pos['cancel'][0], pos['cancel'][1], startport)
     #造城墙
-    timewait(10,startport)
+    timewait(12,startport)
     #收集一次资源确保选中不会出意外
     click(pos['mine1'][0], pos['mine1'][1], startport)
     click(pos['mine2'][0], pos['mine2'][1], startport)
