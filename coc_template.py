@@ -542,6 +542,21 @@ def levelup_mine(startport):
     time.sleep(5)
     click(pos['mine2'][0], pos['mine2'][1], startport)
     levelup(3, startport)
+    
+def levelup_mine1(startport):
+    #收集一次资源确保选中不会出意外
+    click(pos['mine1'][0], pos['mine1'][1], startport)
+    click(pos['mine2'][0], pos['mine2'][1], startport)
+    click(pos['collector1'][0], pos['collector1'][1], startport)
+    click(pos['collector2'][0], pos['collector2'][1], startport)
+    click(pos['cancel'][0], pos['cancel'][1], startport)
+    #升级矿场1,2
+    click(pos['mine1'][0], pos['mine1'][1], startport)
+    levelup(3,startport)
+    time.sleep(5)
+    click(pos['mine2'][0] + 20, pos['mine2'][1] - 20, startport)
+    levelup(3, startport)
+
 
 def levelup_collector(startport):
     # 收集一次资源确保选中不会出意外
@@ -557,6 +572,20 @@ def levelup_collector(startport):
     click(pos['collector2'][0], pos['collector2'][1], startport)
     levelup(3, startport)
 
+def levelup_collector1(startport):
+    # 收集一次资源确保选中不会出意外
+    click(pos['mine1'][0], pos['mine1'][1], startport)
+    click(pos['mine2'][0], pos['mine2'][1], startport)
+    click(pos['collector1'][0], pos['collector1'][1], startport)
+    click(pos['collector2'][0], pos['collector2'][1], startport)
+    click(pos['cancel'][0], pos['cancel'][1], startport)
+    #升级收集器1,2
+    click(pos['collector1'][0] + 20, pos['collector1'][1] - 20, startport)
+    levelup(3,startport)
+    time.sleep(5)
+    click(pos['collector2'][0] + 20, pos['collector2'][1] - 20, startport)
+    levelup(3, startport)
+    
 def levelup_saver(startport):
     # 收集一次资源
     click(pos['collector1'][0], pos['collector1'][1], startport)
@@ -730,10 +759,10 @@ def register(name,startid):
     train('train_troop01',40,startport)
     timewait(25,startport)
     #升级矿场1,2
-    levelup_mine(startport)
+    levelup_mine1(startport)
     time.sleep(60)
     #升级收集器1,2
-    levelup_collector(startport)
+    levelup_collector1(startport)
     time.sleep(60)
     #等待造兵完成
     time.sleep(20)

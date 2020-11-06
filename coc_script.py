@@ -20,8 +20,8 @@ pos = {
   }
 
 #日志路径
-Coclog = r'D:\Program Files\Python38\works\tool\coclog.txt'
-configpath = r"D:\Program Files\Python38\works\tool\Config.ini"
+Coclog = r'E:\Program Files\Python\Python38\works\tool\coclog.txt'
+configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
 ddpath = r'D:\Program Files\DundiEmu\DunDiEmu.exe'
 
 def reboot():
@@ -349,10 +349,13 @@ if __name__ == "__main__":
             if "-" in str(everyid):
                 start = everyid.split("-")[0]
                 end = everyid.split("-")[1]
-                #临时跳过列表,注意这里的元素是int
-                skiplist = range(int(start),int(end)+1)
+                #临时跳过列表,注意这里的元素是int,必须全部转换为str，不然不一致了
+                skiplist = [str(x) for x in range(int(start),int(end)+1)]
+                print(skiplist)
+                print(skipids)
                 skipids.extend(skiplist)
                 skipids.remove(everyid)#删除该列表
+                print(skipids)
                 skipids = [str(x) for x in skipids]#需要把int转换成str，不然下面会报错
                 skipids = list(set(skipids))#去重
         
@@ -362,7 +365,6 @@ if __name__ == "__main__":
         donateids = config.get("coc", "donateids").split()#获取捐兵id的list
         #在捐兵列表中去除付费捐兵的list
         donateids = [x for x in donateids if x not in donateids_for_paid]
-        
         donatenames = {}
         for donateid in donateids:
             donateconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%s\config.ini' %(donateid)
@@ -383,8 +385,10 @@ if __name__ == "__main__":
         #查看捐兵号的开关是否打开，打开就跳过该id
         if donate_switch in ['True','1','T']:
             skipids.extend(donateids)#添加捐兵的id到跳过id列表中
+            skipids.extend(donateids_for_paid)#添加捐兵的id到跳过id列表中
             skipids = list(set(skipids))#去重
-        print('跳过的实例id：%s' %([x for x in skipids]))
+            skipids.sort()
+        print('跳过的实例id：%s' %(skipids))
         
         playnames = {}
         for playid in range(maxid +1):
@@ -478,7 +482,7 @@ if __name__ == "__main__":
     except:
         with open(Coclog,'a') as Coclogfile:
             Coclogfile.write('出现bug重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
-        reboot()
+        #reboot()
 '''
         #使用线程实现重启捐兵和启动打资源分开
         thread_restartplay = threading.Thread(target=restartplay(), name='restartdonate')

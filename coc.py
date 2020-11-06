@@ -48,9 +48,17 @@ def start():
             coc_template.register(name,startid)
         def cocRC():
             startidlist = coc_id.get().split()
-            print(startidlist, type(startidlist))
-            startid = int(startidlist[0])
-            endid = int(startidlist[1])
+            startid = coc_id.get()  # 获取输入框信息
+            #输入框为空自动定义为最大id
+            if startid == "":
+                config = configparser.ConfigParser()
+                config.read("Config.ini", encoding="utf-8")
+                startid = int(config.get("coc", "maxid")) + 1
+                endid = len(os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\')) - 2
+            #print(startidlist, type(startidlist))
+            else:
+                startid = int(startidlist[0])
+                endid = int(startidlist[1])
             coc_template.resource(startid,endid)
         def cocst():
             info = coc_id.get()
@@ -102,9 +110,17 @@ def start():
             coc_template.start_coc(startidlist)
         def levelup_3():
             startidlist = coc_id.get().split()
-            print(startidlist, type(startidlist))
-            startid = int(startidlist[0])
-            endid = int(startidlist[1])
+            startid = coc_id.get()  # 获取输入框信息
+            #输入框为空自动定义为最大id
+            if startid == "":
+                config = configparser.ConfigParser()
+                config.read("Config.ini", encoding="utf-8")
+                startid = int(config.get("coc", "maxid")) + 1
+                endid = len(os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\')) - 2
+            #print(startidlist, type(startidlist))
+            else:
+                startid = int(startidlist[0])
+                endid = int(startidlist[1])
             coc_template.levelup_3(startid,endid)
 
         root = tk.Tk()

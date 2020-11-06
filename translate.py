@@ -41,7 +41,7 @@ def start():
     try:
         def translate():
             content = text1.get('1.0','end')
-            print(content)
+            print(type(content),content)
             data = {
                 'i': content,
                 'from': 'AUTO',
@@ -70,7 +70,12 @@ def start():
                 response = urllib.request.urlopen(req)
                 html = response.read().decode('utf-8')
                 result = json.loads(html)
-                g.msgbox(msg=result['translateResult'][0][0]['tgt'])
+                #g.msgbox(msg=result['translateResult'][0][0]['tgt'])
+                result = result['translateResult']
+                tl_result = [x[0]['tgt'] for x in result]
+                result_message = tk.Tk()
+                tk.Message(result_message,text=tl_result).pack()
+                #g.msgbox(msg=tl_result)
             except urllib.error.HTTPError as HTTPerror:
                 print(HTTPerror.read())
                 time.sleep(1)
