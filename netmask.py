@@ -66,10 +66,10 @@ def start():
         root.title('掩码计算+公网ip地址地理分析')
 
         netmask_label = tk.Label(root, text='掩码或者公网ip地址')
-        netmask_label.grid(row=0, column=1, sticky='w')  # 左对齐
+        netmask_label.grid(row=0, column=1, sticky='w',padx=10,pady=10)  # 左对齐
         netmask_entry = tk.Entry(root)
         netmask_entry.insert(0,'255.255.255.0')#插入初始化文本
-        netmask_entry.grid(row=0, column=2)
+        netmask_entry.grid(row=0, column=2,padx=10,pady=10)
 
         ipPos_bt = tk.Button(root,text='查询ip地址', width=10, command=ipPos_query)
         ipPos_bt.grid(row=1,column=1)

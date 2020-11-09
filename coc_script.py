@@ -16,6 +16,7 @@ pos = {
   'coc_script':[500,680],
   'start_script':[200,1070],
   'login_wandoujia': [640, 500],
+  'login_kunlun': [640, 250],
   'sure':[360,935]
   }
 
@@ -146,7 +147,10 @@ def play(wait_time,skipids):
     if startport == 52555:#如果是星陨，尝试点击登录 
         time.sleep(20)
         click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
-
+    else:
+        #昆仑
+        time.sleep(20)
+        click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
     #打印分割线
     read_id = playnames[startid]
     print(r'============================= %s 实例启动完成 ===============================' %(read_id))  
@@ -190,6 +194,10 @@ def play_donate_for_paid(donateids):
     if startport == 52555:#如果是星陨，尝试点击登录 
         time.sleep(20)
         click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
+    else:
+        #昆仑
+        time.sleep(20)
+        click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
     print('启动付费捐兵脚本完成')
 
     

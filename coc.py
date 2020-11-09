@@ -41,6 +41,8 @@ def start():
             #输入框为空自动定义为最大id
             if startid == "":
                 startid = len(os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\')) - 2
+            else:
+                startid = int(startid)
             name = coc_newid.get()
             #自动定义名称为startid - 6
             if name == "":
