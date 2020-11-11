@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="764151be-7248-4f18-bd88-9c11be37e098" name="默认的" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/Config.ini" afterPath="$PROJECT_DIR$/Config.ini" />
       <change beforePath="$PROJECT_DIR$/coc_script.py" afterPath="$PROJECT_DIR$/coc_script.py" />
       <change beforePath="$PROJECT_DIR$/coc_template.py" afterPath="$PROJECT_DIR$/coc_template.py" />
-      <change beforePath="$PROJECT_DIR$/netmask.py" afterPath="$PROJECT_DIR$/netmask.py" />
-      <change beforePath="$PROJECT_DIR$/wifi.py" afterPath="$PROJECT_DIR$/wifi.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -45,7 +43,7 @@
       <file leaf-file-name="tools.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tools.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6460">
+            <state relative-caret-position="0">
               <caret line="366" column="38" lean-forward="false" selection-start-line="366" selection-start-column="38" selection-end-line="366" selection-end-column="38" />
               <folding />
             </state>
@@ -55,8 +53,8 @@
       <file leaf-file-name="coc.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/coc.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2831">
-              <caret line="153" column="65" lean-forward="false" selection-start-line="153" selection-start-column="65" selection-end-line="153" selection-end-column="65" />
+            <state relative-caret-position="279">
+              <caret line="27" column="37" lean-forward="false" selection-start-line="27" selection-start-column="25" selection-end-line="27" selection-end-column="37" />
               <folding>
                 <element signature="e#0#20#0" expanded="true" />
               </folding>
@@ -67,8 +65,8 @@
       <file leaf-file-name="coc_script.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/coc_script.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-31">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="361">
+              <caret line="19" column="0" lean-forward="false" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="18" />
               <folding>
                 <element signature="e#14#31#0" expanded="true" />
               </folding>
@@ -79,8 +77,8 @@
       <file leaf-file-name="coc_template.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/coc_template.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="211">
-              <caret line="466" column="12" lean-forward="false" selection-start-line="466" selection-start-column="0" selection-end-line="466" selection-end-column="12" />
+            <state relative-caret-position="469">
+              <caret line="489" column="27" lean-forward="true" selection-start-line="489" selection-start-column="27" selection-end-line="489" selection-end-column="27" />
               <folding>
                 <element signature="e#15#32#0" expanded="true" />
               </folding>
@@ -126,16 +124,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="coc_script_DD.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/coc_script_DD.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="coc_start.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/coc_start.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -169,25 +157,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True)</find>
-      <find>home(startport)</find>
-      <find>trainning</find>
-      <find>train</find>
-      <find>train_template02</find>
-      <find>train_donate</find>
-      <find>train_template01</find>
-      <find>trainningitem2</find>
-      <find>trainningitem3</find>
-      <find>trainningitem4</find>
-      <find>train_template</find>
-      <find>train_troopid</find>
-      <find>IP_</find>
-      <find>重</find>
-      <find>start_coc</find>
-      <find>maxid</find>
-      <find>D:\Program Files\DundiEmu\DundiData\avd</find>
-      <find>idcard</find>
-      <find>IDcard['04</find>
       <find>os.</find>
       <find>len</find>
       <find>cocNS</find>
@@ -199,6 +168,25 @@
       <find>skiplist</find>
       <find>&quot;coc&quot;, &quot;skipids&quot;</find>
       <find>back</find>
+      <find>convert</find>
+      <find>exitstore</find>
+      <find>trainningitem3</find>
+      <find>cancel_troop</find>
+      <find>trainningitem1</find>
+      <find>edit</find>
+      <find>edit_army</find>
+      <find>script_canceltroop</find>
+      <find>del_army</find>
+      <find>enter</find>
+      <find>cancel_potion</find>
+      <find>convert_mode</find>
+      <find>donateids_for_paid</find>
+      <find>def script</find>
+      <find>start_script</find>
+      <find>sure</find>
+      <find>coc_script</find>
+      <find>cancel_army</find>
+      <find>train_template</find>
     </findStrings>
     <replaceStrings>
       <replace>on_press_mbt</replace>
@@ -257,9 +245,9 @@
         <option value="$PROJECT_DIR$/tools.py" />
         <option value="$PROJECT_DIR$/netmask.py" />
         <option value="$PROJECT_DIR$/coc.py" />
-        <option value="$PROJECT_DIR$/coc_template.py" />
         <option value="$PROJECT_DIR$/translate.py" />
         <option value="$PROJECT_DIR$/coc_script.py" />
+        <option value="$PROJECT_DIR$/coc_template.py" />
       </list>
     </option>
   </component>
@@ -269,7 +257,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="279" />
     <option name="y" value="173" />
     <option name="width" value="1386" />
@@ -293,6 +281,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -304,8 +294,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -475,7 +463,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32902467" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -485,12 +473,13 @@
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4826087" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32902467" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="运行" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22173913" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12579957" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12686567" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="找到" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -500,7 +489,6 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="找到" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32902467" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -772,14 +760,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/coc_script_DD.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/coc_start.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="570">
@@ -807,31 +787,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/netmask.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="627">
-          <caret line="37" column="36" lean-forward="false" selection-start-line="37" selection-start-column="36" selection-end-line="37" selection-end-column="36" />
-          <folding>
-            <element signature="e#0#20#0" expanded="true" />
-            <marker date="1604921669001" expanded="true" signature="1072:1466" ph="..." />
-            <marker date="1604921669001" expanded="true" signature="2595:2597" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/coc.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2831">
-          <caret line="153" column="65" lean-forward="false" selection-start-line="153" selection-start-column="65" selection-end-line="153" selection-end-column="65" />
-          <folding>
-            <element signature="e#0#20#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tools.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6460">
+        <state relative-caret-position="0">
           <caret line="366" column="38" lean-forward="false" selection-start-line="366" selection-start-column="38" selection-end-line="366" selection-end-column="38" />
           <folding />
         </state>
@@ -847,10 +805,40 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/coc_script_DD.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="27" column="63" lean-forward="true" selection-start-line="27" selection-start-column="63" selection-end-line="27" selection-end-column="63" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/netmask.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="627">
+          <caret line="37" column="36" lean-forward="false" selection-start-line="37" selection-start-column="36" selection-end-line="37" selection-end-column="36" />
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+            <marker date="1604921669001" expanded="true" signature="1072:1466" ph="..." />
+            <marker date="1604921669001" expanded="true" signature="2595:2597" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/coc.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="279">
+          <caret line="27" column="37" lean-forward="false" selection-start-line="27" selection-start-column="25" selection-end-line="27" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/coc_script.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-31">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="361">
+          <caret line="19" column="0" lean-forward="false" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="18" />
           <folding>
             <element signature="e#14#31#0" expanded="true" />
           </folding>
@@ -859,8 +847,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/coc_template.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="211">
-          <caret line="466" column="12" lean-forward="false" selection-start-line="466" selection-start-column="0" selection-end-line="466" selection-end-column="12" />
+        <state relative-caret-position="469">
+          <caret line="489" column="27" lean-forward="true" selection-start-line="489" selection-start-column="27" selection-end-line="489" selection-end-column="27" />
           <folding>
             <element signature="e#15#32#0" expanded="true" />
           </folding>

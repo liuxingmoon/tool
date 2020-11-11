@@ -72,6 +72,7 @@ pos = {
     'camp': [420, 420],
     'ruins': [850, 220],
     'base': [640, 380],
+    'sure': [360, 935],
     'levelup': [715, 600],
     'levelup2': [615, 600],
     'enter': [640, 630],
@@ -142,7 +143,26 @@ pos = {
     'script_swipebot': [340, 1000],
     'boat': [800, 300],
     'script_play': [340, 660],
-    'script_donate': [340, 800]
+    'script_donate': [340, 800],
+    'edit_army': [1135, 585],
+    'del_army': [1135, 650],
+    'del_army_sure': [780, 470],
+    'del_army_trp01': [110, 200],
+    'del_army_trp02': [210, 200],
+    'del_army_trp03': [310, 200],
+    'del_army_trp04': [410, 200],
+    'del_army_trp05': [510, 200],
+    'del_army_trp06': [610, 200],
+    'del_army_trp07': [710, 200],
+    'del_army_trp08': [810, 200],
+    'del_army_pt01': [110, 400],
+    'del_army_pt02': [210, 400],
+    'del_army_pt03': [310, 400],
+    'del_army_pt04': [410, 400],
+    'del_army_pt05': [510, 400],
+    'del_army_pt06': [610, 400],
+    'del_army_pt07': [710, 400]
+
 }
 # 建立字典存储所有位置信息
 rm_pos = {}
@@ -180,7 +200,7 @@ IDcard = {
     '30':['唐文冲',652801198202281613],
     '31':['卜钱磊',652801198202287556],
     '32':['危民佑',652801198202284216],
-    '33':['狄舟察',65280119820228737X],
+    '33':['狄舟察','65280119820228737X'],
     '34':['酆征科',652801198202285016],
     '35':['滑谱班',652801198202285892],
     '36':['酆向涪',652801198202287759],
@@ -459,26 +479,53 @@ def train(train_troopid,num,startport):
 #训练捐兵
 def train_template(train_template,startport):
     click(pos['trainning'][0], pos['trainning'][1], startport,3)
-    #12本以下
-    click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
-    swipe('top', startport)
-    click(pos[train_template][0], pos[train_template][1], startport,3)
-    click(pos[train_template][0], pos[train_template][1], startport)
     #12本上
     click(pos['trainningitem5'][0], pos['trainningitem5'][1], startport,3)
     swipe('top', startport)
     click(pos[train_template][0], pos[train_template][1], startport,3)
-    click(pos[train_template][0], pos[train_template][1], startport)
+    #click(pos[train_template][0], pos[train_template][1], startport)
+    #12本以下,多点一次因为会触发
+    click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
+    click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
+    swipe('top', startport)
+    click(pos[train_template][0], pos[train_template][1], startport,3)
+    #click(pos[train_template][0], pos[train_template][1], startport)
     #关闭
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
 
-#取消所有的兵种
+#取消训练中的兵种
 def cancel_troop(startport):
     click(pos['trainning'][0], pos['trainning'][1], startport)
     print('取消兵种')
     click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport)
     click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 600)
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
+
+#取消训练中的药水
+def cancel_potion(startport):
+    click(pos['trainning'][0], pos['trainning'][1], startport)
+    print('取消药水')
+    click(pos['trainningitem3'][0], pos['trainningitem3'][1], startport)
+    click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 50)
+    click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
+
+#取消现有兵种和药水
+def cancel_army(startport):
+    click(pos['trainning'][0], pos['trainning'][1], startport)
+    print('取消现有兵种和药水')
+    click(pos['trainningitem1'][0], pos['trainningitem1'][1], startport)
+    click(pos['edit_army'][0], pos['edit_army'][1], startport)
+    #取消兵种
+    for n in range(1,9):
+        click_short(pos['del_army_trp0%d' %(n)][0], pos['del_army_trp0%d' %(n)][1], startport, 200)
+    #取消药水
+    for n in range(1,8):
+        click_short(pos['del_army_pt0%d' %(n)][0], pos['del_army_pt0%d' %(n)][1], startport, 10)
+    #确定删除
+    click(pos['del_army'][0], pos['del_army'][1], startport,3)
+    click(pos['del_army_sure'][0], pos['del_army_sure'][1], startport,3)
+    #退出
+    click(pos['exitstore'][0], pos['exitstore'][1], startport, 3)
 
 #启动coc
 def startcoc(startport,*args):
@@ -1108,7 +1155,10 @@ def start_script(startport,*args):
     connect(startport)
     # 启动黑松鼠
     subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' % (startport),shell=True)
-    time.sleep(20)
+    time.sleep(10)
+    #点击更新
+    click(pos['sure'][0], pos['sure'][1], startport)
+    time.sleep(10)
     # 点击模式设置
     click(pos['script_item3'][0], pos['script_item3'][1], startport, 3)
     click(pos['script_switch_mode'][0], pos['script_switch_mode'][1], startport, 3)
@@ -1124,6 +1174,7 @@ def start_script(startport,*args):
 
 #切换打鱼和捐兵
 def convert_mode(startlist,*args):
+    #args[0]表示当前状态，args[1]表示是否删掉已经造好的兵种，1表示不删，2表示删并且造2种
     config = configparser.ConfigParser()
     for nowid in startlist:
         #读取一次配置文件
@@ -1169,6 +1220,15 @@ def convert_mode(startlist,*args):
                 click(pos['boat'][0], pos['boat'][1], startport, 5)
                 #取消训练中的兵种
                 cancel_troop(startport)
+                #删除现有兵种捐兵
+                if str(nowid) in args[1]:
+                    print('删除%d的现有兵种和药水并造兵' %(nowid))
+                    # 取消训练中的药水
+                    cancel_potion(startport)
+                    #取消现有兵种和药水
+                    cancel_army(startport)
+                    # 造捐兵兵种
+                    train_template('train_template02', startport)
                 #造捐兵兵种
                 train_template('train_template03', startport)
                 #切换为捐兵

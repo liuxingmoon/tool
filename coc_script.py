@@ -370,6 +370,7 @@ if __name__ == "__main__":
         #捐兵（一直运行）
         donate_switch = config.get("coc", "donate_switch")#是否开启捐兵
         donateids_for_paid = config.get("coc", "donateids_for_paid").split()#获取付费捐兵id的list
+        donateids_for_paid_del_army = config.get("coc", "donateids_for_paid_del_army").split()#获取付费捐兵id删除兵的list
         donateids = config.get("coc", "donateids").split()#获取捐兵id的list
         #在捐兵列表中去除付费捐兵的list
         donateids = [x for x in donateids if x not in donateids_for_paid]
@@ -458,7 +459,7 @@ if __name__ == "__main__":
                 coc_template.wardonate(warids)
             #早上切换打资源状态为捐兵
             elif (donate_time != '凌晨') and (donate_status == 'play'):
-                coc_template.convert_mode(donateids_for_paid,donate_status)
+                coc_template.convert_mode(donateids_for_paid,donate_status,donateids_for_paid_del_army)
                 coc_template.convert_mode(donateids,donate_status)
                 with open(Coclog,'a') as Coclogfile:
                     Coclogfile.write('早上切换打资源状态为捐兵,切换时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
