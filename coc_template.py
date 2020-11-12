@@ -72,6 +72,7 @@ pos = {
     'camp': [420, 420],
     'ruins': [850, 220],
     'base': [640, 380],
+    'base2': [630, 325],
     'sure': [360, 935],
     'levelup': [715, 600],
     'levelup2': [615, 600],
@@ -913,7 +914,7 @@ def resource(startid,endid):
         cancel(startport)
         levelup_train(startport)
         #升级大本营
-        click(pos['base'][0], pos['base'][1], startport)
+        click(pos['base2'][0], pos['base2'][1], startport)
         click(pos['levelup2'][0], pos['levelup2'][1], startport)
         click(pos['enter'][0], pos['enter'][1], startport)
         close()
