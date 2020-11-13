@@ -469,9 +469,7 @@ if __name__ == "__main__":
                 config.read(configpath, encoding="utf-8")
                 config.set("coc", "donate_status", donate_status)#只能存储str类型数据
                 config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
-            
             #启动付费捐兵号
-            
             for n in range(donateids_for_paid_num):
                 play_donate_for_paid(donateids_for_paid)
             #启动捐兵号

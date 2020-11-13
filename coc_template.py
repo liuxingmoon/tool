@@ -60,12 +60,12 @@ pos = {
     'built14': [710, 195],
     'built15': [643, 416],
     'built16': [770, 310],
-    'built17': [970, 200],
-    'built18': [940, 85],
-    'built19': [370, 130],
-    'built20': [310, 270],
-    'built21': [215, 343],
-    'built22': [816, 512],
+    'built17': [430, 105],
+    'built18': [370, 230],
+    'built19': [935, 420],
+    'built20': [1035, 160],
+    'built21': [1160, 215],
+    'built22': [370, 370],
     'built23': [911, 441],
     'built24': [650, 245],
     'backcamp': [640, 640],
@@ -499,7 +499,7 @@ def cancel_troop(startport):
     click(pos['trainning'][0], pos['trainning'][1], startport)
     print('取消兵种')
     click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport)
-    click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 600)
+    click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 400)
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
 
 #取消训练中的药水
@@ -1030,34 +1030,29 @@ def levelup_3(startid,endid):
         storebuild(startport)
         click(pos['storeitem2'][0], pos['storeitem2'][1], startport)
         click(pos['store_2'][0], pos['store_2'][1], startport)
-        subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 666 93 265 400' % (startport), shell=True)
         time.sleep(1)
         click(pos['built20'][0], pos['built20'][1], startport)
         time.sleep(5)
-        # 造实验室
-        storebuild(startport)
-        click(pos['storeitem1'][0], pos['storeitem1'][1], startport)
-        click(pos['store_3'][0], pos['store_3'][1], startport)
-        subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 666 93 166 480' % (startport), shell=True)
-        time.sleep(1)
-        click(pos['built21'][0], pos['built21'][1], startport)
         # 造兵营
         storebuild(startport)
         click(pos['storeitem1'][0], pos['storeitem1'][1], startport)
         click(pos['store_2'][0], pos['store_2'][1], startport)
-        subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 824 97 766 688' % (startport), shell=True)
         time.sleep(1)
-        click(pos['built22'][0], pos['built22'][1], startport)
-        timewait(1,startport)
+        click(pos['built21'][0], pos['built21'][1], startport)
         # 造迫击炮
         storebuild(startport)
         click(pos['storeitem3'][0], pos['storeitem3'][1], startport)
         click(pos['store_2'][0], pos['store_2'][1], startport)
-        subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 670 102 872 570' % (startport), shell=True)
+        time.sleep(1)
+        click(pos['built22'][0], pos['built22'][1], startport)
+        timewait(5,startport)
+        # 造实验室
+        storebuild(startport)
+        click(pos['storeitem1'][0], pos['storeitem1'][1], startport)
+        click(pos['store_3'][0], pos['store_3'][1], startport)
         time.sleep(1)
         click(pos['built23'][0], pos['built23'][1], startport)
-        #等待造兵营
-        timewait(5,startport)
+
         #造城墙
         for n in range(2):
             swipe('top', startport)
@@ -1175,7 +1170,7 @@ def start_script(startport,*args):
 
 #切换打鱼和捐兵
 def convert_mode(startlist,*args):
-    #args[0]表示当前状态，args[1]表示是否删掉已经造好的兵种，1表示不删，2表示删并且造2种
+    #args[0]表示当前状态，args[1]表示删掉已经造好的兵种的模拟器id
     config = configparser.ConfigParser()
     for nowid in startlist:
         #读取一次配置文件
@@ -1221,15 +1216,17 @@ def convert_mode(startlist,*args):
                 click(pos['boat'][0], pos['boat'][1], startport, 5)
                 #取消训练中的兵种
                 cancel_troop(startport)
-                #删除现有兵种捐兵
-                if str(nowid) in args[1]:
-                    print('删除%d的现有兵种和药水并造兵' %(nowid))
-                    # 取消训练中的药水
-                    cancel_potion(startport)
-                    #取消现有兵种和药水
-                    cancel_army(startport)
-                    # 造捐兵兵种
-                    train_template('train_template02', startport)
+                if len(args) >= 2:
+                    print('开始执行删除现有兵种，需要全部删除的id为%s'%(args[1]))
+                    if (str(nowid) in args[1]):
+                        print('删除%d的现有兵种和药水并造兵' %(nowid))
+                        # 取消训练中的药水
+                        cancel_potion(startport)
+                        #取消现有兵种和药水
+                        cancel_army(startport)
+                        # 造捐兵兵种
+                        train_template('train_template02', startport)
+                print('删除兵种结束')
                 #造捐兵兵种
                 train_template('train_template03', startport)
                 #切换为捐兵

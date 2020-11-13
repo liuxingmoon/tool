@@ -60,7 +60,7 @@ def start():
             #print(startidlist, type(startidlist))
             else:
                 startid = int(startidlist[0])
-                endid = int(startidlist[1])
+                endid = int(startidlist[-1])
             coc_template.resource(startid,endid)
         def cocst():
             info = coc_id.get()
