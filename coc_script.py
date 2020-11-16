@@ -15,7 +15,8 @@ import os
 pos = {
   'coc_script':[500,680],
   'start_script':[200,1070],
-  'login_wandoujia': [640, 500],
+  'login_wandoujia1': [640, 500],
+  'login_wandoujia2': [640, 300],
   'login_kunlun': [640, 250],
   'sure':[360,935]
   }
@@ -146,7 +147,8 @@ def play(wait_time,skipids):
     print('启动打资源脚本完成')
     if startport == 52555:#如果是星陨，尝试点击登录 
         time.sleep(20)
-        click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
+        click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
+        click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
     else:
         #昆仑
         time.sleep(20)
@@ -193,7 +195,8 @@ def play_donate_for_paid(donateids):
     click(pos['start_script'][0],pos['start_script'][1],startport)
     if startport == 52555:#如果是星陨，尝试点击登录 
         time.sleep(20)
-        click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
+        click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
+        click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
     else:
         #昆仑
         time.sleep(20)
@@ -234,7 +237,8 @@ def play_donate(donateids):
     click(pos['start_script'][0],pos['start_script'][1],startport)
     if startport == 52555:#如果是星陨，尝试点击登录 
         time.sleep(20)
-        click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
+        click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
+        click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
     print('启动自用捐兵脚本完成')
     #打印分割线
     read_id = donatenames[donateid_now]
