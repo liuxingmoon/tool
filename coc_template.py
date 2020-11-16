@@ -484,13 +484,13 @@ def train_template(train_template,startport):
     click(pos['trainningitem5'][0], pos['trainningitem5'][1], startport,3)
     swipe('top', startport)
     click(pos[train_template][0], pos[train_template][1], startport,3)
-    #click(pos[train_template][0], pos[train_template][1], startport)
+    click(pos[train_template][0], pos[train_template][1], startport)
     #12本以下,多点一次因为会触发
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
     swipe('top', startport)
     click(pos[train_template][0], pos[train_template][1], startport,3)
-    #click(pos[train_template][0], pos[train_template][1], startport)
+    click(pos[train_template][0], pos[train_template][1], startport)
     #关闭
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
 
@@ -850,7 +850,7 @@ def register(name,startid):
     time.sleep(5)
     click(pos['cancel'][0], pos['cancel'][1], startport)
     #造城墙
-    timewait(12,startport)
+    timewait(15,startport)
     #收集一次资源确保选中不会出意外
     click(pos['mine1'][0], pos['mine1'][1], startport)
     click(pos['mine2'][0], pos['mine2'][1], startport)
@@ -870,10 +870,11 @@ def register(name,startid):
     restartcoc(startport)
     #升级矿场
     levelup_mine(startport)
+    cancel(startport)
     #造兵
     train('train_troop01', 40, startport)
     #等待矿场升级完毕
-    timewait(30, startport)
+    timewait(20, startport)
     #打哥布林
     click(pos['attack'][0], pos['attack'][1], startport)
     click(pos['attack_single'][0], pos['attack_single'][1], startport)
@@ -886,12 +887,14 @@ def register(name,startid):
     time.sleep(5)
     #升级收集器
     levelup_collector(startport)
+    cancel(startport)
     #造兵
     train('train_troop01', 40, startport)
     #等待收集器升级完毕
-    timewait(30, startport)
+    timewait(20, startport)
     #升级罐子和瓶子
     levelup_saver(startport)
+    cancel(startport)
     g.msgbox(msg='初始化完成')
 
 #升级资源

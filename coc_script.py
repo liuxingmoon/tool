@@ -456,7 +456,7 @@ if __name__ == "__main__":
                 config.set("coc", "donate_status", donate_status)#只能存储str类型数据
                 config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
                 #部落战捐兵
-                coc_template.wardonate(warids)
+                #coc_template.wardonate(warids)
             #早上切换打资源状态为捐兵
             elif (donate_time != '凌晨') and (donate_status == 'play'):
                 coc_template.convert_mode(donateids_for_paid,donate_status,donateids_for_paid_del_army)

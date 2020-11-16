@@ -3,6 +3,7 @@ import coc_start
 import coc_template
 import configparser
 import os
+import coc_customer
 
 def start():
     try:
@@ -130,30 +131,30 @@ def start():
         title = tk.Label(root, text='部落冲突脚本功能')
         title.grid(row=0, column=2)
         coc_label = tk.Label(root, text='模拟器id')
-        coc_label.grid(row=1, column=1, sticky='w')  # 左对齐
+        coc_label.grid(row=1, column=1, sticky='w' + 'e')  # 居中
         coc_id = tk.Entry(root)
         coc_id.grid(row=1, column=2)
         #部落战捐兵
-        wardonate_bt = tk.Button(root, text='部落战捐兵', width=10, command=wardonate)
+        wardonate_bt = tk.Button(root, text='部落战捐兵', width=15, command=wardonate)
         wardonate_bt.grid(row=1, column=3)
+        # 部落冲突新账号建立
+        coc_newlabel = tk.Label(root, text='新号id')
+        coc_newlabel.grid(row=2, column=1, sticky='w' + 'e')  # 居中
+        coc_newid = tk.Entry(root)
+        coc_newid.grid(row=2, column=2)
+        cocremove_bt = tk.Button(root, text='新号脚本', command=cocNS, width=15)
+        cocremove_bt.grid(row=2, column=3,
+                          padx=10, pady=10)
         # 部落冲突打资源
         coc_bt = tk.Button(root, text='打资源', command=cocStart, width=15)
-        coc_bt.grid(row=2, column=1,
+        coc_bt.grid(row=3, column=1,
                     padx=10, pady=10)
         #3本新建建筑
         coclevelup_bt = tk.Button(root, text='3本建造建筑', command=levelup_3, width=15)
-        coclevelup_bt.grid(row=2, column=2,
+        coclevelup_bt.grid(row=3, column=2,
                           padx=10, pady=10)
         # 部落冲突升级资源
         cocremove_bt = tk.Button(root, text='升级资源', command=cocRC, width=15)
-        cocremove_bt.grid(row=2, column=3,
-                          padx=10, pady=10)
-        # 部落冲突新账号建立
-        coc_newlabel = tk.Label(root, text='新号id')
-        coc_newlabel.grid(row=3, column=1, sticky='w')  # 左对齐
-        coc_newid = tk.Entry(root)
-        coc_newid.grid(row=3, column=2)
-        cocremove_bt = tk.Button(root, text='新号脚本', command=cocNS, width=15)
         cocremove_bt.grid(row=3, column=3,
                           padx=10, pady=10)
         #只启动部落冲突，不打资源
@@ -171,6 +172,10 @@ def start():
         #切换捐兵/打资源状态
         convert_mode_bt = tk.Button(root, text='切换状态', command=convert_mode, width=15)
         convert_mode_bt.grid(row=5, column=1,
+                          padx=10, pady=10)
+        #客户信息
+        custmoer_bt = tk.Button(root, text='客户信息', command=coc_customer.start, width=15)
+        custmoer_bt.grid(row=5, column=2,
                           padx=10, pady=10)
 
         root.mainloop()

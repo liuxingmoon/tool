@@ -11,7 +11,7 @@ import subprocess
 import download_hvideo as avyrdl
 import thunder_daily_task_v2 as tdtask
 import lotteryDraw as lottery
-import coc
+import coc,coc_customer
 import poweroff
 import translate
 import translate_url
@@ -387,6 +387,8 @@ wifi_bt = tk.Button(root,text='wifi热点',command=wifi.start,width=15)
 wifi_bt.grid(row=9,column=3,
               padx=10,pady=10)
 try:
+    coc_customer.clarm()
     root.mainloop()
+
 except:
     root.destroy()
