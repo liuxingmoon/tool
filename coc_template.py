@@ -529,7 +529,7 @@ def cancel_army(startport):
     click(pos['exitstore'][0], pos['exitstore'][1], startport, 3)
 
 #启动coc
-def startcoc(startport,*args):
+def startcoc(startport):
     connect(startport)
     try:
         #九游
@@ -542,14 +542,6 @@ def startcoc(startport,*args):
         subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
     #豌豆荚
     #subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
-    time.sleep(3)
-    for event in args:
-        if event == 1:
-            print('最小化')
-            wnd = win32gui.FindWindow(u'Qt5QWindowIcon', None)  # 获取窗口句柄
-            win32gui.CloseWindow(wnd)  # 窗口最小化
-        else:
-            print('不用最小化')
     time.sleep(30)
     click(pos['exitstore'][0], pos['exitstore'][1], startport)
     click(pos['cancel'][0], pos['cancel'][1], startport)
@@ -901,13 +893,13 @@ def register(name,startid):
 def resource(startid,endid):
     for nowid in range(startid,endid+1):
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' % (nowid)
-        c().start(action, nowid)
+        c().start(action, nowid,1)#最小化
         startport = getport(nowid)
         connect(startport)
         #重新登录qq
         click(pos['relogin'][0], pos['relogin'][1], startport)
         time.sleep(10)
-        startcoc(startport,1)#最小化
+        startcoc(startport)
         cancel(startport)
         levelup_mine(startport)
         cancel(startport)
@@ -928,13 +920,13 @@ def wardonate(startlist):
     for nowid in startlist:
         nowid = int(nowid)
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (nowid)
-        c().start(action, nowid)
+        c().start(action, nowid,1)#最小化
         startport = getport(nowid)
         connect(startport)
         #重新登录qq
         click(pos['relogin'][0], pos['relogin'][1], startport)
         time.sleep(10)
-        startcoc(startport,1)#最小化
+        startcoc(startport)#最小化
         cancel(startport)
         #进入部落战界面
         click(pos['war'][0], pos['war'][1], startport)

@@ -28,17 +28,18 @@ class Thunder:
 class Coc:
     #开模拟器
     def start(self,qq,id,*args):
+        """0不用最小化,1最小化"""
         subprocess.Popen(qq,shell=True)
         #确保模拟器进程已经启动
-        for event in args:
-            if event == 0:
+        if len(args) > 0:
+            if int(args[0]) == 0:
                 print('不用最小化')
-            else:
+            elif int(args[0]) == 1:
                 while True:
                     result = subprocess.Popen('tasklist|findstr DunDiEmu.exe',shell = True,stdout=subprocess.PIPE).stdout.readline().split()[0]
                     print (result)
                     if result == b'DunDiEmu.exe':
-                        time.sleep(3)
+                        time.sleep(1)
                         break
                 #确保最小化
                 for n in range(2):
