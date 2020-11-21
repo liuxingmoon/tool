@@ -44,131 +44,6 @@ autoclick_bt = tk.Button(root,text='连点"!"',command=ak.start,width=15)
 autoclick_bt.grid(row=1,column=1,
               padx=10,pady=10)
 
-#视频下载
-'''
-videodownload_text = tk.Label(root,#放在框架1里面
-                text = '网页视频下载',
-                justify='left',#左对齐
-                padx=5,
-                pady=20,
-                compound='left',width=15)
-videodownload_text.grid(row=2,column=1,padx=10,pady=10)
-'''
-videodownload_bt = tk.Button(root,text='视频下载',command=vd.start,width=15)
-videodownload_bt.grid(row=1,column=3,
-              padx=10,pady=10)
-
-#音乐下载
-'''
-musicdownload_text = tk.Label(root,#放在框架1里面
-                text = '音乐下载',
-                justify='left',#左对齐
-                padx=5,
-                pady=20,
-                compound='left',width=15)
-musicdownload_text.grid(row=3,column=1,padx=10,pady=10)
-'''
-musicdownload_bt = tk.Button(root,text='音乐下载',command=music.start,width=15)
-musicdownload_bt.grid(row=2,column=3,
-              padx=10,pady=10)
-
-def colorchoose():
-    rgb = colorchooser.askcolor()
-    with open(r"颜色选择.txt","w") as f:
-        f.write(str(rgb))
-    subprocess.Popen(r"start 颜色选择.txt",shell=True)
-    print(rgb)
-'''
-#颜色选择器
-colorchooser_text = tk.Label(root,
-                             text='颜色选择器',
-                             justify='left',  # 左对齐
-                             padx=5,
-                             pady=20,
-                             compound='left', width=15)
-colorchooser_text.grid(row=4,column=1,padx=10,pady=10)
-'''
-colorchooser_bt = tk.Button(root,text='颜色选择',command=colorchoose,width=15)
-colorchooser_bt.grid(row=2,column=1,
-              padx=10,pady=10)
-
-#伊人av下载
-'''
-avyrdownload_text = tk.Label(root,#放在框架1里面
-                text = '伊人下载',
-                justify='left',#左对齐
-                padx=5,
-                pady=20,
-                compound='left',width=15)
-avyrdownload_text.grid(row=4,column=1,padx=10,pady=10)
-'''
-avyrdownload_bt = tk.Button(root,text='伊人下载',command=avyrdl.start,width=15)
-avyrdownload_bt.grid(row=3,column=3,
-              padx=10,pady=10)
-
-#迅雷任务
-'''
-thundertask_text = tk.Label(root,#放在框架1里面
-                text = '迅雷任务',
-                justify='left',#左对齐
-                padx=5,
-                pady=20,
-                compound='left',width=15)
-thundertask_text.grid(row=5,column=1,padx=10,pady=10)
-'''
-thundertask_bt = tk.Button(root,text='迅雷任务',command=tdtask.start,width=15)
-thundertask_bt.grid(row=3,column=1,
-              padx=10,pady=10)
-
-#部落冲突
-'''
-coc_text = tk.Label(root,#放在框架1里面
-                text = '部落冲突',
-                justify='left',#左对齐
-                padx=5,
-                pady=20,
-                compound='left',width=15)
-coc_text.grid(row=6,column=1,padx=10,pady=10)
-'''
-#迅雷、芯次元签到
-thunderSign_bt = tk.Button(root,text='每日签到',command=thunder_sign_in.start,width=15)
-thunderSign_bt.grid(row=4,column=1,
-              padx=10,pady=10)
-
-#定时关机
-novel_bt = tk.Button(root,text='小说下载',command=novel.start,width=15)
-novel_bt.grid(row=4,column=3,
-              padx=10,pady=10)
-
-#过滤迅雷链接
-translateurl_bt = tk.Button(root,text='过滤迅雷链接',command=translate_url.start,width=15)
-translateurl_bt.grid(row=5,column=1,
-              padx=10,pady=10)
-
-#翻译
-translate_bt = tk.Button(root,text='翻译',command=translate.start,width=15)
-translate_bt.grid(row=5,column=3,
-              padx=10,pady=10)
-
-#部落冲突脚本
-coc_bt = tk.Button(root,text='部落冲突',command=coc.start,width=15)
-coc_bt.grid(row=6,column=1,
-              padx=10,pady=10)
-
-#抽奖
-'''
-lottery_text = tk.Label(root,#放在框架1里面
-                text = '点击直播抽奖',
-                justify='left',#左对齐
-                padx=5,
-                pady=20,
-                compound='left',width=15)
-lottery_text.grid(row=6,column=1,padx=10,pady=10)
-'''
-lottery_bt = tk.Button(root,text='抽奖',command=lottery.start,width=15)
-lottery_bt.grid(row=7,column=1,
-              padx=10,pady=10)
-
 #截屏~
 class FreeCapture():
     """ 用来显示全屏幕截图并响应二次截图的窗口类
@@ -358,36 +233,150 @@ def startscreenShot():
         stop_thread(t2)
         flag = 0
     
-    
 screenShot_bt = tk.Button(root,text='截屏"#"',command=startscreenShot,width=15)
-screenShot_bt.grid(row=6,column=3,
-              padx=10,pady=10)
-
-#IP地址查询
-netmask_bt = tk.Button(root,text='掩码IP查询',command=netmask.start,width=15)
-netmask_bt.grid(row=7,column=3,
-              padx=10,pady=10)
-
-#股票K线查询
-stock_query_bt = tk.Button(root,text='股票K线查询',command=stock.start,width=15)
-stock_query_bt.grid(row=8,column=1,
-              padx=10,pady=10)
-#定时关机
-poweroff_bt = tk.Button(root,text='定时关机',command=poweroff.start,width=15)
-poweroff_bt.grid(row=8,column=3,
+screenShot_bt.grid(row=2,column=1,
               padx=10,pady=10)
               
 #开启过滤侠客风云传位置
 pos_bt = tk.Button(root,text='侠客位置"·"',command=pos.start,width=15)
-pos_bt.grid(row=9,column=1,
+pos_bt.grid(row=3,column=1,
+              padx=10,pady=10)
+
+#迅雷、芯次元签到
+thunderSign_bt = tk.Button(root,text='每日签到',command=thunder_sign_in.start,width=15)
+thunderSign_bt.grid(row=4,column=1,
+              padx=10,pady=10)
+#迅雷任务
+'''
+thundertask_text = tk.Label(root,#放在框架1里面
+                text = '迅雷任务',
+                justify='left',#左对齐
+                padx=5,
+                pady=20,
+                compound='left',width=15)
+thundertask_text.grid(row=5,column=1,padx=10,pady=10)
+'''
+thundertask_bt = tk.Button(root,text='迅雷任务',command=tdtask.start,width=15)
+thundertask_bt.grid(row=5,column=1,
+              padx=10,pady=10)
+              
+#过滤迅雷链接
+translateurl_bt = tk.Button(root,text='过滤链接',command=translate_url.start,width=15)
+translateurl_bt.grid(row=5,column=3,
+              padx=10,pady=10)
+
+#部落冲突脚本
+coc_bt = tk.Button(root,text='部落冲突',command=coc.start,width=15)
+coc_bt.grid(row=7,column=1,
+              padx=10,pady=10)
+              
+#视频下载
+'''
+videodownload_text = tk.Label(root,#放在框架1里面
+                text = '网页视频下载',
+                justify='left',#左对齐
+                padx=5,
+                pady=20,
+                compound='left',width=15)
+videodownload_text.grid(row=2,column=1,padx=10,pady=10)
+'''
+videodownload_bt = tk.Button(root,text='视频下载',command=vd.start,width=15)
+videodownload_bt.grid(row=1,column=2,
+              padx=10,pady=10)
+
+#音乐下载
+'''
+musicdownload_text = tk.Label(root,#放在框架1里面
+                text = '音乐下载',
+                justify='left',#左对齐
+                padx=5,
+                pady=20,
+                compound='left',width=15)
+musicdownload_text.grid(row=3,column=1,padx=10,pady=10)
+'''
+musicdownload_bt = tk.Button(root,text='音乐下载',command=music.start,width=15)
+musicdownload_bt.grid(row=2,column=2,
+              padx=10,pady=10)
+#抽奖
+'''
+lottery_text = tk.Label(root,#放在框架1里面
+                text = '点击直播抽奖',
+                justify='left',#左对齐
+                padx=5,
+                pady=20,
+                compound='left',width=15)
+lottery_text.grid(row=6,column=1,padx=10,pady=10)
+'''
+lottery_bt = tk.Button(root,text='直播抽奖',command=lottery.start,width=15)
+lottery_bt.grid(row=3,column=2,
+              padx=10,pady=10)
+#定时关机
+poweroff_bt = tk.Button(root,text='定时关机',command=poweroff.start,width=15)
+poweroff_bt.grid(row=4,column=2,
               padx=10,pady=10)
 
 #开启wifi热点
 wifi_bt = tk.Button(root,text='wifi热点',command=wifi.start,width=15)
-wifi_bt.grid(row=9,column=3,
+wifi_bt.grid(row=5,column=2,
               padx=10,pady=10)
+              
+def colorchoose():
+    rgb = colorchooser.askcolor()
+    with open(r"颜色选择.txt","w") as f:
+        f.write(str(rgb))
+    subprocess.Popen(r"start 颜色选择.txt",shell=True)
+    print(rgb)
+'''
+#颜色选择器
+colorchooser_text = tk.Label(root,
+                             text='颜色选择器',
+                             justify='left',  # 左对齐
+                             padx=5,
+                             pady=20,
+                             compound='left', width=15)
+colorchooser_text.grid(row=4,column=1,padx=10,pady=10)
+'''
+colorchooser_bt = tk.Button(root,text='颜色选择',command=colorchoose,width=15)
+colorchooser_bt.grid(row=1,column=3,
+              padx=10,pady=10)
+              
+#翻译
+translate_bt = tk.Button(root,text='翻译',command=translate.start,width=15)
+translate_bt.grid(row=2,column=3,
+              padx=10,pady=10)
+#IP地址查询
+netmask_bt = tk.Button(root,text='掩码IP查询',command=netmask.start,width=15)
+netmask_bt.grid(row=3,column=3,
+              padx=10,pady=10)
+#股票信息
+stock_bt = tk.Button(root,text='股票信息',command=stock.start,width=15)
+stock_bt.grid(row=4,column=3,
+              padx=10,pady=10)
+              
+#伊人av下载
+'''
+avyrdownload_text = tk.Label(root,#放在框架1里面
+                text = '伊人下载',
+                justify='left',#左对齐
+                padx=5,
+                pady=20,
+                compound='left',width=15)
+avyrdownload_text.grid(row=4,column=1,padx=10,pady=10)
+
+avyrdownload_bt = tk.Button(root,text='伊人下载',command=avyrdl.start,width=15)
+avyrdownload_bt.grid(row=3,column=2,
+              padx=10,pady=10)
+'''
+
+#小说下载
+'''
+novel_bt = tk.Button(root,text='小说下载',command=novel.start,width=15)
+novel_bt.grid(row=4,column=2,
+              padx=10,pady=10)
+'''
+
 try:
-    coc_customer.clarm()
+    coc_customer.clarm('coc_customer.csv')
     root.mainloop()
 
 except:

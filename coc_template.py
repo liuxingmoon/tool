@@ -34,7 +34,7 @@ pos = {
     'store': [1200, 635],
     'relogin': [500, 825],
     'login_wandoujia': [640, 500],
-    'store_build': [300, 100],
+    'store_build': [370, 100],
     'storeitem1': [330, 260],
     'storeitem2': [540, 260],
     'storeitem3': [750, 260],
@@ -66,8 +66,8 @@ pos = {
     'built20': [1035, 160],
     'built21': [1160, 215],
     'built22': [370, 370],
-    'built23': [911, 441],
-    'built24': [650, 245],
+    'built23': [960, 350],
+    'built24': [600, 220],
     'backcamp': [640, 640],
     'camp': [420, 420],
     'ruins': [850, 220],
@@ -675,7 +675,7 @@ def levelup_train(startport):
     levelup(4, startport)
     
 def storebuild(startport):
-    click(pos['store'][0], pos['store'][1], startport)
+    click(pos['store'][0], pos['store'][1], startport,1)
     click(pos['store_build'][0], pos['store_build'][1], startport)
 
 #注册新id并且升级
@@ -926,7 +926,7 @@ def wardonate(startlist):
         #重新登录qq
         click(pos['relogin'][0], pos['relogin'][1], startport)
         time.sleep(10)
-        startcoc(startport)#最小化
+        startcoc(startport)
         cancel(startport)
         #进入部落战界面
         click(pos['war'][0], pos['war'][1], startport)
@@ -983,13 +983,13 @@ def start_coc(startidlist):
 def levelup_3(startid,endid):
     for nowid in range(startid,endid+1):
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' % (nowid)
-        c().start(action, nowid)
+        c().start(action, nowid,1)#最小化
         startport = getport(nowid)
         connect(startport)
         #重新登录qq
         click(pos['relogin'][0], pos['relogin'][1], startport)
         time.sleep(10)
-        startcoc(startport,1)#最小化
+        startcoc(startport)
         cancel(startport)
         #收集资源
         click(pos['mine1'][0], pos['mine1'][1], startport)
@@ -1044,17 +1044,18 @@ def levelup_3(startid,endid):
         # 造实验室
         storebuild(startport)
         click(pos['storeitem1'][0], pos['storeitem1'][1], startport)
-        click(pos['store_3'][0], pos['store_3'][1], startport)
+        click(pos['store_2'][0], pos['store_2'][1], startport)
         time.sleep(1)
         click(pos['built23'][0], pos['built23'][1], startport)
-
+        #退出一次
+        home(startport)
         #造城墙
         for n in range(2):
             swipe('top', startport)
         storebuild(startport)
         click(pos['storeitem3'][0], pos['storeitem3'][1], startport)
         click(pos['store_1'][0], pos['store_1'][1], startport)
-        subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 633 347 590 316' % (startport), shell=True)
+        subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 647 368 550 290' % (startport), shell=True)
         time.sleep(1)
         for n in range(45):
             click(pos['built24'][0], pos['built24'][1], startport)

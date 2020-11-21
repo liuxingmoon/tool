@@ -67,7 +67,7 @@ def start():
                     text = '延时关机',
                     justify='left',#左对齐
                     padx=5,
-                    pady=20,
+                    pady=5,
                     compound='left',width=15)
     time_text.grid(row=1,column=1,padx=10,pady=10)
 
@@ -81,7 +81,8 @@ def start():
     time_scrollerbar.pack(side='right',fill='y')#靠右填充
 
     listbox = tk.Listbox(timelist_frame,selectmode='single',#多选
-                          yscrollcommand=time_scrollerbar.set)#设置启用滚动条，可以滚轮滚动列表
+                         height=5,  # 默认只有10行，如果选项大于10项会被遮蔽
+                         yscrollcommand=time_scrollerbar.set)#设置启用滚动条，可以滚轮滚动列表
     for item in range(0,49,1):
         listbox.insert('end',0.5*item)#每次插入到最后一个index
     listbox.pack(side='left',fill='both')
@@ -93,20 +94,20 @@ def start():
     timecancel_bt.pack()
 
     #定时周期性关机
-    timebox_frame1 = tk.Frame(root)
-    timebox_frame1.grid(row=2,column=1,padx=10,pady=10)  
     timelist_frame1 = tk.Frame(root)
-    timelist_frame1.grid(row=2,column=2,padx=10,pady=10)
+    timelist_frame1.grid(row=3,column=1,columnspan=2,padx=10,pady=10)
+    timebox_frame1 = tk.Frame(root)
+    timebox_frame1.grid(row=3,column=3,padx=10,pady=10)
     timebt_frame1 = tk.Frame(root)
-    timebt_frame1.grid(row=2,column=3,padx=10,pady=10)
+    timebt_frame1.grid(row=4,column=1,columnspan=3,padx=10,pady=10)
 
-    timeoff_text = tk.Label(timebox_frame1,
+    timeoff_text = tk.Label(root,
                     text = '定时周期性关机',
                     justify='left',#左对齐
                     padx=5,
                     pady=20,
                     compound='left',width=15)
-    timeoff_text.pack()
+    timeoff_text.grid(row=2,column=1,columnspan=3,pady=10)
 
     global timebox,editbox,flags
     editbox = tk.Entry(timebox_frame1)
@@ -120,7 +121,7 @@ def start():
     for timelist in timelist1:
         flags.append(tk.IntVar())#每个检查框实例化前，先实例化int值
         checkboxs = tk.Checkbutton(timelist_frame1,text=timelist,variable=flags[-1])
-        checkboxs.pack(anchor='w')#左对齐
+        checkboxs.pack(anchor='center')#左对齐,横向填充
 
     timeoff_bt1 = tk.Button(timebt_frame1,text='定时周期性关机',command=poweroff_time1,width=15)
     timeoff_bt1.pack()

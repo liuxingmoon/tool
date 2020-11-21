@@ -4,9 +4,16 @@ import coc_template
 import configparser
 import os
 import coc_customer
+import AutoClick as ak
 
 def start():
+    #启动部落冲突自动启动鼠标连点
     try:
+        ak.start()
+    except:
+        print ('第二次打开部落冲突')
+    try:
+        
         def getinfo():
             # info = coc_id.get().split()
             info = int(coc_id.get())

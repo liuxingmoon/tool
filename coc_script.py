@@ -10,6 +10,7 @@ import datetime
 import threading
 import coc_template
 import os
+import AutoClick as ak
 
 #元素坐标
 pos = {
@@ -338,6 +339,8 @@ def restartdonate(donateids):
 #coc
 if __name__ == "__main__":
     try:
+        #打开自动点击
+        ak.start()
         #第一次启动时间
         starttime_global = datetime.datetime.now()
         #获取配置文件参数skipid,donateids,instance_num,instance_time
