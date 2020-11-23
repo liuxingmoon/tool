@@ -12,6 +12,7 @@ import ctypes
 import sys
 from pynput.keyboard import Key, Listener
 import configparser
+import random
 # coc模板
 #方法：
 
@@ -34,7 +35,7 @@ pos = {
     'store': [1200, 635],
     'relogin': [500, 825],
     'login_wandoujia': [640, 500],
-    'store_build': [370, 100],
+    'store_build': [300, 100],
     'storeitem1': [330, 260],
     'storeitem2': [540, 260],
     'storeitem3': [750, 260],
@@ -66,7 +67,7 @@ pos = {
     'built20': [1035, 160],
     'built21': [1160, 215],
     'built22': [370, 370],
-    'built23': [960, 350],
+    'built23': [970, 360],
     'built24': [600, 220],
     'backcamp': [640, 640],
     'camp': [420, 420],
@@ -940,6 +941,9 @@ def wardonate(startlist):
         swipe('top', startport)
         swipe('top', startport)
         click(pos['war_1'][0], pos['war_1'][1], startport)
+        #点击下一个到最后一个
+        click_short(pos['war_donate_next'][0], pos['war_donate_next'][1], startport,80)
+        #增援按钮
         click(pos['war_donate'][0], pos['war_donate'][1], startport)
         #捐兵
         for clan in range(40):
@@ -947,24 +951,7 @@ def wardonate(startlist):
             click_short(pos['war_donate_trp2'][0], pos['war_donate_trp2'][1], startport,10)
             click_short(pos['war_donate_trp3'][0], pos['war_donate_trp3'][1], startport,10)
             click_short(pos['war_donate_trp1'][0], pos['war_donate_trp1'][1], startport,10)
-            click(pos['war_donate_next'][0], pos['war_donate_next'][1], startport)
-        #训练部落战兵种
-        #train_template('train_template01',startport)
-        
-        #进入部落战界面
-        click(pos['war'][0], pos['war'][1], startport)
-        #部落战第二个开始捐兵
-        for n in range(10):
-            swipe('top', startport)
-        click(pos['war_2'][0], pos['war_2'][1], startport)
-        click(pos['war_donate'][0], pos['war_donate'][1], startport)
-        #捐兵
-        for clan in range(39):
-            #time.sleep(1)
-            click_short(pos['war_donate_trp2'][0], pos['war_donate_trp2'][1], startport,10)
-            click_short(pos['war_donate_trp3'][0], pos['war_donate_trp3'][1], startport,10)
-            click_short(pos['war_donate_trp1'][0], pos['war_donate_trp1'][1], startport,10)
-            click(pos['war_donate_next'][0], pos['war_donate_next'][1], startport)
+            click(pos['war_donate_last'][0], pos['war_donate_last'][1], startport)
         #训练部落战兵种
         train_template('train_template01',startport)
         #关闭
@@ -1004,7 +991,9 @@ def levelup_3(startid,endid):
         click(pos['collector2'][0], pos['collector2'][1], startport)
         click(pos['cancel'][0], pos['cancel'][1], startport)
         #点击废墟
-        click(pos['ruins'][0], pos['ruins'][1], startport)
+        for n in range(50):
+            click_short(random.randint(400,900), random.randint(100,600), startport,1)
+        cancel(startport)
         # 造炸弹
         storebuild(startport)
         click(pos['storeitem4'][0], pos['storeitem4'][1], startport)
@@ -1051,7 +1040,7 @@ def levelup_3(startid,endid):
         storebuild(startport)
         click(pos['storeitem1'][0], pos['storeitem1'][1], startport)
         click(pos['store_2'][0], pos['store_2'][1], startport)
-        time.sleep(1)
+        time.sleep(2)
         click(pos['built23'][0], pos['built23'][1], startport)
         #退出一次
         home(startport)

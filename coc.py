@@ -17,7 +17,7 @@ def start():
             info = coc_id.get()
             config = configparser.ConfigParser()
             config.read("Config.ini", encoding="utf-8")
-            if info == "":
+            if (info == "") or (info in ['w','W','war','War']):
                 # 不写就打开部落战id
                 startidlist = config.get("coc", "warids").split()
             elif info.isdigit():
@@ -59,6 +59,7 @@ def start():
                 #删除0和26
                 startidlist = [x for x in skipids if x not in ['0','26']]
             else:
+                #剩下的就是首尾格式的列表
                 startidlist = info.split()
             print(startidlist, type(startidlist))
             return startidlist
@@ -116,6 +117,7 @@ def start():
         def cocst():
             startidlist = getinfo()
             coc_template.start_coc(startidlist)
+        #升级3本
         def levelup_3():
             startidlist = getinfo()
             startid = coc_id.get()  # 获取输入框信息
