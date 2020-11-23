@@ -20,6 +20,9 @@ def start():
             if info == "":
                 # 不写就打开部落战id
                 startidlist = config.get("coc", "warids").split()
+            elif info.isdigit():
+                # 如果输入的是数字
+                startidlist = [info]
             elif info in ['a','A','all','ALL']:
                 #有All代表启动所有的
                 os.chdir(r'D:\Program Files\DundiEmu\DundiData\avd')

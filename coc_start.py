@@ -29,43 +29,45 @@ class Coc:
     #开模拟器
     def start(self,qq,id,*args):
         """0不用最小化,1最小化"""
-        subprocess.Popen(qq,shell=True)
-        #确保模拟器进程已经启动
-        if len(args) > 0:
-            if int(args[0]) == 0:
-                print('不用最小化')
-            elif int(args[0]) == 1:
-                while True:
-                    result = subprocess.Popen('tasklist|findstr DunDiEmu.exe',shell = True,stdout=subprocess.PIPE).stdout.readline().split()[0]
-                    print (result)
-                    if result == b'DunDiEmu.exe':
-                        time.sleep(1)
-                        break
-                #确保最小化
-                for n in range(2):
-                    wnd = win32gui.FindWindow(u'Qt5QWindowIcon', None)  # 获取窗口句柄
-                    win32gui.CloseWindow(wnd)  # 窗口最小化
-                    time.sleep(3)
-        #等待系统开机
-        time.sleep(30)
+        try:
+            subprocess.Popen(qq,shell=True)
+            #确保模拟器进程已经启动
+            if len(args) > 0:
+                if int(args[0]) == 0:
+                    print('不用最小化')
+                elif int(args[0]) == 1:
+                    while True:
+                            result = subprocess.Popen('tasklist|findstr DunDiEmu.exe',shell = True,stdout=subprocess.PIPE).stdout.readline().split()[0]
+                            print (result)
+                            if result == b'DunDiEmu.exe':
+                                time.sleep(1)
+                                break
+                    #确保最小化
+                    for n in range(2):
+                        wnd = win32gui.FindWindow(u'Qt5QWindowIcon', None)  # 获取窗口句柄
+                        win32gui.CloseWindow(wnd)  # 窗口最小化
+                        time.sleep(3)
+            #等待系统开机
+            time.sleep(30)
 
-        # 连接模拟器
-        global startport
-        if id == 0:
-            startport = 5555
-        else:
-            startport = 52550 + id
-        # 关闭模拟器连接
-        subprocess.Popen('adb kill-server', shell=True)
-        time.sleep(3)
-        # 开启模拟器连接
-        subprocess.Popen('adb start-server', shell=True)
-        time.sleep(5)
-        #多连接几次确保连接上
-        for n in range(3):
-            subprocess.Popen('adb connect 127.0.0.1:%d' % (startport), shell=True)
+            # 连接模拟器
+            global startport
+            if id == 0:
+                startport = 5555
+            else:
+                startport = 52550 + id
+            # 关闭模拟器连接
+            subprocess.Popen('adb kill-server', shell=True)
             time.sleep(3)
-
+            # 开启模拟器连接
+            subprocess.Popen('adb start-server', shell=True)
+            time.sleep(5)
+            #多连接几次确保连接上
+            for n in range(3):
+                subprocess.Popen('adb connect 127.0.0.1:%d' % (startport), shell=True)
+                time.sleep(3)
+        except:
+            print('============================= %d 实例启动失败 ===============================' %(id))
     #打开黑松鼠
     def coc_script(self,id):
         process = subprocess.Popen('adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(id),shell=True)

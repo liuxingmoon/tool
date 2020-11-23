@@ -131,37 +131,40 @@ def play(wait_time,skipids):
     #config = configparser.ConfigParser()
     #config.read(configpath, encoding="utf-8")
     #为了指定关闭startid，全局
-    global startid
-    startid = config.get("coc", "startid")
-    startid = int(startid)#取出数据为string
-    startlist = getport(startid,skipids)
-    startid = int(startlist[0])#获取启动模拟器id
-    startport = startlist[1]#获取port
-    action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(startid)
-    start(action,startport,wait_time)
-    print('启动模拟器完成')
-    time.sleep(3)
-    coc_script(startport,wait_time)
-    click(pos['sure'][0], pos['sure'][1],startport)
-    time.sleep(5)
-    click(pos['start_script'][0],pos['start_script'][1],startport)
-    print('启动打资源脚本完成')
-    if startport == 52555:#如果是星陨，尝试点击登录 
-        time.sleep(20)
-        click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
-        click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
-    else:
-        #昆仑
-        time.sleep(20)
-        click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
-    #打印分割线
-    read_id = playnames[startid]
-    print(r'============================= %s 实例启动完成 ===============================' %(read_id))  
-    #回滚startid
-    if startid == maxid:   #结束id
-        startid = minid-1   #开始id - 1
-    config.set("coc", "startid", str(startid + 1))#只能存储str类型数据
-    config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+    try:
+        global startid
+        startid = config.get("coc", "startid")
+        startid = int(startid)#取出数据为string
+        startlist = getport(startid,skipids)
+        startid = int(startlist[0])#获取启动模拟器id
+        startport = startlist[1]#获取port
+        action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(startid)
+        start(action,startport,wait_time)
+        print('启动模拟器完成')
+        time.sleep(3)
+        coc_script(startport,wait_time)
+        click(pos['sure'][0], pos['sure'][1],startport)
+        time.sleep(5)
+        click(pos['start_script'][0],pos['start_script'][1],startport)
+        print('启动打资源脚本完成')
+        if startport == 52555:#如果是星陨，尝试点击登录 
+            time.sleep(20)
+            click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
+            click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
+        else:
+            #昆仑
+            time.sleep(20)
+            click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+        #打印分割线
+        read_id = playnames[startid]
+        print(r'============================= %s 实例启动完成 ===============================' %(read_id))  
+        #回滚startid
+        if startid == maxid:   #结束id
+            startid = minid-1   #开始id - 1
+        config.set("coc", "startid", str(startid + 1))#只能存储str类型数据
+        config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+    except:
+        print('============================= %s 实例启动失败 ===============================' %(read_id))
 
 #付费捐兵号
 def play_donate_for_paid(donateids):
