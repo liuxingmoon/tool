@@ -267,16 +267,16 @@ def click_long(x,y,time,startport):
 def swipe(drt,startport):
     if drt == 'top':
         process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 640 200 640 700' % (startport), shell=True)
-        time.sleep(1)
+        time.sleep(2)
     elif drt == 'bot':
         process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 640 650 640 150' % (startport), shell=True)
-        time.sleep(1)
+        time.sleep(2)
     elif drt == 'left':
         process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 100 360 1000 360' % (startport), shell=True)
-        time.sleep(1)
+        time.sleep(2)
     elif drt == 'right':
         process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 1000 360 100 360' % (startport), shell=True)
-        time.sleep(1)
+        time.sleep(2)
 #定点滑动
 def swipeport(x1,y1,x2,y2,startport):
     subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe %d %d %d %d' % (startport,x1,y1,x2,y2), shell=True)
@@ -484,13 +484,11 @@ def train_template(train_template,startport):
     click(pos['trainningitem5'][0], pos['trainningitem5'][1], startport,3)
     swipe('top', startport)
     click(pos[train_template][0], pos[train_template][1], startport,3)
-    click(pos[train_template][0], pos[train_template][1], startport)
     #12本以下,多点一次因为会触发
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
     swipe('top', startport)
     click(pos[train_template][0], pos[train_template][1], startport,3)
-    click(pos[train_template][0], pos[train_template][1], startport)
     #关闭
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
 
@@ -928,6 +926,14 @@ def wardonate(startlist):
         time.sleep(10)
         startcoc(startport)
         cancel(startport)
+        #等待1分
+        timewait(1,startport)
+        #夜世界切换
+        #归到右上角
+        swipe('top',startport)
+        swipe('right',startport)
+        #船
+        click(pos['boat'][0], pos['boat'][1], startport, 5)
         #进入部落战界面
         click(pos['war'][0], pos['war'][1], startport)
         #部落战第一个开始捐兵

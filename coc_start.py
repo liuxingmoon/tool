@@ -85,7 +85,7 @@ def start(startid):
     #startnum = int(startnum[0]) - 1
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' %(startid)
     c = Coc()
-    c.start(action,startid)
+    c.start(action,startid,1)#打资源，直接最小化
     #c.start(星辰)
     print('start')
     c.coc_script(startport)

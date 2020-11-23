@@ -13,64 +13,7 @@ def start():
     except:
         print ('第二次打开部落冲突')
     try:
-        
         def getinfo():
-            # info = coc_id.get().split()
-            info = int(coc_id.get())
-            print(info,type(info))
-            return info
-        def wardonate():
-            info = coc_id.get()
-            #不写就打开部落战id
-            if info == "":
-                config = configparser.ConfigParser()
-                config.read("Config.ini", encoding="utf-8")
-                startidlist = config.get("coc", "warids").split()
-            else:
-                startidlist = info.split()
-            print(startidlist,type(startidlist))
-            coc_template.wardonate(startidlist)
-        def convert_mode():
-            startidlist = coc_id.get().split()
-            print(startidlist,type(startidlist))
-            coc_template.convert_mode(startidlist)
-        def cocStart():
-            startid = getinfo()  # 获取输入框信息
-            coc_start.start(startid)
-        def cocRT():
-            startid = getinfo()  # 获取输入框信息
-            timewait = 2
-            coc_template.removeTree(startid,timewait)
-        def cocRTN():
-            startid = getinfo()  # 获取输入框信息
-            coc_template.removeTree_night(startid)
-        def cocNS():
-            startid = coc_id.get()  # 获取输入框信息
-            #输入框为空自动定义为最大id
-            if startid == "":
-                startid = len(os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\')) - 2
-            else:
-                startid = int(startid)
-            name = coc_newid.get()
-            #自动定义名称为startid - 6
-            if name == "":
-                name = '0' + str(int(startid) - 6)
-            coc_template.register(name,startid)
-        def cocRC():
-            startidlist = coc_id.get().split()
-            startid = coc_id.get()  # 获取输入框信息
-            #输入框为空自动定义为最大id
-            if startid == "":
-                config = configparser.ConfigParser()
-                config.read("Config.ini", encoding="utf-8")
-                startid = int(config.get("coc", "maxid")) + 1
-                endid = len(os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\')) - 2
-            #print(startidlist, type(startidlist))
-            else:
-                startid = int(startidlist[0])
-                endid = int(startidlist[-1])
-            coc_template.resource(startid,endid)
-        def cocst():
             info = coc_id.get()
             config = configparser.ConfigParser()
             config.read("Config.ini", encoding="utf-8")
@@ -115,11 +58,63 @@ def start():
             else:
                 startidlist = info.split()
             print(startidlist, type(startidlist))
-            #startid = int(startidlist[0])
-            #endid = int(startidlist[1])
+            return startidlist
+        #部落战捐兵
+        def wardonate():
+            startidlist = getinfo()
+            coc_template.wardonate(startidlist)
+        #切换捐兵/打资源状态
+        def convert_mode():
+            startidlist = getinfo()
+            coc_template.convert_mode(startidlist)
+        #打资源
+        def cocStart():
+            startidlist = getinfo()  # 获取输入框信息
+            for startid in startidlist:
+                coc_start.start(int(startid))
+        #砍树
+        def cocRT():
+            startid = int(coc_id.get())  # 获取输入框信息
+            timewait = 2
+            coc_template.removeTree(startid,timewait)
+        #夜世界砍树
+        def cocRTN():
+            startid = int(coc_id.get())  # 获取输入框信息
+            coc_template.removeTree_night(startid)
+        #新号
+        def cocNS():
+            startid = coc_id.get()  # 获取输入框信息
+            #输入框为空自动定义为最大id
+            if startid == "":
+                startid = len(os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\')) - 2
+            else:
+                startid = int(startid)
+            name = coc_newid.get()
+            #自动定义名称为startid - 6
+            if name == "":
+                name = '0' + str(int(startid) - 6)
+            coc_template.register(name,startid)
+        #升级资源
+        def cocRC():
+            startidlist = getinfo()
+            startid = coc_id.get()  # 获取输入框信息
+            #输入框为空自动定义为最大id
+            if startid == "":
+                config = configparser.ConfigParser()
+                config.read("Config.ini", encoding="utf-8")
+                startid = int(config.get("coc", "maxid")) + 1
+                endid = len(os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\')) - 2
+            #print(startidlist, type(startidlist))
+            else:
+                startid = int(startidlist[0])
+                endid = int(startidlist[-1])
+            coc_template.resource(startid,endid)
+        #启动部落冲突
+        def cocst():
+            startidlist = getinfo()
             coc_template.start_coc(startidlist)
         def levelup_3():
-            startidlist = coc_id.get().split()
+            startidlist = getinfo()
             startid = coc_id.get()  # 获取输入框信息
             #输入框为空自动定义为最大id
             if startid == "":
