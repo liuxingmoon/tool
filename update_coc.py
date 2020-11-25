@@ -1,22 +1,23 @@
 #同步tool工具代码给amadeus
 import os
+import file_ctrl
 
-src_dir = r"E:\Program Files\Python\Python38\works\\tool\\"
+src_file = r"E:\Program Files\Python\Python38\works\\tool\*.py"
 dest_dir = r"\\Amadeus\\tool\\"
-#dest_dir = "D:\\"
+#coc_script
+Coclog_src = r'E:\Program Files\Python\Python38\works\tool\coclog.txt'
+configpath_src = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
+ddpath_src = r'D:\Program Files\DundiEmu\DunDiEmu.exe'
+
+Coclog_dest = r'D:\Program Files\Python38\works\tool\\coclog.txt'
+configpath_dest = r"D:\Program Files\Python38\works\tool\\Config.ini"
+ddpath_dest = r'D:\Program Files\DundiEmu\\DunDiEmu.exe'
 
 def start():
-    os.chdir(src_dir)
-    os.system('copy /y coc_script.py %s' %(dest_dir))
-    '''
-    #切换目录
-    os.system('cd %s' %dest_dir)
-    file = []
-    with open(r'coc_script.py','r',encoding='utf-8') as f:
-        file = f.readlines()
-        file_index = file.index('#日志路径\n')
-        file[file_index + 1] = "Coclog = r'D:\Program Files\Python38\works\\tool\coclog.txt'"
-        file[file_index + 2] = "configpath = r'D:\Program Files\Python38\works\\tool\Config.ini'"'
-        file[file_index + 3] = "ddpath = r'D:\Program Files\DundiEmu\DunDiEmu.exe'"
-        f.write(file)
-    '''
+    #复制文件并覆盖源文件
+    file_ctrl.copy(src_file,dest_dir)
+    #替换
+    file_ctrl.replace(Coclog_src,Coclog_dest,'coc_script.py')
+    file_ctrl.replace(configpath_src,configpath_dest,'coc_script.py')
+    file_ctrl.replace(ddpath_src,ddpath_dest,'coc_script.py')
+    file_ctrl.replace(configpath_src,configpath_dest,'coc_template.py')

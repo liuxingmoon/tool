@@ -25,6 +25,7 @@ import wifi
 import threading
 import inspect
 import ctypes
+import update_coc
 
 root = tk.Tk()
 root.title('流梦星璃')
@@ -267,7 +268,7 @@ translateurl_bt.grid(row=5,column=3,
 
 #部落冲突脚本
 coc_bt = tk.Button(root,text='部落冲突',command=coc.start,width=15)
-coc_bt.grid(row=7,column=1,
+coc_bt.grid(row=6,column=1,
               padx=10,pady=10)
               
 #视频下载
@@ -318,6 +319,11 @@ poweroff_bt.grid(row=4,column=2,
 #开启wifi热点
 wifi_bt = tk.Button(root,text='wifi热点',command=wifi.start,width=15)
 wifi_bt.grid(row=5,column=2,
+              padx=10,pady=10)
+              
+#更新代码
+update_coc_bt = tk.Button(root,text='更新代码',command=update_coc.start,width=15)
+update_coc_bt.grid(row=6,column=2,
               padx=10,pady=10)
               
 def colorchoose():

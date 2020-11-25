@@ -9,7 +9,13 @@ def poweroff_time():
 def cancelpoweroff_time():
     sub.Popen(r'shutdown -a',shell=True)
 
-def poweroff_time1():
+def getcmd():
+    cmd = cmdbox.get()  # 获取到输入框的信息
+    if cmd == "":
+        cmd = r'shutdown /f /s /t 00'
+    return (cmd)
+
+def poweroff_time1(cmd):
     timebox = editbox.get()#获取到输入框的信息
     w1,w2,w3,w4,w5,w6,w7 = "","","","","","",""#初始化为空
     flagsID = []
@@ -49,8 +55,21 @@ def poweroff_time1():
             w6 = "S,"
     if flagsID[6] == 1:
         w7 = "Su"            
+    
     print(timebox,w1,w2,w3,w4,w5,w6,w7)
-    sub.Popen(r'at %s /every:%s,%s,%s,%s,%s,%s,%s shutdown -f -s -t 00' %(timebox,w1,w2,w3,w4,w5,w6,w7),shell=True)
+    #删掉所有未更改的日期
+    weekday = [w1,w2,w3,w4,w5,w6,w7]
+    for n in weekday:
+        if n == "":
+            weekday.remove(n)
+    days = len(weekday)
+    
+    if cmd == 'shutdown':
+        sub.Popen(r'at %s /every:%s shutdown -f -s -t 00' % (timebox, w1 + w2 + w3 + w4 + w5 + w6 + w7), shell=True)
+    elif cmd == 'restart':
+        sub.Popen(r'at %s /every:%s shutdown -f -r -t 00' % (timebox, w1 + w2 + w3 + w4 + w5 + w6 + w7), shell=True)
+    else:
+        sub.Popen(r'at %s /every:%s %s' % (timebox, w1 + w2 + w3 + w4 + w5 + w6 + w7,cmd), shell=True)
 
 def cancelpoweroff_time1():
     sub.Popen(r'at /yes /delete',shell=True)
@@ -89,9 +108,9 @@ def start():
     time_scrollerbar.config(command=listbox.yview)#绑定滚动条给列表框的y轴view（可以鼠标点击拉动滚动条）
 
     timeoff_bt = tk.Button(timebt_frame,text='延时关机',command=poweroff_time,width=15)
-    timeoff_bt.pack(pady=10)
+    timeoff_bt.pack()
     timecancel_bt = tk.Button(timebt_frame,text='取消延时关机',command=cancelpoweroff_time,width=15)
-    timecancel_bt.pack(pady=10)
+    timecancel_bt.pack()
 
     #定时周期性关机
     timelist_frame1 = tk.Frame(root)
@@ -99,33 +118,45 @@ def start():
     timebox_frame1 = tk.Frame(root)
     timebox_frame1.grid(row=3,column=3,padx=10)
     timebt_frame1 = tk.Frame(root)
-    timebt_frame1.grid(row=4,column=1,columnspan=3,padx=10,pady=5)
+    timebt_frame1.grid(row=4,column=1,columnspan=3,padx=10,pady=10)
 
     timeoff_text = tk.Label(root,
                     text = '定时周期性关机',
                     justify='left',#左对齐
                     padx=5,
-                    pady=5,
                     compound='left',width=15)
     timeoff_text.grid(row=2,column=1,columnspan=3)
 
-    global timebox,editbox,flags
+    global timebox,editbox,flags,cmdbox
+    #时间框
     editbox = tk.Entry(timebox_frame1)
-    editbox.pack(padx=20,pady=20)
+    editbox.pack(padx=10)
     editbox.delete(0,'end')#删除输入框的内容
     editbox.insert(0,'00:00')#插入文本
     timebox = editbox.get()#获取到输入框的信息
+
+    #命令框
+    cmdbox = tk.Entry(timebox_frame1)
+    cmdbox.pack(padx=10)
+    cmdbox.delete(0,'end')#删除输入框的内容
+    cmdbox.insert(0,'shutdown /f /s /t 00')#插入文本
+    timebox = cmdbox.get()#获取到输入框的信息
 
     flags=[]#未选中为0，选中为1
     timelist1 = ['星期一','星期二','星期三','星期四','星期五','星期六','星期日']
     for timelist in timelist1:
         flags.append(tk.IntVar())#每个检查框实例化前，先实例化int值
         checkboxs = tk.Checkbutton(timelist_frame1,text=timelist,variable=flags[-1])
-        checkboxs.pack(side='left',anchor='center')#横向排列，居中显示
-    timeoff_bt1 = tk.Button(timebt_frame1,text='定时周期性关机',command=poweroff_time1,width=15)
-    timeoff_bt1.pack(side='left',anchor='center',padx=25)
-    timecancel_bt1 = tk.Button(timebt_frame1,text='取消定时周期性关机',command=cancelpoweroff_time1,width=15)
-    timecancel_bt1.pack(side='left',anchor='center',padx=25)
+        checkboxs.pack(side='left', anchor='center')  # 横向排列，居中显示
+
+    timeoff_bt1 = tk.Button(timebt_frame1,text='定时周期性关机',command=lambda :poweroff_time1('shutdown'),width=15)
+    timeoff_bt1.pack(side='left',padx=15,anchor='center')
+    timerestart_bt = tk.Button(timebt_frame1,text='定时周期性重启',command=lambda :poweroff_time1('restart'),width=15)
+    timerestart_bt.pack(side='left',padx=15, anchor='center')
+    cmd_bt = tk.Button(timebt_frame1,text='定时执行命令',command=lambda :poweroff_time1(getcmd()),width=15)
+    cmd_bt.pack(side='left',padx=15, anchor='center')
+    timecancel_bt1 = tk.Button(timebt_frame1,text='取消所有定时命令',command=cancelpoweroff_time1,width=15)
+    timecancel_bt1.pack(side='left',padx=15, anchor='center')
 
     root.mainloop()
 

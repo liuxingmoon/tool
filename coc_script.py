@@ -19,6 +19,8 @@ pos = {
   'login_wandoujia1': [640, 500],
   'login_wandoujia2': [640, 300],
   'login_kunlun': [640, 250],
+  'login_kunlun1': [640, 560],
+  'login_kunlun2': [640, 620],
   'sure':[360,935]
   }
 
@@ -27,8 +29,9 @@ Coclog = r'E:\Program Files\Python\Python38\works\tool\coclog.txt'
 configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
 ddpath = r'D:\Program Files\DundiEmu\DunDiEmu.exe'
 
+
 def reboot():
-    subprocess.Popen(r'shutdown /f /r /t 00',shell=True)
+    subprocess.Popen(r'shutdown /f /r /t 60',shell=True)
 
 def start(action,startport,wait_time):
     #开模拟器
@@ -154,7 +157,9 @@ def play(wait_time,skipids):
         else:
             #昆仑
             time.sleep(20)
-            click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+            #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+            click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+            click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
         #打印分割线
         read_id = playnames[startid]
         print(r'============================= %s 实例启动完成 ===============================' %(read_id))  
@@ -204,7 +209,9 @@ def play_donate_for_paid(donateids):
     else:
         #昆仑
         time.sleep(20)
-        click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+        #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
     print('启动付费捐兵脚本完成')
 
     
@@ -243,6 +250,12 @@ def play_donate(donateids):
         time.sleep(20)
         click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
         click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
+    else:
+        #昆仑
+        time.sleep(20)
+        #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
     print('启动自用捐兵脚本完成')
     #打印分割线
     read_id = donatenames[donateid_now]
@@ -499,7 +512,7 @@ if __name__ == "__main__":
     except:
         with open(Coclog,'a') as Coclogfile:
             Coclogfile.write('出现bug重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
-        #reboot()
+        reboot()
 '''
         #使用线程实现重启捐兵和启动打资源分开
         thread_restartplay = threading.Thread(target=restartplay(), name='restartdonate')

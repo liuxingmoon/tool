@@ -35,6 +35,9 @@ pos = {
     'store': [1200, 635],
     'relogin': [500, 825],
     'login_wandoujia': [640, 500],
+    'login_kunlun': [640, 250],
+    'login_kunlun1': [640, 560],
+    'login_kunlun2': [640, 620],
     'store_build': [300, 100],
     'storeitem1': [330, 260],
     'storeitem2': [540, 260],
@@ -534,7 +537,6 @@ def startcoc(startport):
         #九游
         subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
         subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.tencent.tmgp.supercell.clashofclans/com.supercell.titan.tencent.GameAppTencent' % (startport), shell=True)
-
     except:
         #腾讯
         subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.tencent.tmgp.supercell.clashofclans/com.supercell.titan.tencent.GameAppTencent' % (startport), shell=True)
@@ -546,7 +548,10 @@ def startcoc(startport):
     click(pos['cancel'][0], pos['cancel'][1], startport)
     if startport == 52555:#如果是星陨，尝试点击登录 
         click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
-
+    else:
+        #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
 #重启coc
 def restartcoc(startport):
     home(startport)
@@ -1158,6 +1163,9 @@ def start_script(startport,*args):
         elif args[0] == "play":
             click(pos['script_play'][0], pos['script_play'][1], startport, 3)
     click(pos['script_start'][0], pos['script_start'][1], startport)
+    time.sleep(20)
+    click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+    click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
 
 #切换打鱼和捐兵
 def convert_mode(startlist,*args):
