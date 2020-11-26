@@ -109,7 +109,7 @@ def clarm(tbname):
         #转换截止时间
         dead_time = datetime.datetime.strptime(str(dead_time_hr), '%Y-%m-%d %H:%M')
         #一周时提醒
-        if (dead_time - now_time) <= datetime.timedelta(days=7):
+        if datetime.timedelta(days=0) < (dead_time - now_time) <= datetime.timedelta(days=7):
             g.msgbox(msg='尊敬的用户，您的部落 %s\n捐兵服务在一周内即将到期！\n服务结束时间：%s\n请问您是否有意愿继续接受服务?\n祝您游戏愉快！' %(coc_clan_name,dead_time_hr))
 
 #查询信息

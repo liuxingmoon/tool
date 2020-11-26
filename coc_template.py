@@ -549,9 +549,9 @@ def startcoc(startport):
     if startport == 52555:#如果是星陨，尝试点击登录 
         click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
     else:
-        #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
         click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
         click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
+        click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
 #重启coc
 def restartcoc(startport):
     home(startport)
@@ -1166,6 +1166,7 @@ def start_script(startport,*args):
     time.sleep(20)
     click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
     click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
+    click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
 
 #切换打鱼和捐兵
 def convert_mode(startlist,*args):

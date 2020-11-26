@@ -483,7 +483,9 @@ if __name__ == "__main__":
             #早上切换打资源状态为捐兵
             elif (donate_time != '凌晨') and (donate_status == 'play'):
                 coc_template.convert_mode(donateids_for_paid,donate_status,donateids_for_paid_del_army)
-                #coc_template.convert_mode(donateids,donate_status)
+                #周末执行捐兵，工作日打资源升级
+                if (datetime.datetime.now()+datetime.timedelta(days=1)).weekday() in [6,7]
+                    coc_template.convert_mode(donateids,donate_status)
                 with open(Coclog,'a') as Coclogfile:
                     Coclogfile.write('早上切换打资源状态为捐兵,切换时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
                 #关闭 
