@@ -11,6 +11,10 @@ import win32gui
 pos = {
   'coc_script':[500,680],
   'start_script':[200,1070],
+  'login_wandoujia': [640, 500],
+  'login_kunlun': [640, 250],
+  'login_kunlun1': [640, 560],
+  'login_kunlun2': [640, 620],
   'sure':[360,935]
   }
 
@@ -97,5 +101,11 @@ def start(startid):
     time.sleep(3)
     c.click(pos['start_script'][0],pos['start_script'][1],startport)
     time.sleep(3)
+    if startport == 52555:#如果是星陨，尝试点击登录 
+        click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
+    else:
+        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
+        click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
 
 
