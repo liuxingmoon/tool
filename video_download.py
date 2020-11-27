@@ -20,7 +20,7 @@ config = configparser.ConfigParser()
 config.read("Config.ini", encoding="utf-8")
 downloadpath = config.get("download", "videopath")
 if downloadpath == '':
-    downloadpath = r'E:\\'
+    downloadpath = r'D:\\'
 hdownloadpath = config.get("download", "hvideopath")
 
 download_headers = user.user['header']
@@ -41,7 +41,7 @@ def download_video_ffmpeg(url):
     for old in ['《','》','【','】','（','）','@',':',';','.','*','+','-','*','/','[',']','{','}',',','，','。']:
         title = title.replace(old,'')
         title = title.replace(' ', '')#去除空格
-    filename = downloadpath + title + '.mp4'
+    filename = downloadpath + os.sep + title + '.mp4'
     print(filename)
     process = p.Popen(r'ffmpeg -i %s -vcodec copy -acodec copy -absf aac_adtstoasc %s' %(downurl , filename) ,shell=True)#下载
     # 日志
@@ -97,7 +97,7 @@ def start():
     result = g.buttonbox(msg='群号：643442437', title='逍遥红尘', choices=['单个视频下载', '合集视频下载','自定义下载合集地址', '存储目录','终止下载进程','重新下载'])
     if result == '单个视频下载':
         # 单个视频下载
-        msg = '请在下方输入需要下载视频的网页网址\n现在存储路径: %s \n默认存储路径: D:\\Users\\Administrator\\Downloads\\video' % (downloadpath)
+        msg = '请在下方输入需要下载视频的网页网址\n现在存储路径: %s \n默认存储路径: D:\\' % (downloadpath)
         url = g.textbox(msg=msg)
         if 'm3u8' in url:
             download_video_m3u8(url)
@@ -130,8 +130,11 @@ def start():
         download_videos(ids[0], int(ids[1]), int(ids[2]))
     elif result == '存储目录':
         downloadpath = g.diropenbox(msg='选择存储目录', title='逍遥红尘')
-        config.set("download", "videopath", downloadpath)
-        config.write(open("Config.ini", "w"))  # 保存到Config.ini
+        if downloadpath != None:#有输入才更新
+            config.set("download", "videopath", downloadpath)
+            config.write(open("Config.ini", "w"))  # 保存到Config.ini
+        else:
+            downloadpath = config.get("download", "videopath")
     elif result == '终止下载进程':
         close = ('taskkill /f /t /im ffmpeg.exe & taskkill /f /t /im you-get.exe')
         os.system(close)
