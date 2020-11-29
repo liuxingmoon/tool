@@ -121,7 +121,7 @@ def getport(startid,skipids):
             print(r'该模拟器id %d 在禁止启动名单之中，跳过!' %(startid))
             startid = minid
         else:
-            print(r'该模拟器id %d 在禁止启动名单之中，跳过!' %(startid))
+            print(r'============================= 该模拟器id %d 在禁止启动名单之中，跳过! ===============================' %(startid))
             startid += 1
         #递归获取port
         return getport(startid,skipids)
@@ -169,7 +169,7 @@ def play(wait_time,skipids):
         config.set("coc", "startid", str(startid + 1))#只能存储str类型数据
         config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
     except:
-        print('============================= %s 实例启动失败 ===============================' %(read_id))
+        print('============================= 实例启动失败 ===============================')
 
 #付费捐兵号
 def play_donate_for_paid(donateids):
@@ -178,7 +178,10 @@ def play_donate_for_paid(donateids):
     donateid_now = config.get("coc", "donateid_for_paid_now")#str
     #获取即将运行的捐兵index
     if donateid_now in donateids:
-        donateindex = donateids.index(donateid_now)
+        try:
+            donateindex = donateids.index(donateid_now)
+        except:
+            donateindex = -1
     else:
         donateindex = -1
     #获取即将运行的捐兵id
@@ -195,7 +198,7 @@ def play_donate_for_paid(donateids):
         startport = 52550 + int(donateid_now)
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(donateid_now))
     start(action,startport,30)
-    print('启动付费捐兵模拟器完成')
+    print(r'============================= 启动付费捐兵模拟器完成 ===============================')
     time.sleep(3)
     coc_script(startport,5)
     time.sleep(5)
@@ -212,17 +215,20 @@ def play_donate_for_paid(donateids):
         #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
         click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
         click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
-    print('启动付费捐兵脚本完成')
+    print(r'============================= 启动付费捐兵脚本完成 ===============================')
 
     
 #捐兵号
 def play_donate(donateids):
     #获取上一次运行的捐兵id
-    global donateid_now
+    global donateid_now#这是为了让handler能够获取到该id
     donateid_now = config.get("coc", "donateid_now")#str
     #获取即将运行的捐兵index
     if donateid_now in donateids:
-        donateindex = donateids.index(donateid_now)
+        try:
+            donateindex = donateids.index(donateid_now)
+        except:
+            donateindex = -1
     else:
         donateindex = -1
     #获取即将运行的捐兵id
@@ -239,7 +245,7 @@ def play_donate(donateids):
         startport = 52550 + int(donateid_now)
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(donateid_now))
     start(action,startport,30)
-    print('启动捐兵模拟器完成')
+    print(r'============================= 启动捐兵模拟器完成 ===============================')
     time.sleep(3)
     coc_script(startport,5)
     time.sleep(5)
@@ -256,10 +262,56 @@ def play_donate(donateids):
         #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
         click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
         click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
-    print('启动自用捐兵脚本完成')
+    print(r'============================= 启动自用捐兵脚本完成 ===============================')
     #打印分割线
     read_id = donatenames[donateid_now]
     print(r'============================= %s 实例启动完成 ===============================' %(read_id))
+    
+def play_resource(resourceids):
+    #获取上一次运行的打资源id
+    #global resourceid_now
+    resourceid_now = config.get("coc", "resourceid_now")#str
+    #获取即将运行的捐兵index
+    if resourceid_now in resourceids:
+        try:
+            resourceidindex = resourceids.index(resourceid_now)
+        except:
+            resourceidindex = -1
+    else:
+        resourceidindex = -1
+    #获取即将运行的捐兵id
+    if (resourceidindex == len(resourceids) - 1) or (resourceidindex == -1):
+        resourceid_now = resourceids[0]
+    else:
+        resourceid_now = resourceids[resourceidindex + 1]
+    #写入config
+    config.set("coc", "resourceid_now", resourceid_now)#只能存储str类型数据
+    config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+    if int(resourceid_now) == 0:
+        startport = 5555
+    else:
+        startport = 52550 + int(resourceid_now)
+    action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(resourceid_now))
+    start(action,startport,30)
+    print(r'============================= 启动模拟器完成 ===============================')
+    time.sleep(3)
+    coc_script(startport,5)
+    time.sleep(5)
+    click(pos['sure'][0], pos['sure'][1],startport)
+    time.sleep(5)
+    click(pos['start_script'][0],pos['start_script'][1],startport)
+    if startport == 52555:#如果是星陨，尝试点击登录 
+        time.sleep(20)
+        click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
+        click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
+    else:
+        #昆仑
+        time.sleep(20)
+        #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
+    print(r'============================= 启动持续打资源脚本完成 ===============================')
+   
     
     
 #根据时间判断运行实例数量
@@ -275,7 +327,7 @@ def instance(donate_switch,donateids):
         print('目前处于晚上,可以执行 %d 实例, %d 分钟，可以运行捐兵实例' %(instance_num_night,instance_time_night*60))
         #付费捐兵号(晚上运行启动)
         if donate_switch in ['True','1','T']:
-            print('持久运行号开始运行！')
+            print(r'============================= 持久运行号开始运行！ ===============================')
         else:
             print('没有持久运行号需要运行！')
         return [instance_num_night,instance_time_night,'晚上']
@@ -286,9 +338,9 @@ def instance(donate_switch,donateids):
         print('目前处于白天,可以执行%d实例,%d分钟' %(instance_num_day,instance_time_day*60))
         #付费捐兵号(白天运行启动)
         if donate_switch in ['True','1','T']:
-            print('持久运行号开始运行！')
+            print(r'============================= 持久运行号开始运行！ ===============================')
         else:
-            print('没有持久运行号需要运行！')
+            print(r'============================= 没有持久运行号需要运行！ ===============================')
         return [instance_num_day,instance_time_day,'白天',donate_status]
 
 #关闭指定id窗口          
@@ -303,10 +355,10 @@ def handle_window_play(hwnd,extra):
         #关闭的id是跳过列表或者捐兵列表，递归关闭前一个id
         if str(int(closeplayid) + 6) in skipids:
             closeplayid = int(closeplayid) - 1
-            print('此关闭的模拟器名字 ：%s没有打开，需要向上跳过1位!' %(str(int(closeplayid) + 1)))
+            print(r'============================= 此关闭的模拟器名字 ：%s没有打开，需要向上跳过1位! ===============================' %(str(int(closeplayid) + 1)))
             win32gui.EnumWindows(handle_window_play,None)
         if str(closeplayid) in win32gui.GetWindowText(hwnd):
-            print(r'关闭的模拟器名字为：%s' %(str(closeplayid)))
+            print(r'============================= 关闭的模拟器名字为：%s ===============================' %(str(closeplayid)))
             win32gui.PostMessage(hwnd,win32con.WM_CLOSE,0,0)
 #关闭捐兵id
 def handle_window_donate(hwnd,wndname):
@@ -342,12 +394,12 @@ def restartdonate(donateids):
     if (starttime.seconds / 3600) >= donate_time:
         win32gui.EnumWindows(handle_window_donate, None)
         if donate_mode == "A":
-            print(r'运行捐兵号超过4小时，下线15分钟！')
+            print(r'============================= 运行捐兵号超过4小时，下线15分钟！ ===============================')
             timewait(15)
         else:
-            print('当前使用的是轮循捐兵模式，不用等待15分钟！')
+            print(r'============================= 当前使用的是轮循捐兵模式，不用等待15分钟！ ===============================')
         donatetime_start = datetime.datetime.now()
-        print(r'已经下线15分钟，开始捐兵！')
+        print(r'============================= 已经下线15分钟，开始捐兵！ ===============================')
         for n in range(donate_num):
             play_donate(donateids)
 
@@ -357,6 +409,9 @@ if __name__ == "__main__":
     try:
         #打开自动点击
         ak.start()
+        #刚启动等待一分钟避免打开模拟器卡顿
+        print(r'============================= 刚启动等待一分钟避免打开模拟器卡顿 ===============================')
+        timewait(1)
         #第一次启动时间
         starttime_global = datetime.datetime.now()
         #获取配置文件参数skipid,donateids,instance_num,instance_time
@@ -395,8 +450,11 @@ if __name__ == "__main__":
         donateids_for_paid = config.get("coc", "donateids_for_paid").split()#获取付费捐兵id的list
         donateids_for_paid_del_army = config.get("coc", "donateids_for_paid_del_army").split()#获取付费捐兵id删除兵的list
         donateids = config.get("coc", "donateids").split()#获取捐兵id的list
-        #在捐兵列表中去除付费捐兵的list
-        donateids = [x for x in donateids if x not in donateids_for_paid]
+        resourceids = config.get("coc", "resourceids").split()#获取持续打资源id的list
+        #在持续打资源的list去除付费捐兵的list
+        resourceids = [x for x in resourceids if x not in donateids_for_paid]
+        #在捐兵列表中去除付费捐兵的list和持续打资源的list
+        donateids = [x for x in donateids if (x not in donateids_for_paid) and (x not in resourceids)]
         donatenames = {}
         for donateid in donateids:
             donateconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%s\config.ini' %(donateid)
@@ -406,9 +464,11 @@ if __name__ == "__main__":
                     if 'EmulatorTitleName' in configline:
                         donatename = configline.split('=')[-1].rstrip('\n')
                         donatenames[donateid] = donatename
-        print(r'当前的捐兵号和名字为: %s' %(donatenames))
+        print(r'============================= 当前的捐兵号和名字为: %s ===============================' %(donatenames))
         #获取付费捐兵号数量
         donateids_for_paid_num = len(donateids_for_paid)
+        #获取持续打资源id的list
+        resourceids_num = int(config.get("coc", "resourceids_num"))#打资源号的个数
         #获取捐兵的数量
         if donate_mode == "A":
             donate_num = len(donateids)
@@ -418,9 +478,10 @@ if __name__ == "__main__":
         if donate_switch in ['True','1','T']:
             skipids.extend(donateids)#添加捐兵的id到跳过id列表中
             skipids.extend(donateids_for_paid)#添加捐兵的id到跳过id列表中
+            skipids.extend(resourceids)#添加持续打资源的id到跳过id列表中
             skipids = list(set(skipids))#去重
             skipids.sort()
-        print('跳过的实例id：%s' %(skipids))
+        print(r'============================= 跳过的实例id：%s ===============================' %(skipids))
         
         playnames = {}
         for playid in range(maxid +1):
@@ -432,7 +493,7 @@ if __name__ == "__main__":
                         if 'EmulatorTitleName' in configline:
                             playname = configline.split('=')[-1].rstrip('\n')
                             playnames[playid] = playname
-        print(r'当前的打资源号和名字为: %s' %(playnames))
+        print(r'============================= 当前的打资源号和名字为: %s ===============================' %(playnames))
             
         #白天和夜晚运行的实例数量和时间
         instance_num_day = int(config.get("coc", "instance_num_day"))
@@ -461,7 +522,7 @@ if __name__ == "__main__":
                 if instance_num < donate_num:
                     instance_num = 0
                 else:
-                    instance_num = instance_num - donate_num - donateids_for_paid_num
+                    instance_num = instance_num - donate_num - donateids_for_paid_num - resourceids_num
             #等待时间
             instance_time = result[1]
             #现在时间
@@ -470,6 +531,7 @@ if __name__ == "__main__":
             if (donate_time == '凌晨') and (donate_status == 'donate'):
                 coc_template.convert_mode(donateids_for_paid,donate_status)
                 coc_template.convert_mode(donateids,donate_status)
+                coc_template.convert_mode(resourceids,donate_status)
                 with open(Coclog,'a') as Coclogfile:
                     Coclogfile.write('凌晨切换捐兵状态为打资源,切换时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
                 #关闭
@@ -483,9 +545,9 @@ if __name__ == "__main__":
             #早上切换打资源状态为捐兵
             elif (donate_time != '凌晨') and (donate_status == 'play'):
                 coc_template.convert_mode(donateids_for_paid,donate_status,donateids_for_paid_del_army)
-                #周日打资源，其他时间捐兵
+                #周5打资源，其他时间捐兵
                 try:
-                    if datetime.datetime.now().weekday() in [0,1,2,3,4,5]:
+                    if datetime.datetime.now().weekday() in [0,1,2,3,5,6]:
                         coc_template.convert_mode(donateids,donate_status)
                 except:
                     print('出故障，不捐兵，继续打资源')
@@ -500,6 +562,9 @@ if __name__ == "__main__":
             #启动付费捐兵号
             for n in range(donateids_for_paid_num):
                 play_donate_for_paid(donateids_for_paid)
+            #启动持续打资源号
+            for n in range(resourceids_num):
+                play_resource(resourceids)
             #启动捐兵号
             for n in range(donate_num):
                 play_donate(donateids)
@@ -513,7 +578,7 @@ if __name__ == "__main__":
             if runtime >= 23:
                 with open(Coclog,'a') as Coclogfile:
                     Coclogfile.write('运行时间超过一天重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
-                reboot()
+                #reboot()
     except:
         with open(Coclog,'a') as Coclogfile:
             Coclogfile.write('出现bug重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))

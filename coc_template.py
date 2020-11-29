@@ -488,10 +488,12 @@ def train_template(train_template,startport):
     click(pos['trainningitem5'][0], pos['trainningitem5'][1], startport,3)
     swipe('top', startport)
     click(pos[train_template][0], pos[train_template][1], startport,3)
+    click(pos[train_template][0], pos[train_template][1], startport,3)
     #12本以下,多点一次因为会触发
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
     swipe('top', startport)
+    click(pos[train_template][0], pos[train_template][1], startport,3)
     click(pos[train_template][0], pos[train_template][1], startport,3)
     #关闭
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
@@ -1176,11 +1178,7 @@ def convert_mode(startlist,*args):
         #读取一次配置文件
         config.read(configpath, encoding="utf-8")
         nowid = int(nowid)
-        action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (nowid)
-        c().start(action, nowid)
         startport = getport(nowid)
-        # 重新登录qq
-        click(pos['relogin'][0], pos['relogin'][1], startport)
         #查看是否在捐兵配置中，没有就配置为捐兵
         try:
             if len(args) > 0:
@@ -1198,12 +1196,22 @@ def convert_mode(startlist,*args):
             if status == "donate":
                 print("切换状态为 play")
                 status = "play"
+                #启动模拟器
+                action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (nowid)
+                c().start(action, nowid)
+                # 重新登录qq
+                click(pos['relogin'][0], pos['relogin'][1], startport,3)
                 #切换为打资源
                 start_script(startport,status)
             else:
                 print("切换状态为 donate")
                 status = "donate"
-                click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
+                #启动模拟器
+                action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (nowid)
+                c().start(action, nowid)
+                # 重新登录qq
+                click(pos['relogin'][0], pos['relogin'][1], startport,3)
+                #click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
                 #启动coc
                 startcoc(startport)
                 #等待1分

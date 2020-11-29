@@ -42,6 +42,8 @@ def get_coc_info():
     coc_clan_name = coc_clan_name_ny.get()
     srv_month = coc_srv_month_ny.get()
     money = coc_money_ny.get()
+    if (coc_id,coc_clan_name,srv_month) == (None,None,None) and money != None:
+        coc_id,coc_clan_name,srv_month = 0,'部落首领转让',0
     return (int(coc_id),coc_clan_name,int(srv_month),int(money))
 
 #根据模拟器id获取信息
@@ -196,13 +198,13 @@ def start():
         coc_id_lb.grid(row=0, column=1, sticky='w',padx=10,pady=10)  # 左对齐
         global coc_id_ny,coc_clan_name_ny,coc_srv_month_ny,coc_money_ny
         coc_id_ny = tk.Entry(root)
-        coc_id_ny.insert(0,'6')#插入初始化文本
+        coc_id_ny.insert(0,'0')#插入初始化文本
         coc_id_ny.grid(row=0, column=2,padx=10,pady=10)
         #客户部落名称
         coc_clan_name_lb = tk.Label(root, text='客户部落名称')
         coc_clan_name_lb.grid(row=1, column=1, sticky='w',padx=10,pady=10)  # 左对齐
         coc_clan_name_ny = tk.Entry(root)
-        coc_clan_name_ny.insert(0,'叙利亚军团')#插入初始化文本
+        coc_clan_name_ny.insert(0,'天空之城')#插入初始化文本
         coc_clan_name_ny.grid(row=1, column=2,padx=10,pady=10)
         #服务月数
         coc_srv_month_lb = tk.Label(root, text='服务月数')
