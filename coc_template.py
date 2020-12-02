@@ -488,12 +488,11 @@ def train_template(train_template,startport):
     click(pos['trainningitem5'][0], pos['trainningitem5'][1], startport,3)
     swipe('top', startport)
     click(pos[train_template][0], pos[train_template][1], startport,3)
-    click(pos[train_template][0], pos[train_template][1], startport,3)
-    #12本以下,多点一次因为会触发
+    #click(pos[train_template][0], pos[train_template][1], startport,3)
+    #12本以下,多点一次因为会触发强化军队按钮
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
     swipe('top', startport)
-    click(pos[train_template][0], pos[train_template][1], startport,3)
     click(pos[train_template][0], pos[train_template][1], startport,3)
     #关闭
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)

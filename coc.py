@@ -58,6 +58,12 @@ def start():
                 skipids = config.get("coc", "skipids").split()
                 #删除0和26
                 startidlist = [x for x in skipids if x not in ['0','26']]
+            elif info in ['d', 'D', 'donate', 'DONATE']:
+                donateids = config.get("coc", "donateids").split()
+                donateids_for_paid = config.get("coc", "donateids_for_paid").split()#获取付费捐兵id的list
+                resourceids = config.get("coc", "resourceids").split()#获取持续打资源id的list
+                #在捐兵列表中去除付费捐兵的list和持续打资源的list
+                startidlist = [x for x in donateids if (x not in donateids_for_paid) and (x not in resourceids)]
             else:
                 #剩下的就是首尾格式的列表
                 startidlist = info.split()
