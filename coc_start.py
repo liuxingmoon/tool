@@ -102,15 +102,16 @@ def start(startid):
     c.click(pos['start_script'][0],pos['start_script'][1],startport)
     time.sleep(3)
     if startport == 52555:#如果是星陨，尝试点击登录 
-        click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
+        c.click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
     elif int(startid) in [10,13,15,20,21,25,27,31,32,33,34,36]:
-        time.sleep(60)
-        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)#点击账号
-        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)#点击登录
-        click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)#点击暂时不绑定
+        #这些号启动比较慢
+        time.sleep(30)
+        c.click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport)#点击登录
+        c.click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport)#点击账号
+        c.click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport)#点击暂时不绑定
     else:
-        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
-        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
-        click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+        c.click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport)
+        c.click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport)
+        c.click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport)
 
 
