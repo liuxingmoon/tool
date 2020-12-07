@@ -112,9 +112,9 @@ def clarm(tbname):
         dead_time = datetime.datetime.strptime(str(dead_time_hr), '%Y-%m-%d %H:%M')
         #一周时提醒
         if datetime.timedelta(days=6) <= (dead_time - now_time) <= datetime.timedelta(days=7):
-            g.msgbox(msg='尊敬的用户，您的部落 %s\n捐兵服务在一周内即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,dead_time_hr))
+            g.msgbox(msg='尊敬的用户，您的部落 %s\n捐兵服务在一周内即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,dead_time_hr))
         elif datetime.timedelta(days=0) <= (dead_time - now_time) <= datetime.timedelta(days=1):
-            g.msgbox(msg='尊敬的用户，您的部落 %s\n捐兵服务在今天即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,dead_time_hr))
+            g.msgbox(msg='尊敬的用户，您的部落 %s\n捐兵服务在今天即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,dead_time_hr))
 #查询信息
 def query(tbname):
     clarm(tbname)
