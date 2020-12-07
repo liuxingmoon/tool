@@ -409,9 +409,6 @@ if __name__ == "__main__":
     try:
         #打开自动点击
         ak.start()
-        #刚启动等待一分钟避免打开模拟器卡顿
-        print(r'============================= 刚启动等待一分钟避免打开模拟器卡顿 ===============================')
-        timewait(1)
         #第一次启动时间
         starttime_global = datetime.datetime.now()
         #获取配置文件参数skipid,donateids,instance_num,instance_time
@@ -544,6 +541,13 @@ if __name__ == "__main__":
                 #coc_template.wardonate(warids)
             #早上切换打资源状态为捐兵
             elif (donate_time != '凌晨') and (donate_status == 'play'):
+                #刚启动等待一分钟避免打开模拟器卡顿
+                print(r'============================= 刚重启主机启动coc测试等待一分钟避免打开模拟器卡顿 ===============================')
+                startport = 52555
+                action_test = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi 5 -disable_audio  -fps 40'
+                start(action_test,startport,1)
+                close()
+                timewait(1)
                 coc_template.convert_mode(donateids_for_paid,donate_status,donateids_for_paid_del_army)
                 #周5打资源，其他时间捐兵
                 try:

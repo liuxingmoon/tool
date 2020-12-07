@@ -52,7 +52,7 @@ class Coc:
                         win32gui.CloseWindow(wnd)  # 窗口最小化
                         time.sleep(3)
             #等待系统开机
-            time.sleep(30)
+            time.sleep(40)
 
             # 连接模拟器
             global startport
