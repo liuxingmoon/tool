@@ -364,12 +364,19 @@ def handle_window_play(hwnd,extra):
             print(r'============================= 关闭的轮循打资源模拟器名字为：%s ===============================' %(str(closeplayid)))
             win32gui.PostMessage(hwnd,win32con.WM_CLOSE,0,0)
 
-#关闭持续打资源号            
+#关闭持续打资源号
+def close_resource():
+    for resourceid in resource_names:
+        closename = resource_names[resourceid]
+        close_window = win32gui.FindWindow(None, closename)
+        # 关闭一个捐兵号
+        win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
+
 def handle_window_resource(hwnd,wndname):
     if win32gui.IsWindowVisible(hwnd):
         #关闭持续打资源号
         for resourceid in resource_names:
-            closename = resource_names[donateid]
+            closename = resource_names[resourceid]
             if closename in win32gui.GetWindowText(hwnd):
                 print(r'============================= 关闭的持续打资源号模拟器名字为：%s ===============================' %(str(closename)))
                 #关闭一个捐兵号
@@ -549,6 +556,11 @@ if __name__ == "__main__":
         morning_time = config.get("coc", "morning_time")
         #获取当前时间判断启动持续时间
         donatetime_start = datetime.datetime.now()
+        
+        #启动付费捐兵号
+        for n in range(donateids_for_paid_num):
+            play_donate_for_paid(donateids_for_paid)
+            
         while True:
             #获取捐兵号的状态（当前是在捐兵还是在打资源）
             config.read(configpath, encoding="utf-8")
@@ -583,6 +595,9 @@ if __name__ == "__main__":
                 config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
                 #部落战捐兵
                 #coc_template.wardonate(warids)
+                #启动付费捐兵号
+                for n in range(donateids_for_paid_num):
+                    play_donate_for_paid(donateids_for_paid)
             #早上切换打资源状态为捐兵
             elif (donate_time != '凌晨') and (donate_status == 'play'):
                 #刚启动等待一分钟避免打开模拟器卡顿
@@ -603,10 +618,9 @@ if __name__ == "__main__":
                 config.read(configpath, encoding="utf-8")
                 config.set("coc", "donate_status", donate_status)#只能存储str类型数据
                 config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
-            #启动付费捐兵号
-            for n in range(donateids_for_paid_num):
-                play_donate_for_paid(donateids_for_paid)
+
             #关闭持续打资源号
+            #close_resource()
             win32gui.EnumWindows(handle_window_resource, None)
             #启动持续打资源号
             for n in range(resourceids_num):
