@@ -98,11 +98,6 @@ def timewait(min):
         time.sleep(60)
 
 def getport(startid,skipids):
-    #每启动一个模拟器，需要关闭一个
-    global closeplayid
-    #关闭id
-    closeplayid = startid - 6 - instance_num
-    #win32gui.EnumWindows(handle_window_play,None)
     #获取启动端口
     if startid == 0:
         #如果恰好既是第一个id，又是要跳过的id，或者是捐兵id，需要往下id+1
@@ -124,7 +119,7 @@ def getport(startid,skipids):
             print(r'============================= 该模拟器id %d 在禁止启动名单之中，跳过! ===============================' %(startid))
             startid += 1
         #递归获取port
-        return getport(startid,skipids)
+        getport(startid,skipids)
     else:
         startport = 52550 + startid
         return [startid,startport]
@@ -135,8 +130,6 @@ def play(wait_time,skipids):
     #config.read(configpath, encoding="utf-8")
     #为了指定关闭startid，全局
     try:
-        #启动新一个打资源id前先关闭上一个打资源id
-        win32gui.EnumWindows(handle_window_play,None)
         global startid
         startid = config.get("coc", "startid")
         startid = int(startid)#取出数据为string
@@ -144,6 +137,14 @@ def play(wait_time,skipids):
         startid = int(startlist[0])#获取启动模拟器id
         startport = startlist[1]#获取port
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(startid)
+        #启动新一个打资源id前先关闭上一个打资源id
+        closeid = startid - 6 - instance_num
+        if closeid <= 0:
+            closename = maxid - 6 + closeid 
+        elif closeid < 10:
+            closename = '0' + str(closeid)
+        close_play(closename)
+        #启动新id
         start(action,startport,wait_time)
         print('============================= 启动模拟器完成 =============================')
         time.sleep(3)
@@ -348,15 +349,17 @@ def instance(donate_switch,donateids):
 
 #关闭指定id窗口          
 def handle_window_play(hwnd,extra):
+    #关闭id
+    global closeplayid
+    closeplayid = startid - 6 - instance_num
     if win32gui.IsWindowVisible(hwnd):
-        global closeplayid
-        closeplayid = int(closeplayid)
         if closeplayid <= 0:
             closeplayid = maxid - 6 + closeplayid 
         elif closeplayid < 10:
             closeplayid = '0' + str(closeplayid)
         #关闭的id是跳过列表或者捐兵列表，递归关闭前一个id
         if str(int(closeplayid) + 6) in skipids:
+            closename = resource_names[resourceid]
             closeplayid = int(closeplayid) - 1
             print(r'============================= 此关闭的轮循打资源模拟器名字 ：%s没有打开，需要向上跳过1位! ===============================' %(str(int(closeplayid) + 1)))
             win32gui.EnumWindows(handle_window_play,None)
@@ -364,6 +367,16 @@ def handle_window_play(hwnd,extra):
             print(r'============================= 关闭的轮循打资源模拟器名字为：%s ===============================' %(str(closeplayid)))
             win32gui.PostMessage(hwnd,win32con.WM_CLOSE,0,0)
 
+#关闭轮循打资源号
+def close_play(closename):
+    if str(closename) not in notplaylist:
+        #如果不是轮循打资源号，需要往上跳一位关闭
+        close_play(int(closename) + 1)
+    else:
+        close_window = win32gui.FindWindow(None, closename)
+        # 关闭一个捐兵号
+        win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
+            
 #关闭持续打资源号
 def close_resource():
     for resourceid in resource_names:
@@ -483,7 +496,7 @@ if __name__ == "__main__":
                     if 'EmulatorTitleName' in configline:
                         donatename = configline.split('=')[-1].rstrip('\n')
                         donatenames_for_paid[donateid_for_paid] = donatename
-        print(r'============================= 当前的付费捐兵号id和名字为: %s ===============================' %(donatenames_for_paid))
+        print('============================= 当前的付费捐兵号id和名字如下 ===============================\n%s' %(donatenames_for_paid))
         
         resource_names = {}
         for resourceid in resourceids:
@@ -494,7 +507,7 @@ if __name__ == "__main__":
                     if 'EmulatorTitleName' in configline:
                         donatename = configline.split('=')[-1].rstrip('\n')
                         resource_names[resourceid] = donatename
-        print(r'============================= 当前的持续打资源号id和名字为: %s ===============================' %(resource_names))
+        print('============================= 当前的持续打资源号id和名字如下 ===============================\n%s' %(resource_names))
         
         donatenames = {}
         for donateid in donateids:
@@ -505,7 +518,7 @@ if __name__ == "__main__":
                     if 'EmulatorTitleName' in configline:
                         donatename = configline.split('=')[-1].rstrip('\n')
                         donatenames[donateid] = donatename
-        print(r'============================= 当前的捐兵号id和名字为: %s ===============================' %(donatenames))
+        print('============================= 当前的捐兵号id和名字如下 ===============================\n%s' %(donatenames))
         
         #获取付费捐兵号数量
         donateids_for_paid_num = len(donateids_for_paid)
@@ -523,7 +536,7 @@ if __name__ == "__main__":
             skipids.extend(resourceids)#添加持续打资源的id到跳过id列表中
             skipids = list(set(skipids))#去重
             skipids.sort()
-        print(r'============================= 跳过的实例id：%s ===============================' %(skipids))
+        print('============================= 跳过的实例id如下 ===============================\n%s' %(skipids))
         
         playnames = {}
         notplaylist = []
@@ -541,7 +554,7 @@ if __name__ == "__main__":
                         if 'EmulatorTitleName' in configline:
                             playname = configline.split('=')[-1].rstrip('\n')
                             playnames[playid] = playname
-        print(r'============================= 当前的打资源号和名字为: %s ===============================' %(playnames))
+        print('============================= 当前的打资源号和名字如下: ===============================\n%s' %(playnames))
             
         #白天和夜晚运行的实例数量和时间
         instance_num_day = int(config.get("coc", "instance_num_day"))
@@ -582,6 +595,7 @@ if __name__ == "__main__":
             donate_time = result[2]
             #凌晨切换捐兵状态为打资源，顺便做一次部落战捐兵
             if (donate_time == '凌晨') and (donate_status == 'donate'):
+                close()#关闭
                 coc_template.convert_mode(donateids_for_paid,donate_status)
                 coc_template.convert_mode(donateids,donate_status)
                 coc_template.convert_mode(resourceids,donate_status)
@@ -600,6 +614,7 @@ if __name__ == "__main__":
                     play_donate_for_paid(donateids_for_paid)
             #早上切换打资源状态为捐兵
             elif (donate_time != '凌晨') and (donate_status == 'play'):
+                close()#关闭
                 #刚启动等待一分钟避免打开模拟器卡顿
                 print(r'============================= 刚重启主机启动coc测试等待一分钟避免打开模拟器卡顿 ===============================')
                 timewait(1)
