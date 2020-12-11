@@ -107,11 +107,15 @@ def start(startid):
         #这些号启动比较慢
         time.sleep(30)
         c.click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport)#点击登录
+        time.sleep(3)
         c.click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport)#点击账号
+        time.sleep(3)
         c.click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport)#点击暂时不绑定
     else:
         c.click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport)
+        time.sleep(3)
         c.click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport)
+        time.sleep(3)
         c.click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport)
 
 

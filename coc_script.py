@@ -135,6 +135,8 @@ def play(wait_time,skipids):
     #config.read(configpath, encoding="utf-8")
     #为了指定关闭startid，全局
     try:
+        #启动新一个打资源id前先关闭上一个打资源id
+        win32gui.EnumWindows(handle_window_play,None)
         global startid
         startid = config.get("coc", "startid")
         startid = int(startid)#取出数据为string
@@ -143,13 +145,13 @@ def play(wait_time,skipids):
         startport = startlist[1]#获取port
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(startid)
         start(action,startport,wait_time)
-        print('启动模拟器完成')
+        print('============================= 启动模拟器完成 =============================')
         time.sleep(3)
         coc_script(startport,wait_time)
         click(pos['sure'][0], pos['sure'][1],startport)
         time.sleep(5)
         click(pos['start_script'][0],pos['start_script'][1],startport)
-        print('启动打资源脚本完成')
+        print('============================= 启动打资源脚本完成 =============================')
         if startport == 52555:#如果是星陨，尝试点击登录 
             time.sleep(20)
             click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
@@ -220,6 +222,7 @@ def play_donate_for_paid(donateids):
     
 #捐兵号
 def play_donate(donateids):
+    
     #获取上一次运行的捐兵id
     global donateid_now#这是为了让handler能够获取到该id
     donateid_now = config.get("coc", "donateid_now")#str
@@ -355,23 +358,33 @@ def handle_window_play(hwnd,extra):
         #关闭的id是跳过列表或者捐兵列表，递归关闭前一个id
         if str(int(closeplayid) + 6) in skipids:
             closeplayid = int(closeplayid) - 1
-            print(r'============================= 此关闭的模拟器名字 ：%s没有打开，需要向上跳过1位! ===============================' %(str(int(closeplayid) + 1)))
+            print(r'============================= 此关闭的轮循打资源模拟器名字 ：%s没有打开，需要向上跳过1位! ===============================' %(str(int(closeplayid) + 1)))
             win32gui.EnumWindows(handle_window_play,None)
         if str(closeplayid) in win32gui.GetWindowText(hwnd):
-            print(r'============================= 关闭的模拟器名字为：%s ===============================' %(str(closeplayid)))
+            print(r'============================= 关闭的轮循打资源模拟器名字为：%s ===============================' %(str(closeplayid)))
             win32gui.PostMessage(hwnd,win32con.WM_CLOSE,0,0)
+
+#关闭持续打资源号            
+def handle_window_resource(hwnd,wndname):
+    if win32gui.IsWindowVisible(hwnd):
+        #关闭持续打资源号
+        for resourceid in resource_names:
+            closename = resource_names[donateid]
+            if closename in win32gui.GetWindowText(hwnd):
+                print(r'============================= 关闭的持续打资源号模拟器名字为：%s ===============================' %(str(closename)))
+                #关闭一个捐兵号
+                win32gui.PostMessage(hwnd,win32con.WM_CLOSE,0,0)
+
 #关闭捐兵id
 def handle_window_donate(hwnd,wndname):
     if win32gui.IsWindowVisible(hwnd):
-        for donatename in donatenames:
-            #print(donatename)
-            #closedonateid = donatenames[int(donateid_now) - donate_num + 1]
-            closedonateid = donatenames[donatename]
-            if closedonateid in win32gui.GetWindowText(hwnd):
+        #关闭自用捐兵号
+        for donateid in donatenames:
+            closedonatename = donatenames[donateid]
+            if closedonatename in win32gui.GetWindowText(hwnd):
+                print(r'============================= 关闭的自用捐兵号模拟器名字为：%s ===============================' %(str(closedonatename)))
                 #关闭一个捐兵号
                 win32gui.PostMessage(hwnd,win32con.WM_CLOSE,0,0)
-                #启动一个捐兵号
-                #play_donate(donateids)
                 
 #重启打资源
 def restartplay():
@@ -407,6 +420,8 @@ def restartdonate(donateids):
 #coc
 if __name__ == "__main__":
     try:
+        #关闭
+        close()
         #打开自动点击
         ak.start()
         #第一次启动时间
@@ -452,6 +467,28 @@ if __name__ == "__main__":
         resourceids = [x for x in resourceids if x not in donateids_for_paid]
         #在捐兵列表中去除付费捐兵的list和持续打资源的list
         donateids = [x for x in donateids if (x not in donateids_for_paid) and (x not in resourceids)]
+        donatenames_for_paid = {}
+        for donateid_for_paid in donateids_for_paid:
+            donateconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%s\config.ini' %(donateid_for_paid)
+            with open(donateconfig,'r') as donatefile:
+                configlines = donatefile.readlines()
+                for configline in configlines:
+                    if 'EmulatorTitleName' in configline:
+                        donatename = configline.split('=')[-1].rstrip('\n')
+                        donatenames_for_paid[donateid_for_paid] = donatename
+        print(r'============================= 当前的付费捐兵号id和名字为: %s ===============================' %(donatenames_for_paid))
+        
+        resource_names = {}
+        for resourceid in resourceids:
+            donateconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%s\config.ini' %(resourceid)
+            with open(donateconfig,'r') as donatefile:
+                configlines = donatefile.readlines()
+                for configline in configlines:
+                    if 'EmulatorTitleName' in configline:
+                        donatename = configline.split('=')[-1].rstrip('\n')
+                        resource_names[resourceid] = donatename
+        print(r'============================= 当前的持续打资源号id和名字为: %s ===============================' %(resource_names))
+        
         donatenames = {}
         for donateid in donateids:
             donateconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%s\config.ini' %(donateid)
@@ -461,7 +498,8 @@ if __name__ == "__main__":
                     if 'EmulatorTitleName' in configline:
                         donatename = configline.split('=')[-1].rstrip('\n')
                         donatenames[donateid] = donatename
-        print(r'============================= 当前的捐兵号和名字为: %s ===============================' %(donatenames))
+        print(r'============================= 当前的捐兵号id和名字为: %s ===============================' %(donatenames))
+        
         #获取付费捐兵号数量
         donateids_for_paid_num = len(donateids_for_paid)
         #获取持续打资源id的list
@@ -481,8 +519,14 @@ if __name__ == "__main__":
         print(r'============================= 跳过的实例id：%s ===============================' %(skipids))
         
         playnames = {}
+        notplaylist = []
+        notplaylist.extend(donateids)
+        notplaylist.extend(donateids_for_paid)
+        notplaylist.extend(resourceids)
+        notplaylist.extend(skipids)
+        notplaylist = list(set(notplaylist))#去重
         for playid in range(maxid +1):
-            if playid not in skipids:
+            if str(playid) not in notplaylist:
                 playconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' %(playid)
                 with open(playconfig,'r') as playfile:
                     configlines = playfile.readlines()
@@ -510,7 +554,7 @@ if __name__ == "__main__":
             config.read(configpath, encoding="utf-8")
             donate_status = config.get("coc", "donate_status")
             #关闭
-            close()
+            #close()
             #获取当前时间的参数并运行持久化运行号
             result = instance(donate_switch,donateids)
             #启动打资源的模拟器个数
@@ -543,10 +587,6 @@ if __name__ == "__main__":
             elif (donate_time != '凌晨') and (donate_status == 'play'):
                 #刚启动等待一分钟避免打开模拟器卡顿
                 print(r'============================= 刚重启主机启动coc测试等待一分钟避免打开模拟器卡顿 ===============================')
-                startport = 52555
-                action_test = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi 5 -disable_audio  -fps 40'
-                start(action_test,startport,1)
-                close()
                 timewait(1)
                 coc_template.convert_mode(donateids_for_paid,donate_status,donateids_for_paid_del_army)
                 #周5打资源，其他时间捐兵
@@ -566,9 +606,13 @@ if __name__ == "__main__":
             #启动付费捐兵号
             for n in range(donateids_for_paid_num):
                 play_donate_for_paid(donateids_for_paid)
+            #关闭持续打资源号
+            win32gui.EnumWindows(handle_window_resource, None)
             #启动持续打资源号
             for n in range(resourceids_num):
                 play_resource(resourceids)
+            #关闭自用捐兵号    
+            win32gui.EnumWindows(handle_window_donate, None)
             #启动捐兵号
             for n in range(donate_num):
                 play_donate(donateids)

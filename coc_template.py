@@ -530,8 +530,8 @@ def cancel_army(startport):
     for n in range(1,8):
         click_short(pos['del_army_pt0%d' %(n)][0], pos['del_army_pt0%d' %(n)][1], startport, 10)
     #确定删除
-    click(pos['del_army'][0], pos['del_army'][1], startport,3)
-    click(pos['del_army_sure'][0], pos['del_army_sure'][1], startport,3)
+    click(pos['del_army'][0], pos['del_army'][1], startport, 3)
+    click(pos['del_army_sure'][0], pos['del_army_sure'][1], startport, 3)
     #退出
     click(pos['exitstore'][0], pos['exitstore'][1], startport, 3)
 
