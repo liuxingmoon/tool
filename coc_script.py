@@ -293,12 +293,13 @@ def play_resource(resourceids):
         startport = 52550 + int(resourceid_now)
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(resourceid_now))
     start(action,startport,30)
-    print(r'============================= 启动模拟器完成 ===============================')
+    print(r'============================= 启动持续打资源模拟器完成 ===============================')
     time.sleep(3)
     coc_script(startport,5)
-    time.sleep(5)
+    time.sleep(10)
     click(pos['sure'][0], pos['sure'][1],startport)
     time.sleep(5)
+    click(pos['start_script'][0],pos['start_script'][1],startport)
     click(pos['start_script'][0],pos['start_script'][1],startport)
     if startport == 52555:#如果是星陨，尝试点击登录 
         time.sleep(20)
@@ -588,10 +589,14 @@ if __name__ == "__main__":
     #获取当前时间判断启动持续时间
     donatetime_start = datetime.datetime.now()
     # 获取捐兵号的状态（当前是在捐兵还是在打资源）
-    config.read(configpath, encoding="utf-8")
     donate_status = config.get("coc", "donate_status")
     result = instance(donate_switch,donate_status)
     time_status = result[2]
+    #获取重启模拟器时间（小时）
+    restart_time = int(config.get("coc", "restart_time"))
+    #切换重启状态为'F'，表示已经过了那个重启的时间，把状态归零
+    restart_status = 'F'
+    #首次运行打开付费捐兵号
     if ((time_status != '凌晨') and (donate_status == 'donate')) or ((time_status == '凌晨') and (donate_status == 'play')):
         #启动付费捐兵号
         restartdonate_for_paid()
@@ -670,11 +675,13 @@ if __name__ == "__main__":
         runtime_global = endtime_global - starttime_global
         #每隔一天重启一次
         runtime_hours = int(runtime_global.total_seconds() / 3600)
-        runtime_days = runtime_hours/24
-        if (runtime_days != 0) and ((runtime_days % 24) == 0):
-            close()
+        runtime_days = int(runtime_hours / 24)
+        if (runtime_hours != 0) and ((runtime_hours % restart_time) == 0) and (restart_status == 'F'):
+            print(r'============================= 当前脚本每运行 %d 小时，全部模拟器重启一次! =============================' %(restart_time))
+            restart_status = 'T'#切换重启状态为'T'，表示已经重启过了，在这个小时内不要再重启了
             restartdonate_for_paid()
-            print(r'============================= 当前脚本已运行 %d 天，全部模拟器重启一次! =============================' % (runtime_days))
+        elif (runtime_hours != 0) and ((runtime_hours % restart_time) != 0) and (restart_status == 'T'):
+            restart_status = 'F'#切换重启状态为'F'，表示已经过了那个重启的时间，把状态归零
         print(r'============================= 当前脚本已运行 %d 个小时! =============================' %(runtime_hours))
         if runtime_days >= 10:
             with open(Coclog,'a') as Coclogfile:
