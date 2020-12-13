@@ -252,9 +252,11 @@ def finish(startport):
     time.sleep(3)
 # 点击屏幕
 def click(x,y,startport,*args):
+    if startport == 5555:
+        subprocess.Popen(r'adb -s emulator-5554 shell input tap %d %d' %(x,y),shell=True)
     subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
     print(x,y)
-    time.sleep(1)
+    time.sleep(3)
     if len(args) > 0:
         time.sleep(args[0])
 # 快速点击屏幕
@@ -523,17 +525,15 @@ def cancel_army(startport):
     print('取消现有兵种和药水')
     click(pos['trainningitem1'][0], pos['trainningitem1'][1], startport)
     click(pos['edit_army'][0], pos['edit_army'][1], startport)
-    #取消兵种
-    for n in range(1,9):
+    for n in range(1,6):#取消兵种
         click_short(pos['del_army_trp0%d' %(n)][0], pos['del_army_trp0%d' %(n)][1], startport, 200)
-    #取消药水
-    for n in range(1,8):
+    for n in range(1,8):#取消药水
         click_short(pos['del_army_pt0%d' %(n)][0], pos['del_army_pt0%d' %(n)][1], startport, 10)
-    #确定删除
-    click(pos['del_army'][0], pos['del_army'][1], startport, 3)
+    click(pos['del_army'][0], pos['del_army'][1], startport, 3)#确定删除
+    time.sleep(3)
     click(pos['del_army_sure'][0], pos['del_army_sure'][1], startport, 3)
-    #退出
-    click(pos['exitstore'][0], pos['exitstore'][1], startport, 3)
+    time.sleep(3)
+    click(pos['exitstore'][0], pos['exitstore'][1], startport, 3)#退出
 
 #启动coc
 def startcoc(startport):

@@ -2,6 +2,7 @@
 import os
 import file_ctrl
 
+src_dir = r"E:\Program Files\Python\Python38\works\\tool\\"
 src_file = r"E:\Program Files\Python\Python38\works\\tool\*.py"
 dest_dir = r"\\Amadeus\\tool\\"
 #coc_script
@@ -21,3 +22,4 @@ def start():
     file_ctrl.replace(configpath_src,configpath_dest,'coc_script.py')
     file_ctrl.replace(ddpath_src,ddpath_dest,'coc_script.py')
     file_ctrl.replace(configpath_src,configpath_dest,'coc_template.py')
+    os.chdir(src_dir)#返回原始目录
