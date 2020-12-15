@@ -25,7 +25,7 @@ import wifi
 import threading
 import inspect
 import ctypes
-import update_coc
+
 
 root = tk.Tk()
 root.title('流梦星璃')
@@ -321,10 +321,6 @@ wifi_bt = tk.Button(root,text='wifi热点',command=wifi.start,width=15)
 wifi_bt.grid(row=5,column=2,
               padx=10,pady=10)
               
-#更新代码
-update_coc_bt = tk.Button(root,text='更新代码',command=update_coc.start,width=15)
-update_coc_bt.grid(row=6,column=2,
-              padx=10,pady=10)
               
 def colorchoose():
     rgb = colorchooser.askcolor()

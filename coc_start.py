@@ -91,7 +91,7 @@ def start(startid):
     #startnum = int(startnum[0]) - 1
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' %(startid)
     c = Coc()
-    c.start(action,startid,1)#打资源，直接最小化
+    c.start(action,startid)
     #c.start(星辰)
     print('start')
     c.coc_script(startport)
@@ -100,9 +100,10 @@ def start(startid):
     c.click(pos['sure'][0],pos['sure'][1],startport)
     time.sleep(3)
     c.click(pos['start_script'][0],pos['start_script'][1],startport)
-    time.sleep(3)
+    time.sleep(5)
     if startport == 52555:#如果是星陨，尝试点击登录 
-        c.click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
+        c.click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport)
+        time.sleep(3)
     elif int(startid) in [10,13,15,20,21,25,27,31,32,33,34,36]:
         #这些号启动比较慢
         time.sleep(30)

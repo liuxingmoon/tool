@@ -5,6 +5,7 @@ import configparser
 import os
 import coc_customer
 import AutoClick as ak
+import update_coc
 
 def start():
     #启动部落冲突自动启动鼠标连点
@@ -190,6 +191,10 @@ def start():
         custmoer_bt = tk.Button(root, text='客户信息', command=coc_customer.start, width=15)
         custmoer_bt.grid(row=5, column=2,
                           padx=10, pady=10)
+        #更新代码
+        update_coc_bt = tk.Button(root,text='更新代码',command=update_coc.start,width=15)
+        update_coc_bt.grid(row=5,column=3,
+              padx=10,pady=10)
 
         root.mainloop()
     except:

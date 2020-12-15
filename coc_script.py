@@ -11,6 +11,7 @@ import threading
 import coc_template
 import os
 import AutoClick as ak
+import coc_start
 
 #元素坐标
 pos = {
@@ -153,12 +154,13 @@ def play(wait_time,skipids):
             time.sleep(20)
             click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
             click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
-        elif str(startid) not in notplaylist:#双重否定表肯定，在轮循打资源列表中的id
+        #elif str(startid) not in notplaylist:#双重否定表肯定，在轮循打资源列表中的id
+        elif int(startid) in [10,13,15,20,21,25,27,31,32,33,34,36]:
             #昆仑
             time.sleep(20)
             #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
-            click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
             click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
+            click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
         #打印分割线
         read_id = playnames[startid]
         print(r'============================= %s 实例启动完成 ===============================' %(read_id))
@@ -208,12 +210,12 @@ def play_donate_for_paid(donateids):
         time.sleep(20)
         click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
         click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
-    else:
+    elif int(donateid_now) in [10,13,15,20,21,25,27,31,32,33,34,36]:
         #昆仑
         time.sleep(20)
         #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
-        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
         click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
+        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
     print(r'============================= 启动付费捐兵脚本完成 ===============================')
 
     
@@ -256,12 +258,12 @@ def play_donate(donateids):
         time.sleep(20)
         click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
         click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
-    else:
+    elif int(donateid_now) in [10,13,15,20,21,25,27,31,32,33,34,36]:
         #昆仑
         time.sleep(20)
         #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
-        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
         click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
+        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
     print(r'============================= 启动自用捐兵脚本完成 ===============================')
     #打印分割线
     read_id = donatenames[donateid_now]
@@ -298,19 +300,19 @@ def play_resource(resourceids):
     coc_script(startport,5)
     time.sleep(10)
     click(pos['sure'][0], pos['sure'][1],startport)
-    time.sleep(5)
-    click(pos['start_script'][0],pos['start_script'][1],startport)
-    click(pos['start_script'][0],pos['start_script'][1],startport)
+    time.sleep(10)
+    click(pos['start_script'][0],pos['start_script'][1],startport,5)
+    click(pos['start_script'][0],pos['start_script'][1],startport,10)
     if startport == 52555:#如果是星陨，尝试点击登录 
         time.sleep(20)
         click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
         click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
-    else:
+    elif int(resourceid_now) in [10,13,15,20,21,25,27,31,32,33,34,36]:
         #昆仑
         time.sleep(20)
         #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
-        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
         click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
+        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
     print(r'============================= 启动持续打资源脚本完成 ===============================')
    
     
@@ -364,72 +366,67 @@ def handle_window_play(hwnd,extra):
             print(r'============================= 关闭的轮循打资源模拟器名字为：%s ===============================' %(str(closeplayid)))
             win32gui.PostMessage(hwnd,win32con.WM_CLOSE,0,0)
 
-#关闭轮循打资源号
-def close_play():
-    '''
-    if str(closename) not in notplaylist:
-        #如果不是轮循打资源号，需要往上跳一位关闭
-        closename = int(closename) - 1
-        if closeid <= 0:
-            closename = maxid - 6 + closeid
-        elif closeid < 10:
-            closename = '0' + str(closeid)
-        close_play(str(closename))
+#关闭模拟器列表（列表中所有）
+def close_emu(closelist):
+    for close_id in closelist:
+        close_name = closelist[close_id]
+        close_window = win32gui.FindWindow(None, close_name)
+        # 关闭一个捐兵号
+        win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
+        print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
+
+#启动模拟器（列表中所有）       
+def start_emu(start_id):
+    if int(start_id) == 0:
+        startport = 5555
     else:
-        close_window = win32gui.FindWindow(None, str(closename))
+        startport = 52550 + int(start_id)
+    action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(start_id))
+    start(action,startport,30)
+    print(r'============================= 启动付费捐兵号模拟器完成 ===============================')
+    time.sleep(3)
+    coc_script(startport,5)
+    time.sleep(10)
+    click(pos['sure'][0], pos['sure'][1],startport)
+    time.sleep(10)
+    click(pos['start_script'][0],pos['start_script'][1],startport,5)
+    click(pos['start_script'][0],pos['start_script'][1],startport,10)
+    if startport == 52555:#如果是星陨，尝试点击登录 
+        time.sleep(20)
+        click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
+        click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
+    elif int(start_id) in [10,13,15,20,21,25,27,31,32,33,34,36]:
+        #昆仑
+        time.sleep(20)
+        #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
+        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+    print(r'============================= 启动付费捐兵号脚本完成 ===============================')
+   
+        
+#依次重启模拟器（列表中所有）
+def restart_emu(restartlist,*donateids_for_paid_2nd):
+    for restart_id in restartlist:
+        restart_name = restartlist[restart_id]#关闭的模拟器名字
+        close_window = win32gui.FindWindow(None, restart_name)
         # 关闭一个捐兵号
         win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
-        print('============================= 关闭的轮循打资源模拟器名字为：%s ===============================' %(closename))
-        '''
-    #不需要去计算是哪个id需要关闭，直接关闭所有的轮循打资源号
-    for closeid in playnames:
-        closename = playnames[closeid]
-        close_window = win32gui.FindWindow(None, closename)
-        # 关闭一个捐兵号
-        win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
-        print('============================= 关闭的轮循打资源模拟器名字为：%s ===============================' %(closename))
-#关闭持续打资源号
-def close_resource():
-    for resourceid in resource_names:
-        closename = resource_names[resourceid]
-        close_window = win32gui.FindWindow(None, closename)
-        # 关闭一个捐兵号
-        win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
-        print('============================= 关闭的持续打资源号模拟器名字为：%s ===============================' %(closename))
-
-def handle_window_resource(hwnd,wndname):
-    if win32gui.IsWindowVisible(hwnd):
-        #关闭持续打资源号
-        for resourceid in resource_names:
-            closename = resource_names[resourceid]
-            if closename in win32gui.GetWindowText(hwnd):
-                print(r'============================= 关闭的持续打资源号模拟器名字为：%s ===============================' %(str(closename)))
-                #关闭一个捐兵号
-                win32gui.PostMessage(hwnd,win32con.WM_CLOSE,0,0)
-
-#关闭捐兵id
-def handle_window_donate(hwnd,wndname):
-    if win32gui.IsWindowVisible(hwnd):
-        #关闭自用捐兵号
-        for donateid in donatenames:
-            closedonatename = donatenames[donateid]
-            if closedonatename in win32gui.GetWindowText(hwnd):
-                print(r'============================= 关闭的自用捐兵号模拟器名字为：%s ===============================' %(str(closedonatename)))
-                #关闭一个捐兵号
-                win32gui.PostMessage(hwnd,win32con.WM_CLOSE,0,0)
-
-def restartdonate_for_paid():
-    close()
-    for n in range(donateids_for_paid_num):
-        play_donate_for_paid(donateids_for_paid)
-                
+        if (len(donateids_for_paid_2nd) > 0) and (str(restart_id) in donateids_for_paid_2nd[0]):
+            print('============================= 重启的模拟器：%s 是第二梯队的,第一梯队重启结束等待15分钟再重启 ===============================' %(restart_name))
+        else:
+            print('============================= 重启的模拟器名字为：%s ===============================' %(restart_name))
+            start_emu(int(restart_id))
+    if len(donateids_for_paid_2nd) > 0:
+        timewait(15)
+        for restart_id in donateids_for_paid_2nd[0]:
+            start_emu(int(restart_id))#启动第二梯队
 #重启打资源
 def restartplay():
     #同时运行几个实例
     wait_time = 10
     #启动新一个打资源id前先关闭上一个打资源id
     try:
-        close_play()
+        close_emu(playnames)
     except:
         print('关闭轮循打资源号失败')
     for times in range(instance_num):
@@ -447,7 +444,7 @@ def restartdonate(donateids):
     starttime = donatetime_end - donatetime_start
     
     if (starttime.seconds / 3600) >= donate_time:
-        win32gui.EnumWindows(handle_window_donate, None)
+        close_emu(donatenames)
         if donate_mode == "A":
             print(r'============================= 运行捐兵号超过4小时，下线15分钟！ ===============================')
             timewait(15)
@@ -461,10 +458,10 @@ def restartdonate(donateids):
 #开始操作
 #coc
 if __name__ == "__main__":
+    #关闭前面的模拟器
+    #close()
     #打开自动点击
     ak.start()
-    #第一次启动时间
-    starttime_global = datetime.datetime.now()
     #获取配置文件参数skipid,donateids,instance_num,instance_time
     config = configparser.ConfigParser()
     config.read(configpath, encoding="utf-8")
@@ -596,12 +593,32 @@ if __name__ == "__main__":
     restart_time = int(config.get("coc", "restart_time"))
     #切换重启状态为'F'，表示已经过了那个重启的时间，把状态归零
     restart_status = 'F'
+    #第一次启动时间
+    starttime_global = datetime.datetime.now()
+    #获取付费捐兵号第二梯队列表
+    donateids_for_paid_2nd = config.get("coc", "donateids_for_paid_2nd").split()
     #首次运行打开付费捐兵号
     if ((time_status != '凌晨') and (donate_status == 'donate')) or ((time_status == '凌晨') and (donate_status == 'play')):
         #启动付费捐兵号
-        restartdonate_for_paid()
+        restart_emu(donatenames_for_paid,donateids_for_paid_2nd)
 
     while True:
+        endtime_global = datetime.datetime.now()
+        runtime_global = endtime_global - starttime_global
+        #每隔一天重启一次
+        runtime_hours = round(runtime_global.total_seconds() / 3600)
+        runtime_days = int(runtime_hours / 24)
+        if (runtime_hours != 0) and ((runtime_hours % restart_time) == 0) and (restart_status == 'F'):
+            print(r'============================= 当前脚本每运行 %d 小时，全部模拟器重启一次! =============================' %(restart_time))
+            restart_status = 'T'#切换重启状态为'T'，表示已经重启过了，在这个小时内不要再重启了
+            restart_emu(donatenames_for_paid)#只重启付费捐兵号
+        elif (runtime_hours != 0) and ((runtime_hours % restart_time) != 0) and (restart_status == 'T'):
+            restart_status = 'F'#切换重启状态为'F'，表示已经过了那个重启的时间，把状态归零
+        print(r'============================= 当前脚本已运行 %d 天 %d 个小时! =============================' %(runtime_days , (runtime_hours - runtime_days*24)))
+        if runtime_days >= 7:
+            with open(Coclog,'a') as Coclogfile:
+                Coclogfile.write('============================= 运行时间超过 %d 天重启主机,重启时间：%s =============================\n' %(runtime_days , time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+            reboot()
         #获取捐兵号的状态（当前是在捐兵还是在打资源）
         config.read(configpath, encoding="utf-8")
         donate_status = config.get("coc", "donate_status")
@@ -634,14 +651,14 @@ if __name__ == "__main__":
             config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
             #部落战捐兵
             #coc_template.wardonate(warids)
-            #启动付费捐兵号
-            restartdonate_for_paid()
+            restart_emu(donatenames_for_paid)#只重启付费捐兵号
         #早上切换打资源状态为捐兵
         elif (time_status != '凌晨') and (donate_status == 'play'):
-            close()#关闭
-            #刚启动等待一分钟避免打开模拟器卡顿
-            print(r'============================= 刚重启主机启动coc测试等待一分钟避免打开模拟器卡顿 ===============================')
-            timewait(1)
+            close_emu(donatenames_for_paid)#关闭所有付费捐兵号
+            print(r'============================= 等待15分钟避免切换时没有授权导致切换失败 ===============================')
+            timewait(15)#等待15分钟避免启动时没有授权登录
+            start_ids(donatenames_for_paid)#启动所有的付费捐兵号，为了授权
+            close_emu(donatenames_for_paid)#关闭所有付费捐兵号
             coc_template.convert_mode(donateids_for_paid,donate_status,donateids_for_paid_del_army)
             #周5打资源，其他时间捐兵
             try:
@@ -655,38 +672,19 @@ if __name__ == "__main__":
             config.read(configpath, encoding="utf-8")
             config.set("coc", "donate_status", donate_status)#只能存储str类型数据
             config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
-            #启动付费捐兵号
-            restartdonate_for_paid()
-
+            restart_emu(donatenames_for_paid,donateids_for_paid_2nd)#只重启付费捐兵号
         #关闭持续打资源号
-        #close_resource()
-        win32gui.EnumWindows(handle_window_resource, None)
+        close_emu(resource_names)
         #启动持续打资源号
         for n in range(resourceids_num):
             play_resource(resourceids)
         #关闭自用捐兵号
-        win32gui.EnumWindows(handle_window_donate, None)
+        close_emu(donatenames)
         #启动捐兵号
         for n in range(donate_num):
             play_donate(donateids)
         #启动打资源号
         restartplay()
-        endtime_global = datetime.datetime.now()
-        runtime_global = endtime_global - starttime_global
-        #每隔一天重启一次
-        runtime_hours = int(runtime_global.total_seconds() / 3600)
-        runtime_days = int(runtime_hours / 24)
-        if (runtime_hours != 0) and ((runtime_hours % restart_time) == 0) and (restart_status == 'F'):
-            print(r'============================= 当前脚本每运行 %d 小时，全部模拟器重启一次! =============================' %(restart_time))
-            restart_status = 'T'#切换重启状态为'T'，表示已经重启过了，在这个小时内不要再重启了
-            restartdonate_for_paid()
-        elif (runtime_hours != 0) and ((runtime_hours % restart_time) != 0) and (restart_status == 'T'):
-            restart_status = 'F'#切换重启状态为'F'，表示已经过了那个重启的时间，把状态归零
-        print(r'============================= 当前脚本已运行 %d 个小时! =============================' %(runtime_hours))
-        if runtime_days >= 10:
-            with open(Coclog,'a') as Coclogfile:
-                Coclogfile.write('============================= 运行时间超过 %d 天重启主机,重启时间：%s =============================\n' %(runtime_days , time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
-            reboot()
 '''
     except Err as reason:
         with open(Coclog,'a') as Coclogfile:

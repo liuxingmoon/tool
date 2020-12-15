@@ -99,6 +99,21 @@ pos = {
     'trainningitem4': [810, 45],
     'trainningitem5': [1030, 45],
     'train_troop01': [130, 440],
+    'train_troop02': [260, 440],
+    'train_troop03': [390, 440],
+    'train_troop04': [520, 440],
+    'train_troop05': [650, 440],
+    'train_troop06': [780, 440],
+    'train_troop07': [910, 440],
+    'train_troop08': [1060, 440],
+    'train_troop11': [130, 580],
+    'train_troop12': [260, 580],
+    'train_troop13': [390, 580],
+    'train_troop14': [520, 580],
+    'train_troop15': [650, 580],
+    'train_troop16': [780, 580],
+    'train_troop17': [910, 580],
+    'train_troop18': [1060, 580],
     'train_template00': [1130, 180],
     'train_template01': [1130, 330],
     'train_template02': [1130, 480],
@@ -481,12 +496,19 @@ def removeTree(startid,timewait):
 
 
 #训练士兵
-def train(train_troopid,num,startport):
+def train_troop(train_troopid,num,startport):
     click(pos['trainning'][0], pos['trainning'][1], startport)
     click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport)
     click_short(pos[train_troopid][0], pos[train_troopid][1], startport,num)
-    click(pos['exitstore'][0], pos['exitstore'][1], startport)
-
+    click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
+    
+#训练potion
+def train_potion(train_troopid,num,startport):
+    click(pos['trainning'][0], pos['trainning'][1], startport)
+    click(pos['trainningitem3'][0], pos['trainningitem3'][1], startport)
+    click_short(pos[train_troopid][0], pos[train_troopid][1], startport,num)
+    click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
+    
 #训练捐兵
 def train_template(train_template,startport):
     click(pos['trainning'][0], pos['trainning'][1], startport,3)
@@ -502,7 +524,7 @@ def train_template(train_template,startport):
     click(pos[train_template][0], pos[train_template][1], startport,3)
     #关闭
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
-
+    
 #取消训练中的兵种
 def cancel_troop(startport):
     click(pos['trainning'][0], pos['trainning'][1], startport)
@@ -549,14 +571,15 @@ def startcoc(startport):
     #豌豆荚
     #subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
     time.sleep(30)
-    click(pos['exitstore'][0], pos['exitstore'][1], startport)
-    click(pos['cancel'][0], pos['cancel'][1], startport)
     if startport == 52555:#如果是星陨，尝试点击登录 
         click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
     else:
         click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
         click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
         click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+    #点击取消位置取消广告
+    click(pos['exitstore'][0], pos['exitstore'][1], startport)
+    click(pos['cancel'][0], pos['cancel'][1], startport)
 #重启coc
 def restartcoc(startport):
     home(startport)
@@ -829,7 +852,7 @@ def register(name,startid):
     click(pos['built13'][0], pos['built13'][1], startport)
     time.sleep(7)
     #造兵
-    train('train_troop01',40,startport)
+    train_troop('train_troop01',40,startport)
     timewait(25,startport)
     #升级矿场1,2
     levelup_mine1(startport)
@@ -873,7 +896,7 @@ def register(name,startid):
     levelup_mine(startport)
     cancel(startport)
     #造兵
-    train('train_troop01', 40, startport)
+    train_troop('train_troop01', 40, startport)
     #等待矿场升级完毕
     timewait(20, startport)
     #打哥布林
@@ -890,7 +913,7 @@ def register(name,startid):
     levelup_collector(startport)
     cancel(startport)
     #造兵
-    train('train_troop01', 40, startport)
+    train_troop('train_troop01', 40, startport)
     #等待收集器升级完毕
     timewait(20, startport)
     #升级罐子和瓶子
@@ -948,8 +971,8 @@ def wardonate(startlist):
         #进入部落战界面
         click(pos['war'][0], pos['war'][1], startport)
         #部落战第一个开始捐兵
-        swipe('top', startport)
-        swipe('top', startport)
+        for n in range(5):
+            swipe('top', startport)
         click(pos['war_1'][0], pos['war_1'][1], startport)
         #点击下一个到最后一个
         click_short(pos['war_donate_next'][0], pos['war_donate_next'][1], startport,80)
@@ -964,6 +987,10 @@ def wardonate(startlist):
             click(pos['war_donate_last'][0], pos['war_donate_last'][1], startport)
         #训练部落战兵种
         train_template('train_template01',startport)
+        #补一下气球兵
+        train_troop('train_troop13', 100 , startport)
+        #造雷电药水
+        train_potion('train_troop01', 11 , startport)
         #关闭
         close()
     #g.msgbox(msg='部落战捐兵完成')
