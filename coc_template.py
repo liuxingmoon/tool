@@ -530,7 +530,7 @@ def cancel_troop(startport):
     click(pos['trainning'][0], pos['trainning'][1], startport)
     print('取消兵种')
     click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport)
-    click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 400)
+    click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 500)
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
 
 #取消训练中的药水
@@ -548,7 +548,7 @@ def cancel_army(startport):
     click(pos['trainningitem1'][0], pos['trainningitem1'][1], startport)
     click(pos['edit_army'][0], pos['edit_army'][1], startport)
     for n in range(1,6):#取消兵种
-        click_short(pos['del_army_trp0%d' %(n)][0], pos['del_army_trp0%d' %(n)][1], startport, 200)
+        click_short(pos['del_army_trp0%d' %(n)][0], pos['del_army_trp0%d' %(n)][1], startport, 250)
     for n in range(1,8):#取消药水
         click_short(pos['del_army_pt0%d' %(n)][0], pos['del_army_pt0%d' %(n)][1], startport, 10)
     click(pos['del_army'][0], pos['del_army'][1], startport, 3)#确定删除
@@ -1266,6 +1266,7 @@ def convert_mode(startlist,*args):
                         train_template('train_template02', startport)
                 print('删除兵种结束')
                 #造捐兵兵种
+                train_template('train_template03', startport)
                 train_template('train_template03', startport)
                 #切换为捐兵
                 home(startport)

@@ -657,7 +657,7 @@ if __name__ == "__main__":
             close_emu(donatenames_for_paid)#关闭所有付费捐兵号
             print(r'============================= 等待15分钟避免切换时没有授权导致切换失败 ===============================')
             timewait(15)#等待15分钟避免启动时没有授权登录
-            start_ids(donatenames_for_paid)#启动所有的付费捐兵号，为了授权
+            restart_emu(donatenames_for_paid)#只重启付费捐兵号为了授权
             close_emu(donatenames_for_paid)#关闭所有付费捐兵号
             coc_template.convert_mode(donateids_for_paid,donate_status,donateids_for_paid_del_army)
             #周5打资源，其他时间捐兵
