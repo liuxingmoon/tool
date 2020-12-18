@@ -25,7 +25,7 @@ pos = {
     'pointbot': [658, 525],
     'pointbot_continue': [793, 424],
     'action': [640, 590],
-    'cancel': [1200, 350],
+    'cancel': [1200, 50],
     'exitstore': [1230, 50],
     'name': [640, 325],
     'name_done': [640, 235],
@@ -118,6 +118,10 @@ pos = {
     'train_template01': [1130, 330],
     'train_template02': [1130, 480],
     'train_template03': [1130, 630],
+    'train_siege_unit01': [180, 500],
+    'train_siege_unit02': [410, 500],
+    'train_siege_unit03': [650, 500],
+    'train_siege_unit04': [880, 500],
     'attack_troop01': [200, 655],
     'attack_troop02': [300, 655],
     'attack_troop03': [400, 655],
@@ -161,6 +165,10 @@ pos = {
     'script_switch_mode': [340, 610],
     'script_swipetop': [340, 740],
     'script_swipebot': [340, 1000],
+    'script_night_attackmode': [425, 780],
+    'script_night_attackmode_no': [425, 840],
+    'script_night_attackmode_prize': [425, 900],
+    'script_night_attackmode_alltime': [425, 970],
     'boat': [800, 300],
     'script_play': [340, 660],
     'script_donate': [340, 800],
@@ -524,6 +532,15 @@ def train_template(train_template,startport):
     click(pos[train_template][0], pos[train_template][1], startport,3)
     #关闭
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
+
+#训练攻城器
+def train_siege_unit(startport):
+    click(pos['trainning'][0], pos['trainning'][1], startport,3)
+    click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
+    click_short(pos['train_siege_unit01'][0], pos['train_siege_unit01'][1], startport, 2)
+    click_short(pos['train_siege_unit02'][0], pos['train_siege_unit02'][1], startport, 2)
+    click_short(pos['train_siege_unit03'][0], pos['train_siege_unit03'][1], startport, 2)
+    click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     
 #取消训练中的兵种
 def cancel_troop(startport):
@@ -547,8 +564,10 @@ def cancel_army(startport):
     print('取消现有兵种和药水')
     click(pos['trainningitem1'][0], pos['trainningitem1'][1], startport)
     click(pos['edit_army'][0], pos['edit_army'][1], startport)
-    for n in range(1,6):#取消兵种
-        click_short(pos['del_army_trp0%d' %(n)][0], pos['del_army_trp0%d' %(n)][1], startport, 250)
+    #取消兵种
+    click_short(pos['del_army_trp01'][0], pos['del_army_trp01'][1], startport, 100)
+    click_short(pos['del_army_trp02'][0], pos['del_army_trp02'][1], startport, 250)
+    click_short(pos['del_army_trp03'][0], pos['del_army_trp03'][1], startport, 30)
     for n in range(1,8):#取消药水
         click_short(pos['del_army_pt0%d' %(n)][0], pos['del_army_pt0%d' %(n)][1], startport, 10)
     click(pos['del_army'][0], pos['del_army'][1], startport, 3)#确定删除
@@ -987,10 +1006,11 @@ def wardonate(startlist):
             click(pos['war_donate_last'][0], pos['war_donate_last'][1], startport)
         #训练部落战兵种
         train_template('train_template01',startport)
+        train_template('train_template01',startport)
         #补一下气球兵
         train_troop('train_troop13', 100 , startport)
         #造雷电药水
-        train_potion('train_troop01', 11 , startport)
+        train_potion('train_troop01', 22 , startport)
         #关闭
         close()
     #g.msgbox(msg='部落战捐兵完成')
@@ -1186,14 +1206,26 @@ def start_script(startport,*args):
     # 点击模式设置
     click(pos['script_item3'][0], pos['script_item3'][1], startport, 3)
     click(pos['script_switch_mode'][0], pos['script_switch_mode'][1], startport, 3)
-    # 滑动
+    # 从上往下滑动
     swipeport(pos['script_swipetop'][0], pos['script_swipetop'][1], pos['script_swipebot'][0],pos['script_swipebot'][1], startport)
     time.sleep(5)
     if len(args) > 0:
-        if args[0] == "donate":
+        if args[0] == "donate":#切换为donate
             click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
-        elif args[0] == "play":
+            # 从下往上滑动
+            for n in range(5):
+                swipeport(pos['script_swipebot'][0], pos['script_swipebot'][1], pos['script_swipetop'][0],pos['script_swipetop'][1], startport)
+            #切换夜世界不打资源
+            click(pos['script_night_attackmode'][0], pos['script_night_attackmode'][1], startport, 3)
+            click(pos['script_night_attackmode_no'][0], pos['script_night_attackmode_no'][1], startport, 3)
+        elif args[0] == "play":#切换为play
             click(pos['script_play'][0], pos['script_play'][1], startport, 3)
+            # 从下往上滑动
+            for n in range(10):
+                swipeport(pos['script_swipebot'][0], 950, pos['script_swipetop'][0], 370, startport)
+            click(pos['script_night_attackmode'][0], pos['script_night_attackmode'][1], startport, 3)
+            click(pos['script_night_attackmode_prize'][0], pos['script_night_attackmode_prize'][1], startport, 3)
+            
     click(pos['script_start'][0], pos['script_start'][1], startport)
     time.sleep(20)
     click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
@@ -1265,9 +1297,11 @@ def convert_mode(startlist,*args):
                         # 造捐兵兵种
                         train_template('train_template02', startport)
                 print('删除兵种结束')
+                #造攻城器，防止中断期间把攻城器弄掉了
+                train_siege_unit(startport)
                 #造捐兵兵种
                 train_template('train_template03', startport)
-                train_template('train_template03', startport)
+                #train_template('train_template03', startport)
                 #切换为捐兵
                 home(startport)
                 start_script(startport,status)

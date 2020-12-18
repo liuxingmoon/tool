@@ -30,7 +30,12 @@ Coclog = r'E:\Program Files\Python\Python38\works\tool\coclog.txt'
 configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
 ddpath = r'D:\Program Files\DundiEmu\DunDiEmu.exe'
 
-
+def connect(startport):
+    if startport == 5555:
+        subprocess.Popen(r'adb connect emulator-5554',shell = True)
+        subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
+    else:
+        subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
 
 def start(action,startport,wait_time):
     #开模拟器
@@ -48,17 +53,17 @@ def start(action,startport,wait_time):
     subprocess.Popen('adb start-server', shell=True)
     time.sleep(3)
     #重启并连接连接
-    if startport == 5555:
-        subprocess.Popen(r'adb connect emulator-5554',shell = True)
-        subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
-    else:
-        subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
+    connect(startport)
     time.sleep(3)
     '''
     if result.split()[0] == b'unable':
         close()
     '''
 
+def kill_adb():
+    subprocess.Popen('taskkill /f /t /im adb.exe',shell=True)
+    time.sleep(3)
+    
 def close():
     subprocess.Popen('taskkill /f /t /im DunDiEmu.exe & taskkill /f /t /im DdemuHandle.exe & taskkill /f /t /im adb.exe',shell=True)
     time.sleep(3)
@@ -72,15 +77,17 @@ def coc_script(startport,wait_time):
     time.sleep(wait_time)
     if startport == 5555:
         subprocess.Popen(r'adb -s emulator-5554 shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity',shell=True)
-        result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
-        text = result.stdout.readlines()#元组存储
+        subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
+        #text = result.stdout.readlines()#元组存储
     else:
-        result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
-        text = result.stdout.readlines()#元组存储
+        subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
+        #text = result.stdout.readlines()#元组存储
+    '''
     if 'not found' in text:
         with open(Coclog,'a') as Coclogfile:
             Coclogfile.write('出现bug重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
         reboot()
+    '''
     time.sleep(10)
     
     
@@ -99,35 +106,42 @@ def timewait(min):
     for n in range(min):
         time.sleep(60)
 
-def getport(startid,skipids):
-    #获取启动端口
-    if startid == 0:
-        #如果恰好既是第一个id，又是要跳过的id，或者是捐兵id，需要往下id+1
-        if str(startid) in skipids:
-            print(r'该模拟器id %d 在禁止启动名单之中，跳过!' %(startid))
-            startid += 1
-            #递归获取port
-            return getport(startid,skipids)
+def getport(startid,*skipids):
+    if len(skipids) > 0:
+        #获取启动端口
+        if startid == 0:
+            #如果恰好既是第一个id，又是要跳过的id，或者是捐兵id，需要往下id+1
+            if str(startid) in skipids[0]:
+                print(r'该模拟器id %d 在禁止启动名单之中，跳过!' %(startid))
+                startid += 1
+                #递归获取port
+                return getport(startid,skipids[0])
+            else:
+                startport = 5555
+                return [startid,startport]
+        #skipids
+        elif str(startid) in skipids[0]:
+            #如果恰好既是最后一个id，又是要跳过的id，需要直接循环为初始id
+            if startid == maxid:
+                print(r'该模拟器id %d 在禁止启动名单之中，跳过!' %(startid))
+                startid = minid
+                #递归获取port
+                return getport(startid,skipids[0])
+            else:
+                print(r'============================= 该模拟器id %d 在禁止启动名单之中，跳过! ===============================' %(startid))
+                startid += 1
+                #递归获取port
+                return getport(startid,skipids[0])
         else:
-            startport = 5555
+            startport = 52550 + startid
             return [startid,startport]
-    #skipids
-    elif str(startid) in skipids:
-        #如果恰好既是最后一个id，又是要跳过的id，需要直接循环为初始id
-        if startid == maxid:
-            print(r'该模拟器id %d 在禁止启动名单之中，跳过!' %(startid))
-            startid = minid
-            #递归获取port
-            return getport(startid,skipids)
-        else:
-            print(r'============================= 该模拟器id %d 在禁止启动名单之中，跳过! ===============================' %(startid))
-            startid += 1
-            #递归获取port
-            return getport(startid,skipids)
     else:
-        startport = 52550 + startid
-        return [startid,startport]
-
+        if int(startid) == 0:
+            startport = 5555
+        else:
+            startport = 52550 + int(startid)
+        return startport
+        
 def play(wait_time,skipids):
     # 参数获取
     #config = configparser.ConfigParser()
@@ -150,17 +164,8 @@ def play(wait_time,skipids):
         time.sleep(5)
         click(pos['start_script'][0],pos['start_script'][1],startport)
         print('============================= 启动打资源脚本完成 =============================')
-        if startport == 52555:#如果是星陨，尝试点击登录
-            time.sleep(20)
-            click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
-            click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
-        #elif str(startid) not in notplaylist:#双重否定表肯定，在轮循打资源列表中的id
-        elif int(startid) in [10,13,15,20,21,25,27,31,32,33,34,36]:
-            #昆仑
-            time.sleep(20)
-            #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
-            click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
-            click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+        time.sleep(20)
+        login_click(startid)
         #打印分割线
         read_id = playnames[startid]
         print(r'============================= %s 实例启动完成 ===============================' %(read_id))
@@ -193,10 +198,7 @@ def play_donate_for_paid(donateids):
     #写入config
     config.set("coc", "donateid_for_paid_now", donateid_now)#只能存储str类型数据
     config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
-    if int(donateid_now) == 0:
-        startport = 5555
-    else:
-        startport = 52550 + int(donateid_now)
+    startport = getport(int(donateid_now))
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(donateid_now))
     start(action,startport,30)
     print(r'============================= 启动付费捐兵模拟器完成 ===============================')
@@ -206,16 +208,8 @@ def play_donate_for_paid(donateids):
     click(pos['sure'][0], pos['sure'][1],startport)
     time.sleep(5)
     click(pos['start_script'][0],pos['start_script'][1],startport)
-    if startport == 52555:#如果是星陨，尝试点击登录 
-        time.sleep(20)
-        click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
-        click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
-    elif int(donateid_now) in [10,13,15,20,21,25,27,31,32,33,34,36]:
-        #昆仑
-        time.sleep(20)
-        #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
-        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
-        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+    time.sleep(20)
+    login_click(donateid_now)
     print(r'============================= 启动付费捐兵脚本完成 ===============================')
 
     
@@ -241,10 +235,7 @@ def play_donate(donateids):
     #写入config
     config.set("coc", "donateid_now", donateid_now)#只能存储str类型数据
     config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
-    if int(donateid_now) == 0:
-        startport = 5555
-    else:
-        startport = 52550 + int(donateid_now)
+    startport = getport(int(donateid_now))
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(donateid_now))
     start(action,startport,30)
     print(r'============================= 启动捐兵模拟器完成 ===============================')
@@ -254,16 +245,8 @@ def play_donate(donateids):
     click(pos['sure'][0], pos['sure'][1],startport)
     time.sleep(5)
     click(pos['start_script'][0],pos['start_script'][1],startport)
-    if startport == 52555:#如果是星陨，尝试点击登录 
-        time.sleep(20)
-        click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
-        click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
-    elif int(donateid_now) in [10,13,15,20,21,25,27,31,32,33,34,36]:
-        #昆仑
-        time.sleep(20)
-        #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
-        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
-        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+    time.sleep(20)
+    login_click(donateid_now)
     print(r'============================= 启动自用捐兵脚本完成 ===============================')
     #打印分割线
     read_id = donatenames[donateid_now]
@@ -293,6 +276,7 @@ def play_resource(resourceids):
         startport = 5555
     else:
         startport = 52550 + int(resourceid_now)
+    startport = getport(int(resourceid_now))
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(resourceid_now))
     start(action,startport,30)
     print(r'============================= 启动持续打资源模拟器完成 ===============================')
@@ -300,19 +284,10 @@ def play_resource(resourceids):
     coc_script(startport,5)
     time.sleep(10)
     click(pos['sure'][0], pos['sure'][1],startport)
-    time.sleep(10)
+    time.sleep(15)
     click(pos['start_script'][0],pos['start_script'][1],startport,5)
-    click(pos['start_script'][0],pos['start_script'][1],startport,10)
-    if startport == 52555:#如果是星陨，尝试点击登录 
-        time.sleep(20)
-        click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
-        click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
-    elif int(resourceid_now) in [10,13,15,20,21,25,27,31,32,33,34,36]:
-        #昆仑
-        time.sleep(20)
-        #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
-        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
-        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+    time.sleep(20)
+    login_click(resourceid_now)
     print(r'============================= 启动持续打资源脚本完成 ===============================')
    
     
@@ -377,30 +352,20 @@ def close_emu(closelist):
 
 #启动模拟器（列表中所有）       
 def start_emu(start_id):
-    if int(start_id) == 0:
-        startport = 5555
-    else:
-        startport = 52550 + int(start_id)
+    startport = getport(start_id)
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(start_id))
     start(action,startport,30)
     print(r'============================= 启动付费捐兵号模拟器完成 ===============================')
     time.sleep(3)
+    print(startport)
     coc_script(startport,5)
     time.sleep(10)
     click(pos['sure'][0], pos['sure'][1],startport)
     time.sleep(10)
     click(pos['start_script'][0],pos['start_script'][1],startport,5)
     click(pos['start_script'][0],pos['start_script'][1],startport,10)
-    if startport == 52555:#如果是星陨，尝试点击登录 
-        time.sleep(20)
-        click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
-        click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
-    elif int(start_id) in [10,13,15,20,21,25,27,31,32,33,34,36]:
-        #昆仑
-        time.sleep(20)
-        #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
-        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
-        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+    time.sleep(20)
+    login_click(start_id)
     print(r'============================= 启动付费捐兵号脚本完成 ===============================')
    
         
@@ -455,6 +420,21 @@ def restartdonate(donateids):
         for n in range(donate_num):
             play_donate(donateids)
 
+def login_click(startid):
+    startport = getport(startid)
+    connect(startport)#连接        
+    if int(startid) == 5:#如果是星陨，尝试点击登录
+        click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
+        click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
+    #elif str(startid) not in notplaylist:#双重否定表肯定，在轮循打资源列表中的id
+    elif int(startid) in [10,13,15,20,21,25,27,29,30,31,32,33,34,36]:
+        #昆仑
+        #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
+        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+    elif int(startid) in [0,1,2,3,4,42]:#QQ
+        click(pos['start_script'][0],pos['start_script'][1],startport,5)
+        
 #开始操作
 #coc
 if __name__ == "__main__":
@@ -600,9 +580,10 @@ if __name__ == "__main__":
     #首次运行打开付费捐兵号
     if ((time_status != '凌晨') and (donate_status == 'donate')) or ((time_status == '凌晨') and (donate_status == 'play')):
         #启动付费捐兵号
+        kill_adb()
         restart_emu(donatenames_for_paid,donateids_for_paid_2nd)
-
     while True:
+        kill_adb()
         endtime_global = datetime.datetime.now()
         runtime_global = endtime_global - starttime_global
         #每隔一天重启一次
@@ -685,6 +666,9 @@ if __name__ == "__main__":
             play_donate(donateids)
         #启动打资源号
         restartplay()
+        #启动付费捐兵号防登录失败
+        login_click(5)#点击一下星陨防止卡在登录页面
+        login_click(3)#点击一下星河，总是卡在启动脚本页面
 '''
     except Err as reason:
         with open(Coclog,'a') as Coclogfile:

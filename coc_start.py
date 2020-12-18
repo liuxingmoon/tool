@@ -104,7 +104,7 @@ def start(startid):
     if startport == 52555:#如果是星陨，尝试点击登录 
         c.click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport)
         time.sleep(3)
-    elif int(startid) in [10,13,15,20,21,25,27,31,32,33,34,36]:
+    elif int(startid) in [10,13,15,20,21,25,27,29,30,31,32,33,34,36]:
         #这些号启动比较慢
         time.sleep(30)
         c.click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport)#点击登录
