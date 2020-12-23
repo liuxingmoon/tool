@@ -5,7 +5,7 @@ import configparser
 import os
 import coc_customer
 import AutoClick as ak
-import update_coc
+import coc_update,coc_resume
 
 def start():
     #启动部落冲突自动启动鼠标连点
@@ -77,7 +77,8 @@ def start():
         #切换捐兵/打资源状态
         def convert_mode():
             startidlist = getinfo()
-            coc_template.convert_mode(startidlist)
+            for convert_id in startidlist:
+                coc_template.convert_mode(convert_id,"play","force")#切换为捐兵
         #打资源
         def cocStart():
             startidlist = getinfo()  # 获取输入框信息
@@ -184,7 +185,7 @@ def start():
         cocremoveN_bt.grid(row=4, column=3,
                           padx=10, pady=10)
         #切换捐兵/打资源状态
-        convert_mode_bt = tk.Button(root, text='切换状态', command=convert_mode, width=15)
+        convert_mode_bt = tk.Button(root, text='切换捐兵状态', command=convert_mode, width=15)
         convert_mode_bt.grid(row=5, column=1,
                           padx=10, pady=10)
         #客户信息
@@ -192,8 +193,12 @@ def start():
         custmoer_bt.grid(row=5, column=2,
                           padx=10, pady=10)
         #更新代码
-        update_coc_bt = tk.Button(root,text='更新代码',command=update_coc.start,width=15)
-        update_coc_bt.grid(row=5,column=3,
+        coc_update_bt = tk.Button(root,text='更新备份',command=coc_update.start,width=15)
+        coc_update_bt.grid(row=5,column=3,
+              padx=10,pady=10)
+        #恢复备份
+        coc_resume_bt = tk.Button(root,text='恢复代码',command=coc_resume.start,width=15)
+        coc_resume_bt.grid(row=6,column=1,
               padx=10,pady=10)
 
         root.mainloop()

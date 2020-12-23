@@ -1,6 +1,6 @@
 import tkinter as tk
 import time
-import os
+import os,sys
 import tkinter.messagebox as messagebox
 import tkinter.filedialog
 import tkinter.colorchooser as colorchooser

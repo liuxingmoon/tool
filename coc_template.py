@@ -4,7 +4,9 @@ import time
 import easygui as g
 import random
 from coc_start import Coc as c
+import coc_start
 import win32gui
+from win32.lib import win32con
 import keyboard as k
 import threading
 import inspect
@@ -13,6 +15,8 @@ import sys
 from pynput.keyboard import Key, Listener
 import configparser
 import random
+from multiprocessing import Process
+
 # coc模板
 #方法：
 
@@ -252,7 +256,25 @@ def getport(startid):
     else:
         startport = 52550 + startid
         return startport
+        
+def kill_server():
+    # 关闭模拟器连接
+    subprocess.Popen('adb kill-server', shell=True)
+    time.sleep(3)
 
+def start_server():
+    #开启模拟器连接
+    subprocess.Popen('adb start-server', shell=True)
+    time.sleep(3)
+
+def restart_server():
+    kill_server()
+    start_server()
+        
+def kill_adb():
+    subprocess.Popen('taskkill /f /t /im adb.exe',shell=True)
+    time.sleep(3)
+    
 # 开始
 def connect(startport):
     # 关闭模拟器连接
@@ -505,6 +527,7 @@ def removeTree(startid,timewait):
 
 #训练士兵
 def train_troop(train_troopid,num,startport):
+    click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     click(pos['trainning'][0], pos['trainning'][1], startport)
     click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport)
     click_short(pos[train_troopid][0], pos[train_troopid][1], startport,num)
@@ -512,6 +535,7 @@ def train_troop(train_troopid,num,startport):
     
 #训练potion
 def train_potion(train_troopid,num,startport):
+    click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     click(pos['trainning'][0], pos['trainning'][1], startport)
     click(pos['trainningitem3'][0], pos['trainningitem3'][1], startport)
     click_short(pos[train_troopid][0], pos[train_troopid][1], startport,num)
@@ -519,6 +543,7 @@ def train_potion(train_troopid,num,startport):
     
 #训练捐兵
 def train_template(train_template,startport):
+    click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     click(pos['trainning'][0], pos['trainning'][1], startport,3)
     #12本上
     click(pos['trainningitem5'][0], pos['trainningitem5'][1], startport,3)
@@ -535,6 +560,7 @@ def train_template(train_template,startport):
 
 #训练攻城器
 def train_siege_unit(startport):
+    click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     click(pos['trainning'][0], pos['trainning'][1], startport,3)
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
     click_short(pos['train_siege_unit01'][0], pos['train_siege_unit01'][1], startport, 2)
@@ -544,6 +570,7 @@ def train_siege_unit(startport):
     
 #取消训练中的兵种
 def cancel_troop(startport):
+    click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     click(pos['trainning'][0], pos['trainning'][1], startport)
     print('取消兵种')
     click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport)
@@ -552,6 +579,7 @@ def cancel_troop(startport):
 
 #取消训练中的药水
 def cancel_potion(startport):
+    click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     click(pos['trainning'][0], pos['trainning'][1], startport)
     print('取消药水')
     click(pos['trainningitem3'][0], pos['trainningitem3'][1], startport)
@@ -560,6 +588,7 @@ def cancel_potion(startport):
 
 #取消现有兵种和药水
 def cancel_army(startport):
+    click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     click(pos['trainning'][0], pos['trainning'][1], startport)
     print('取消现有兵种和药水')
     click(pos['trainningitem1'][0], pos['trainningitem1'][1], startport)
@@ -577,7 +606,7 @@ def cancel_army(startport):
     click(pos['exitstore'][0], pos['exitstore'][1], startport, 3)#退出
 
 #启动coc
-def startcoc(startport):
+def startcoc(startport,wait_time):
     connect(startport)
     try:
         #九游
@@ -589,7 +618,7 @@ def startcoc(startport):
         subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
     #豌豆荚
     #subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
-    time.sleep(30)
+    time.sleep(wait_time)
     if startport == 52555:#如果是星陨，尝试点击登录 
         click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
     else:
@@ -603,12 +632,25 @@ def startcoc(startport):
 def restartcoc(startport):
     home(startport)
     time.sleep(60)
-    startcoc(startport)
+    startcoc(startport,35)
 
 def close():
-    subprocess.Popen('taskkill /f /t /im DunDiEmu.exe & taskkill /f /t /im DdemuHandle.exe',shell=True)
+    subprocess.Popen('taskkill /f /t /im DunDiEmu.exe & taskkill /f /t /im DdemuHandle.exe & taskkill /f /t /im adb.exe',shell=True)
     time.sleep(3)
-
+    
+#关闭模拟器名字    
+def close_emu_id(close_id):
+    close_id = int(close_id)
+    close_config = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' %(close_id)
+    with open(close_config,'r') as close_file:
+        configlines = close_file.readlines()
+        for configline in configlines:
+            if 'EmulatorTitleName' in configline:
+                close_name = configline.split('=')[-1].rstrip('\n')
+        close_window = win32gui.FindWindow(None, close_name)
+        win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)# 关闭一个捐兵号
+        print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
+        
 #等待
 def timewait(min,startport):
     for n in range(min):
@@ -950,7 +992,7 @@ def resource(startid,endid):
         #重新登录qq
         click(pos['relogin'][0], pos['relogin'][1], startport)
         time.sleep(10)
-        startcoc(startport)
+        startcoc(startport,35)
         cancel(startport)
         levelup_mine(startport)
         cancel(startport)
@@ -963,7 +1005,7 @@ def resource(startid,endid):
         click(pos['base2'][0], pos['base2'][1], startport)
         click(pos['levelup2'][0], pos['levelup2'][1], startport)
         click(pos['enter'][0], pos['enter'][1], startport)
-        close()
+        close_emu_id(int(nowid))
     g.msgbox(msg='升级完成')
 
 #部落战捐兵
@@ -977,7 +1019,7 @@ def wardonate(startlist):
         #重新登录qq
         click(pos['relogin'][0], pos['relogin'][1], startport)
         time.sleep(10)
-        startcoc(startport)
+        startcoc(startport,35)
         cancel(startport)
         #等待1分
         timewait(1,startport)
@@ -1012,7 +1054,7 @@ def wardonate(startlist):
         #造雷电药水
         train_potion('train_troop01', 22 , startport)
         #关闭
-        close()
+        close_emu_id(int(nowid))
     #g.msgbox(msg='部落战捐兵完成')
 
 #启动coc
@@ -1025,7 +1067,7 @@ def start_coc(startidlist):
         #重新登录qq
         click(pos['relogin'][0], pos['relogin'][1], startport)
         time.sleep(10)
-        startcoc(startport)
+        startcoc(startport,35)
         cancel(startport)
     g.msgbox(msg='启动各个部落完成')
     
@@ -1039,7 +1081,7 @@ def levelup_3(startid,endid):
         #重新登录qq
         click(pos['relogin'][0], pos['relogin'][1], startport)
         time.sleep(10)
-        startcoc(startport)
+        startcoc(startport,35)
         cancel(startport)
         #收集资源
         click(pos['mine1'][0], pos['mine1'][1], startport)
@@ -1111,7 +1153,7 @@ def levelup_3(startid,endid):
         time.sleep(1)
         for n in range(45):
             click(pos['built24'][0], pos['built24'][1], startport)
-        close()
+        close_emu_id(int(nowid))
     g.msgbox(msg='升级完成')
 
 
@@ -1232,85 +1274,92 @@ def start_script(startport,*args):
     click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
     click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
 
+        
 #切换打鱼和捐兵
-def convert_mode(startlist,*args):
+def convert_mode(convert_id,*args):
     #args[0]表示当前状态，args[1]表示删掉已经造好的兵种的模拟器id
     config = configparser.ConfigParser()
-    for nowid in startlist:
-        #读取一次配置文件
-        config.read(configpath, encoding="utf-8")
-        nowid = int(nowid)
-        startport = getport(nowid)
-        #查看是否在捐兵配置中，没有就配置为捐兵
-        try:
-            if len(args) > 0:
-                status = args[0]
-                statusnow = config.get("coc", "startid%d"%(nowid))
-            else:
-                status = config.get("coc", "startid%d"%(nowid))
-                statusnow = config.get("coc", "startid%d"%(nowid))
-        except:
-            config.set("coc", "startid%d"%(nowid),"donate")
-            config.write(open(configpath, "w",encoding='utf-8'))
-            status = "donate"
-        #转换状态并保存
-        if status == statusnow:
-            if status == "donate":
-                print("切换状态为 play")
-                status = "play"
-                #启动模拟器
-                action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (nowid)
-                c().start(action, nowid)
-                # 重新登录qq
-                click(pos['relogin'][0], pos['relogin'][1], startport,3)
-                #切换为打资源
-                start_script(startport,status)
-            else:
-                print("切换状态为 donate")
-                status = "donate"
-                #启动模拟器
-                action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (nowid)
-                c().start(action, nowid)
-                # 重新登录qq
-                click(pos['relogin'][0], pos['relogin'][1], startport,3)
-                #click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
-                #启动coc
-                startcoc(startport)
-                #等待1分
-                timewait(1,startport)
-                #夜世界切换
-                #归到右上角
-                swipe('top',startport)
-                swipe('right',startport)
-                #船
-                click(pos['boat'][0], pos['boat'][1], startport, 5)
-                #取消训练中的兵种
-                cancel_troop(startport)
-                if len(args) >= 2:
-                    print('开始执行删除现有兵种，需要全部删除的id为%s'%(args[1]))
-                    if (str(nowid) in args[1]):
-                        print('删除%d的现有兵种和药水并造兵' %(nowid))
-                        # 取消训练中的药水
-                        cancel_potion(startport)
-                        #取消现有兵种和药水
-                        cancel_army(startport)
-                        # 造捐兵兵种
-                        train_template('train_template02', startport)
-                print('删除兵种结束')
-                #造攻城器，防止中断期间把攻城器弄掉了
-                train_siege_unit(startport)
-                #造捐兵兵种
-                train_template('train_template03', startport)
-                #train_template('train_template03', startport)
-                #切换为捐兵
-                home(startport)
-                start_script(startport,status)
-            #暂停几秒钟保存切换后状态
-            time.sleep(5)
-            close()
+    #for nowid in startlist:
+    #读取一次配置文件
+    config.read(configpath, encoding="utf-8")
+    donateids_for_paid_del_army = config.get("coc", "donateids_for_paid_del_army").split()
+    #nowid = int(nowid)
+    convert_id = int(convert_id)
+    startport = getport(convert_id)
+    kill_adb()#重启一下adb
+    #查看是否在捐兵配置中，没有就配置为捐兵
+    try:
+        if len(args) > 0:
+            status = args[0]
+            statusnow = config.get("coc", "startid%d"%(convert_id))
         else:
-            status = statusnow
-            close()
-        #保存当前状态
-        config.set("coc", "startid%d"%(nowid),status)
+            status = config.get("coc", "startid%d"%(convert_id))
+            statusnow = config.get("coc", "startid%d"%(convert_id))
+    except:
+        config.set("coc", "startid%d"%(convert_id),"donate")
         config.write(open(configpath, "w",encoding='utf-8'))
+        status = "donate"
+    #转换状态并保存
+    if (status == statusnow) or (len(args) == 2):
+        if status == "donate":
+            print("切换状态为 play")
+            status = "play"
+            #启动模拟器
+            action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (convert_id)
+            coc_start.start_convert(action, convert_id, 60)
+            # 重新登录qq
+            click(pos['relogin'][0], pos['relogin'][1], startport,3)
+            #切换为打资源
+            start_script(startport,status)
+        else:
+            print("切换状态为 donate")
+            status = "donate"
+            #启动模拟器
+            action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (convert_id)
+            coc_start.start_convert(action, convert_id, 30)
+            #等待1分
+            timewait(1,startport)
+            # 重新登录qq
+            click(pos['relogin'][0], pos['relogin'][1], startport,3)
+            #click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
+            #启动coc
+            startcoc(startport,150)
+            #等待1分
+            timewait(1,startport)
+            #夜世界切换
+            #归到右上角
+            swipe('top',startport)
+            swipe('right',startport)
+            #船
+            click(pos['boat'][0], pos['boat'][1], startport, 5)
+            #取消训练中的兵种
+            cancel_troop(startport)
+            if (str(convert_id) in donateids_for_paid_del_army):
+                print('开始执行删除现有兵种，需要全部删除的id为%s'%(donateids_for_paid_del_army))
+                print('删除%d的现有兵种和药水并造兵' %(convert_id))
+                # 取消训练中的药水
+                cancel_potion(startport)
+                #取消现有兵种和药水
+                cancel_army(startport)
+                # 造捐兵兵种
+                train_template('train_template02', startport)
+            print('删除兵种结束')
+            #造攻城器，防止中断期间把攻城器弄掉了
+            train_siege_unit(startport)
+            #造捐兵兵种
+            train_template('train_template03', startport)
+            #train_template('train_template03', startport)
+            #切换为捐兵
+            home(startport)
+            start_script(startport,status)
+        #暂停几秒钟保存切换后状态
+        time.sleep(5)
+        close_emu_id(convert_id)#关闭该模拟器
+        #close()
+    else:
+        status = statusnow
+        close_emu_id(convert_id)#关闭该模拟器
+        #close()
+    #保存当前状态
+    config.set("coc", "startid%d"%(convert_id),status)
+    config.write(open(configpath, "w",encoding='utf-8'))

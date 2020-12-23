@@ -11,8 +11,9 @@ import threading
 import coc_template
 import os
 import AutoClick as ak
+import keyboard as k
 import coc_start
-
+from multiprocessing import Process
 #元素坐标
 pos = {
   'coc_script':[500,680],
@@ -36,6 +37,25 @@ def connect(startport):
         subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
     else:
         subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
+        
+def kill_adb():
+    subprocess.Popen('taskkill /f /t /im adb.exe',shell=True)
+    time.sleep(3)
+    
+def kill_server():
+    # 关闭模拟器连接
+    subprocess.Popen('adb kill-server', shell=True)
+    time.sleep(3)
+
+def start_server():
+    #开启模拟器连接
+    subprocess.Popen('adb start-server', shell=True)
+    time.sleep(3)
+
+def restart_server():
+    kill_server()
+    kill_adb()
+    start_server()
 
 def start(action,startport,wait_time):
     #开模拟器
@@ -46,22 +66,9 @@ def start(action,startport,wait_time):
     #确保模拟器进程已经启动
     #等待系统开机
     time.sleep(40)
-    # 关闭模拟器连接
-    subprocess.Popen('adb kill-server', shell=True)
-    time.sleep(3)
-    #开启模拟器连接
-    subprocess.Popen('adb start-server', shell=True)
-    time.sleep(3)
+    start_server()
     #重启并连接连接
     connect(startport)
-    time.sleep(3)
-    '''
-    if result.split()[0] == b'unable':
-        close()
-    '''
-
-def kill_adb():
-    subprocess.Popen('taskkill /f /t /im adb.exe',shell=True)
     time.sleep(3)
     
 def close():
@@ -154,7 +161,7 @@ def play(wait_time,skipids):
         startlist = getport(startid,skipids)
         startid = int(startlist[0])#获取启动模拟器id
         startport = startlist[1]#获取port
-        action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(startid)
+        action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(startid)
         #启动新id
         start(action,startport,wait_time)
         print('============================= 启动模拟器完成 =============================')
@@ -199,7 +206,7 @@ def play_donate_for_paid(donateids):
     config.set("coc", "donateid_for_paid_now", donateid_now)#只能存储str类型数据
     config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
     startport = getport(int(donateid_now))
-    action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(donateid_now))
+    action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(donateid_now))
     start(action,startport,30)
     print(r'============================= 启动付费捐兵模拟器完成 ===============================')
     time.sleep(3)
@@ -236,7 +243,7 @@ def play_donate(donateids):
     config.set("coc", "donateid_now", donateid_now)#只能存储str类型数据
     config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
     startport = getport(int(donateid_now))
-    action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(donateid_now))
+    action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(donateid_now))
     start(action,startport,30)
     print(r'============================= 启动捐兵模拟器完成 ===============================')
     time.sleep(3)
@@ -277,7 +284,7 @@ def play_resource(resourceids):
     else:
         startport = 52550 + int(resourceid_now)
     startport = getport(int(resourceid_now))
-    action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(resourceid_now))
+    action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(resourceid_now))
     start(action,startport,30)
     print(r'============================= 启动持续打资源模拟器完成 ===============================')
     time.sleep(3)
@@ -305,9 +312,9 @@ def instance(donate_switch,donate_status):
         print('目前处于晚上,可以执行 %d 实例, %d 分钟，可以运行捐兵实例' %(instance_num_night,instance_time_night*60))
         #付费捐兵号(晚上运行启动)
         if donate_switch in ['True','1','T']:
-            print(r'============================= 持久运行号开始运行！ ===============================')
+            print(r'============================= 自用捐兵号运行！ ===============================')
         else:
-            print('没有持久运行号需要运行！')
+            print('没有自用捐兵号需要运行！')
         return [instance_num_night,instance_time_night,'晚上']
     elif now_time >= morning_time_end and now_time < day_time_end:
         print('目前处于凌晨,可以执行 %d 实例, %d 分钟，不需要运行捐兵实例' %(instance_num_morning,instance_time_morning*60))
@@ -316,9 +323,9 @@ def instance(donate_switch,donate_status):
         print('目前处于白天,可以执行%d实例,%d分钟' %(instance_num_day,instance_time_day*60))
         #付费捐兵号(白天运行启动)
         if donate_switch in ['True','1','T']:
-            print(r'============================= 持久运行号开始运行！ ===============================')
+            print(r'============================= 自用捐兵号开始运行！ ===============================')
         else:
-            print(r'============================= 没有持久运行号需要运行！ ===============================')
+            print(r'============================= 没有自用捐兵号需要运行！ ===============================')
         return [instance_num_day,instance_time_day,'白天',donate_status]
 
 #关闭指定id窗口          
@@ -351,10 +358,10 @@ def close_emu(closelist):
         print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
 
 #启动模拟器（列表中所有）       
-def start_emu(start_id):
+def start_emu(start_id,wait_time):
     startport = getport(start_id)
-    action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(start_id))
-    start(action,startport,30)
+    action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(start_id))
+    start(action,startport,wait_time)
     print(r'============================= 启动付费捐兵号模拟器完成 ===============================')
     time.sleep(3)
     print(startport)
@@ -380,11 +387,16 @@ def restart_emu(restartlist,*donateids_for_paid_2nd):
             print('============================= 重启的模拟器：%s 是第二梯队的,第一梯队重启结束等待15分钟再重启 ===============================' %(restart_name))
         else:
             print('============================= 重启的模拟器名字为：%s ===============================' %(restart_name))
-            start_emu(int(restart_id))
+            #start_emu_process = Process(target=start_emu,args=(int(restart_id),60))
+            #start_emu_process.start()
+            start_emu(int(restart_id),30)
     if len(donateids_for_paid_2nd) > 0:
         timewait(15)
         for restart_id in donateids_for_paid_2nd[0]:
-            start_emu(int(restart_id))#启动第二梯队
+            #start_emu_process = Process(target=start_emu,args=(int(restart_id),30))
+            #start_emu_process.start()
+            start_emu(int(restart_id),30)#启动第二梯队
+    restart_server()
 #重启打资源
 def restartplay():
     #同时运行几个实例
@@ -399,6 +411,7 @@ def restartplay():
         wait_time += 5
     #运行该coc实例时间
     t = int(3600*instance_time)
+    restart_server()
     time.sleep(t)
         
 #重启捐兵号
@@ -419,7 +432,8 @@ def restartdonate(donateids):
         print(r'============================= 已经下线15分钟，开始捐兵！ ===============================')
         for n in range(donate_num):
             play_donate(donateids)
-
+    restart_server()
+    
 def login_click(startid):
     startport = getport(startid)
     connect(startport)#连接        
@@ -434,7 +448,9 @@ def login_click(startid):
         click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
     elif int(startid) in [0,1,2,3,4,42]:#QQ
         click(pos['start_script'][0],pos['start_script'][1],startport,5)
-        
+    else:
+        click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+    
 #开始操作
 #coc
 if __name__ == "__main__":
@@ -474,7 +490,10 @@ if __name__ == "__main__":
             skipids = list(set(skipids))#去重
 
     #捐兵（一直运行）
-    donate_switch = config.get("coc", "donate_switch")#是否开启捐兵
+    donate_for_paid_switch = config.get("coc", "donate_for_paid_switch")#是否开启持续打资源
+    play_resource_switch = config.get("coc", "play_resource_switch")#是否开启持续打资源
+    donate_switch = config.get("coc", "donate_switch")#是否开启自用捐兵
+    play_switch = config.get("coc", "play_switch")#是否开启轮循打资源
     donateids_for_paid = config.get("coc", "donateids_for_paid").split()#获取付费捐兵id的list
     donateids_for_paid_del_army = config.get("coc", "donateids_for_paid_del_army").split()#获取付费捐兵id删除兵的list
     donateids = config.get("coc", "donateids").split()#获取捐兵id的list
@@ -518,20 +537,24 @@ if __name__ == "__main__":
 
     #获取付费捐兵号数量
     donateids_for_paid_num = len(donateids_for_paid)
-    #获取持续打资源id的list
-    resourceids_num = int(config.get("coc", "resourceids_num"))#打资源号的个数
     #获取捐兵的数量
     if donate_mode == "A":
         donate_num = len(donateids)
-    else:
+    elif donate_switch == "T":
         donate_num = int(config.get("coc", "donate_num"))#捐兵号的个数
+    elif donate_switch == "F":
+        donate_num = 0
+    if play_resource_switch in ['True','1','T']:
+        #获取持续打资源id的list
+        resourceids_num = int(config.get("coc", "resourceids_num"))#打资源号的个数
+    elif play_resource_switch in ['False','0','F']:
+        resourceids_num = 0
     #查看捐兵号的开关是否打开，打开就跳过该id
-    if donate_switch in ['True','1','T']:
-        skipids.extend(donateids)#添加捐兵的id到跳过id列表中
-        skipids.extend(donateids_for_paid)#添加捐兵的id到跳过id列表中
-        skipids.extend(resourceids)#添加持续打资源的id到跳过id列表中
-        skipids = list(set(skipids))#去重
-        skipids.sort()
+    skipids.extend(donateids_for_paid)#添加捐兵的id到跳过id列表中
+    skipids.extend(donateids)#添加捐兵的id到跳过id列表中
+    skipids.extend(resourceids)#添加持续打资源的id到跳过id列表中
+    skipids = list(set(skipids))#去重
+    skipids.sort()
     print('============================= 跳过的实例id如下 ===============================\n%s' %(skipids))
 
     playnames = {}
@@ -609,44 +632,90 @@ if __name__ == "__main__":
         result = instance(donate_switch,donate_status)
         #启动打资源的模拟器个数
         instance_num = result[0]
+        '''
         if donate_switch in ['True','1','T']:
             if instance_num < donate_num:
                 instance_num = 0
             else:
-                instance_num = instance_num - donate_num - donateids_for_paid_num - resourceids_num
+        '''
+        instance_num = instance_num - donate_num - donateids_for_paid_num - resourceids_num
         #等待时间
         instance_time = result[1]
         #现在时间
         time_status = result[2]
         #凌晨切换捐兵状态为打资源，顺便做一次部落战捐兵
         if (time_status == '凌晨') and (donate_status == 'donate'):
-            close()#关闭
-            coc_template.convert_mode(donateids_for_paid,donate_status)
-            coc_template.convert_mode(donateids,donate_status)
-            coc_template.convert_mode(resourceids,donate_status)
+            close()#关闭kill_adb()
+            for convert_id in donateids_for_paid:
+                process_convert_donateids_for_paid = Process(target=coc_template.convert_mode,args=(convert_id,donate_status))
+                process_convert_donateids_for_paid.start()
+            process_convert_donateids_for_paid.join()#主线程等待子线程运行完执行下一步
+            #coc_template.convert_mode(donateids_for_paid,donate_status)
+            for convert_id in resourceids:
+                process_convert_resourceids = Process(target=coc_template.convert_mode,args=(convert_id,donate_status))
+                process_convert_resourceids.start()
+            process_convert_resourceids.join()#主线程等待子线程运行完执行下一步
+            #coc_template.convert_mode(resourceids,donate_status)
+            '''
+            for convert_id in donateids:
+                process_convert_donateids = Process(target=coc_template.convert_mode,args=(convert_id,donate_status))
+                process_convert_donateids.start()
+            process_convert_donateids.join()#主线程等待子线程运行完执行下一步
+            #coc_template.convert_mode(donateids,donate_status)
+            '''
+            #点击中间关闭adb.exe弹出的错误按钮
+            for n in range(15):
+                k.mouse_click(894, 544)
+            
             with open(Coclog,'a') as Coclogfile:
                 Coclogfile.write('凌晨切换捐兵状态为打资源,切换时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             donate_status = 'play'
             config.read(configpath, encoding="utf-8")
             config.set("coc", "donate_status", donate_status)#只能存储str类型数据
+            for convert_id in donateids_for_paid:
+                config.set("coc", "startid%d" %(int(convert_id)), donate_status)#只能存储str类型数据
+            for convert_id in resourceids:
+                config.set("coc", "startid%d" %(int(convert_id)), donate_status)#只能存储str类型数据
             config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
             #部落战捐兵
             #coc_template.wardonate(warids)
             restart_emu(donatenames_for_paid)#只重启付费捐兵号
         #早上切换打资源状态为捐兵
         elif (time_status != '凌晨') and (donate_status == 'play'):
-            close_emu(donatenames_for_paid)#关闭所有付费捐兵号
+            close()#关闭所有模拟器kill_adb()
             print(r'============================= 等待15分钟避免切换时没有授权导致切换失败 ===============================')
             timewait(15)#等待15分钟避免启动时没有授权登录
             restart_emu(donatenames_for_paid)#只重启付费捐兵号为了授权
             close_emu(donatenames_for_paid)#关闭所有付费捐兵号
-            coc_template.convert_mode(donateids_for_paid,donate_status,donateids_for_paid_del_army)
+            '''
+            #多进程执行有不可预料失败可能
+            for convert_id in donateids_for_paid:
+                process_convert_donateids_for_paid = Process(target=coc_template.convert_mode,args=(convert_id,donate_status,donateids_for_paid_del_army))
+                process_convert_donateids_for_paid.start()
+            process_convert_donateids_for_paid.join()#主线程等待子线程运行完执行下一步
+            '''
+            for convert_id in donateids_for_paid:
+                coc_template.convert_mode(convert_id,donate_status)
+            restart_server()
             #周5打资源，其他时间捐兵
+            '''
             try:
                 if datetime.datetime.now().weekday() in [0,1,2,3,5,6]:
-                    coc_template.convert_mode(donateids,donate_status)
+
+                    for convert_id in donateids:
+                        process_convert_donateids = Process(target=coc_template.convert_mode,args=(convert_id,donate_status))
+                        process_convert_donateids.start()
+                    process_convert_donateids.join()
+
+                    for convert_id in donateids:
+                        coc_template.convert_mode(convert_id,donate_status)
+                    restart_server()
             except:
                 print('============================= 出故障，不捐兵，继续打资源 =============================')
+            '''
+            #点击中间关闭adb.exe弹出的错误按钮
+            #for n in range(15):
+                #k.mouse_click(894, 544)
             with open(Coclog,'a') as Coclogfile:
                 Coclogfile.write('============================= 早上切换打资源状态为捐兵,切换时间：%s =============================\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             donate_status = 'donate'
@@ -657,15 +726,20 @@ if __name__ == "__main__":
         #关闭持续打资源号
         close_emu(resource_names)
         #启动持续打资源号
-        for n in range(resourceids_num):
-            play_resource(resourceids)
-        #关闭自用捐兵号
-        close_emu(donatenames)
+        if play_resource_switch in ['True','1','T']:
+            for n in range(resourceids_num):
+                play_resource(resourceids)
+            restart_server()
         #启动捐兵号
-        for n in range(donate_num):
-            play_donate(donateids)
-        #启动打资源号
-        restartplay()
+        if donate_switch in ['True','1','T']:
+            #关闭自用捐兵号
+            close_emu(donatenames)
+            for n in range(donate_num):
+                play_donate(donateids)
+            restart_server()
+        if play_switch in ['True','1','T']:
+            #启动打资源号
+            restartplay()
         #启动付费捐兵号防登录失败
         login_click(5)#点击一下星陨防止卡在登录页面
         login_click(3)#点击一下星河，总是卡在启动脚本页面
