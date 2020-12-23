@@ -1270,8 +1270,8 @@ def start_script(startport,*args):
             
     click(pos['script_start'][0], pos['script_start'][1], startport)
     time.sleep(20)
-    click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
-    click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
+    #click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+    #click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
     click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
 
         

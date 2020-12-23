@@ -222,7 +222,6 @@ def play_donate_for_paid(donateids):
     
 #捐兵号
 def play_donate(donateids):
-    
     #获取上一次运行的捐兵id
     global donateid_now#这是为了让handler能够获取到该id
     donateid_now = config.get("coc", "donateid_now")#str
@@ -235,10 +234,16 @@ def play_donate(donateids):
     else:
         donateindex = -1
     #获取即将运行的捐兵id
-    if (donateindex == len(donateids) - 1) or (donateindex == -1):
+    if (donateindex == len(donateids) - 1) or (donateindex == -1):#如果前一个id已经是最后一个
         donateid_now = donateids[0]
     else:
         donateid_now = donateids[donateindex + 1]
+    close_index = (donateindex + 1) - donate_num
+    if close_index < 0:
+        close_index = len(donateids) + close_index
+    close_id = donateids[close_index]
+    #关闭前一个模拟器
+    close_emu_id(close_id)
     #写入config
     config.set("coc", "donateid_now", donateid_now)#只能存储str类型数据
     config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
@@ -349,7 +354,7 @@ def handle_window_play(hwnd,extra):
             win32gui.PostMessage(hwnd,win32con.WM_CLOSE,0,0)
 
 #关闭模拟器列表（列表中所有）
-def close_emu(closelist):
+def close_emu_all(closelist):
     for close_id in closelist:
         close_name = closelist[close_id]
         close_window = win32gui.FindWindow(None, close_name)
@@ -357,6 +362,21 @@ def close_emu(closelist):
         win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
         print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
 
+#关闭模拟器（关闭id）
+def close_emu_id(close_id):
+    try:
+        close_config = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' %(int(close_id))
+        with open(close_config,'r') as close_file:
+            configlines = close_file.readlines()
+            for configline in configlines:
+                if 'EmulatorTitleName' in configline:
+                    close_name = configline.split('=')[-1].rstrip('\n')
+    except:
+        print("============================= 没有该模拟器:%d ===============================" %(int(close_id)))
+    close_window = win32gui.FindWindow(None, close_name)
+    win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
+    print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
+        
 #启动模拟器（列表中所有）       
 def start_emu(start_id,wait_time):
     startport = getport(start_id)
@@ -403,7 +423,7 @@ def restartplay():
     wait_time = 10
     #启动新一个打资源id前先关闭上一个打资源id
     try:
-        close_emu(playnames)
+        close_emu_all(playnames)
     except:
         print('关闭轮循打资源号失败')
     for times in range(instance_num):
@@ -422,7 +442,7 @@ def restartdonate(donateids):
     starttime = donatetime_end - donatetime_start
     
     if (starttime.seconds / 3600) >= donate_time:
-        close_emu(donatenames)
+        close_emu_all(donatenames)
         if donate_mode == "A":
             print(r'============================= 运行捐兵号超过4小时，下线15分钟！ ===============================')
             timewait(15)
@@ -441,11 +461,13 @@ def login_click(startid):
         click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
         click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
     #elif str(startid) not in notplaylist:#双重否定表肯定，在轮循打资源列表中的id
+        '''
     elif int(startid) in [10,13,15,20,21,25,27,29,30,31,32,33,34,36]:
         #昆仑
         #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
         click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
         click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+        '''
     elif int(startid) in [0,1,2,3,4,42]:#QQ
         click(pos['start_script'][0],pos['start_script'][1],startport,5)
     else:
@@ -686,7 +708,7 @@ if __name__ == "__main__":
             print(r'============================= 等待15分钟避免切换时没有授权导致切换失败 ===============================')
             timewait(15)#等待15分钟避免启动时没有授权登录
             restart_emu(donatenames_for_paid)#只重启付费捐兵号为了授权
-            close_emu(donatenames_for_paid)#关闭所有付费捐兵号
+            close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
             '''
             #多进程执行有不可预料失败可能
             for convert_id in donateids_for_paid:
@@ -724,7 +746,7 @@ if __name__ == "__main__":
             config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
             restart_emu(donatenames_for_paid,donateids_for_paid_2nd)#只重启付费捐兵号
         #关闭持续打资源号
-        close_emu(resource_names)
+        close_emu_all(resource_names)
         #启动持续打资源号
         if play_resource_switch in ['True','1','T']:
             for n in range(resourceids_num):
@@ -733,7 +755,7 @@ if __name__ == "__main__":
         #启动捐兵号
         if donate_switch in ['True','1','T']:
             #关闭自用捐兵号
-            close_emu(donatenames)
+            #close_emu_all(donatenames)
             for n in range(donate_num):
                 play_donate(donateids)
             restart_server()

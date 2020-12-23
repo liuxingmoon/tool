@@ -114,14 +114,16 @@ def start(startid):
         time.sleep(3)
         c.click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport)
     #elif str(startid) not in notplaylist:#双重否定表肯定，在轮循打资源列表中的id
+        '''
     elif int(startid) in [10,13,15,20,21,25,27,29,30,31,32,33,34,36]:
         #昆仑
         #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
         c.click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport)
         time.sleep(3)
         c.click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport)
+        '''
     else:
-        click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+        c.click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport)
     
 
 #转换模式启动
