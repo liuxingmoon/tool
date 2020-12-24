@@ -542,7 +542,7 @@ def train_potion(train_troopid,num,startport):
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     
 #训练捐兵
-def train_template(train_template,startport):
+def train_template(train_template,startport,*args):
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     click(pos['trainning'][0], pos['trainning'][1], startport,3)
     #12本上
@@ -554,7 +554,9 @@ def train_template(train_template,startport):
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
     swipe('top', startport)
-    click(pos[train_template][0], pos[train_template][1], startport,3)
+    if len(args) > 0:
+        for times in args[0]:
+            click(pos[train_template][0], pos[train_template][1], startport,3)
     #关闭
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
 
@@ -1047,8 +1049,7 @@ def wardonate(startlist):
             click_short(pos['war_donate_trp1'][0], pos['war_donate_trp1'][1], startport,10)
             click(pos['war_donate_last'][0], pos['war_donate_last'][1], startport)
         #训练部落战兵种
-        train_template('train_template01',startport)
-        train_template('train_template01',startport)
+        train_template('train_template01',startport,2)
         #补一下气球兵
         train_troop('train_troop13', 100 , startport)
         #造雷电药水
