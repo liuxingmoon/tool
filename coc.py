@@ -59,7 +59,7 @@ def start():
                 skipids = config.get("coc", "skipids").split()
                 #删除0和26
                 #startidlist = [x for x in skipids if x not in ['0','26','28','35','39']]
-                startidlist = [x for x in skipids if x not in ['0','26']]
+                startidlist = [x for x in skipids if x not in ['0','26','1','2','3','4','5']]
             elif info in ['d', 'D', 'donate', 'DONATE']:
                 donateids = config.get("coc", "donateids").split()
                 donateids_for_paid = config.get("coc", "donateids_for_paid").split()#获取付费捐兵id的list

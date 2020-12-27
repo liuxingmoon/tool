@@ -554,8 +554,9 @@ def train_template(train_template,startport,*args):
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
     swipe('top', startport)
+    click(pos[train_template][0], pos[train_template][1], startport,3)
     if len(args) > 0:
-        for times in args[0]:
+        for times in range(args[0] - 1):
             click(pos[train_template][0], pos[train_template][1], startport,3)
     #关闭
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
@@ -568,6 +569,7 @@ def train_siege_unit(startport):
     click_short(pos['train_siege_unit01'][0], pos['train_siege_unit01'][1], startport, 2)
     click_short(pos['train_siege_unit02'][0], pos['train_siege_unit02'][1], startport, 2)
     click_short(pos['train_siege_unit03'][0], pos['train_siege_unit03'][1], startport, 2)
+    time.sleep(3)
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     
 #取消训练中的兵种
@@ -577,6 +579,7 @@ def cancel_troop(startport):
     print('取消兵种')
     click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport)
     click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 500)
+    time.sleep(3)
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
 
 #取消训练中的药水
@@ -599,12 +602,14 @@ def cancel_army(startport):
     click_short(pos['del_army_trp01'][0], pos['del_army_trp01'][1], startport, 100)
     click_short(pos['del_army_trp02'][0], pos['del_army_trp02'][1], startport, 250)
     click_short(pos['del_army_trp03'][0], pos['del_army_trp03'][1], startport, 30)
+    time.sleep(3)
     for n in range(1,8):#取消药水
         click_short(pos['del_army_pt0%d' %(n)][0], pos['del_army_pt0%d' %(n)][1], startport, 10)
+    time.sleep(3)
     click(pos['del_army'][0], pos['del_army'][1], startport, 3)#确定删除
-    time.sleep(3)
+    time.sleep(5)
     click(pos['del_army_sure'][0], pos['del_army_sure'][1], startport, 3)
-    time.sleep(3)
+    time.sleep(5)
     click(pos['exitstore'][0], pos['exitstore'][1], startport, 3)#退出
 
 #启动coc
@@ -1048,6 +1053,8 @@ def wardonate(startlist):
             click_short(pos['war_donate_trp3'][0], pos['war_donate_trp3'][1], startport,10)
             click_short(pos['war_donate_trp1'][0], pos['war_donate_trp1'][1], startport,10)
             click(pos['war_donate_last'][0], pos['war_donate_last'][1], startport)
+        for n in range(2):
+            back(startport)#返回到主页面
         #训练部落战兵种
         train_template('train_template01',startport,2)
         #补一下气球兵
@@ -1307,7 +1314,7 @@ def convert_mode(convert_id,*args):
             status = "play"
             #启动模拟器
             action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (convert_id)
-            coc_start.start_convert(action, convert_id, 60)
+            coc_start.start_convert(action, convert_id, 30)
             # 重新登录qq
             click(pos['relogin'][0], pos['relogin'][1], startport,3)
             #切换为打资源

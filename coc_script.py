@@ -55,7 +55,7 @@ def start_server():
 def restart_server():
     kill_adb()
     kill_server()
-    start_server()
+    #start_server()
 
 def start(action,startport,wait_time):
     #开模拟器
@@ -444,7 +444,7 @@ def restartdonate(donateids):
     donatetime_end = datetime.datetime.now()
     starttime = donatetime_end - donatetime_start
     
-    if (starttime.seconds / 3600) >= donate_time:
+    if (starttime.seconds / 3600) >= restart_time:
         close_emu_all(donatenames)
         if donate_mode == "A":
             print(r'============================= 运行捐兵号超过4小时，下线15分钟！ ===============================')
@@ -490,7 +490,7 @@ if __name__ == "__main__":
     minid = int(config.get("coc", "minid"))
     maxid = len(os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\')) - 2
     #maxid = int(config.get("coc", "maxid"))
-    donate_time = float(config.get("coc", "donate_time"))
+    #restart_time = float(config.get("coc", "restart_time"))
     #捐兵模式：一直捐兵（A)，还是半捐
     donate_mode = config.get("coc", "donate_mode")
     #跳过启动的id初始列表
@@ -673,38 +673,51 @@ if __name__ == "__main__":
             close()#关闭kill_adb()
             restart_server()
             if donate_for_paid_switch in ['True','1','T']:
+                '''
                 for convert_id in donateids_for_paid:
                     process_convert_donateids_for_paid = Process(target=coc_template.convert_mode,args=(convert_id,donate_status))
                     process_convert_donateids_for_paid.start()
                 process_convert_donateids_for_paid.join()#主线程等待子线程运行完执行下一步
-                #coc_template.convert_mode(donateids_for_paid,donate_status)
+                '''
+                for convert_id in donateids_for_paid:
+                    coc_template.convert_mode(convert_id,donate_status)
                 restart_server()
             if play_resource_switch in ['True','1','T']:
+                '''
                 for convert_id in resourceids:
                     process_convert_resourceids = Process(target=coc_template.convert_mode,args=(convert_id,donate_status))
                     process_convert_resourceids.start()
                 process_convert_resourceids.join()#主线程等待子线程运行完执行下一步
-                #coc_template.convert_mode(resourceids,donate_status)
+                '''
+                for convert_id in resourceids:
+                    coc_template.convert_mode(convert_id,donate_status)
             if donate_switch in ['True','1','T']:
+                '''
                 for convert_id in donateids:
                     process_convert_donateids = Process(target=coc_template.convert_mode,args=(convert_id,donate_status))
                     process_convert_donateids.start()
                 process_convert_donateids.join()#主线程等待子线程运行完执行下一步
-                #coc_template.convert_mode(donateids,donate_status)
+                '''
+                for convert_id in donateids:
+                    coc_template.convert_mode(convert_id,donate_status)
             #点击中间关闭adb.exe弹出的错误按钮
+            '''
             for n in range(15):
                 k.mouse_click(894, 544)
+            '''
             with open(Coclog,'a') as Coclogfile:
                 Coclogfile.write('凌晨切换捐兵状态为打资源,切换时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             donate_status = 'play'
             config.read(configpath, encoding="utf-8")
             config.set("coc", "donate_status", donate_status)#只能存储str类型数据
+            '''
             for convert_id in donateids_for_paid:
                 config.set("coc", "startid%d" %(int(convert_id)), donate_status)#只能存储str类型数据
             for convert_id in resourceids:
                 config.set("coc", "startid%d" %(int(convert_id)), donate_status)#只能存储str类型数据
             for convert_id in donateids:
                 config.set("coc", "startid%d" %(int(convert_id)), donate_status)#只能存储str类型数据
+            '''
             config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
             #部落战捐兵
             #coc_template.wardonate(warids)
