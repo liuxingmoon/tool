@@ -46,10 +46,14 @@ def start():
                 for emu in emulist:
                     emunum.append(int(emu.replace('dundi', '')))
                 skipids = config.get("coc", "skipids").split()
+                resourceids = config.get("coc", "resourceids").split()
                 warids = config.get("coc", "warids").split()
+                donateids_for_paid = config.get("coc", "donateids_for_paid").split()
                 donateids = config.get("coc", "donateids").split()
                 skipids.extend(warids)  # 添加部落战控制的id到跳过id列表中
+                skipids.extend(donateids_for_paid)  # 添加部落战控制的id到跳过id列表中
                 skipids.extend(donateids)  # 添加捐兵控制的id到跳过id列表中
+                skipids.extend(resourceids)  # 添加捐兵控制的id到跳过id列表中
                 skipids = [int(x) for x in skipids] # 转换str型为int
                 #删除所有在emunum而也在skipids的
                 startidlist = [x for x in emunum if x not in skipids]

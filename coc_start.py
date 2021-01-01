@@ -24,7 +24,23 @@ QQ3 = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi 2 -disable_audio  -fps 4
 QQ4 = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi 3 -disable_audio  -fps 40'
 QQ5 = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi 4 -disable_audio  -fps 40'
 
-
+def connect(startport):
+    if startport == 5555:
+        subprocess.Popen(r'adb connect emulator-5554',shell = True)
+        subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
+    else:
+        result = subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True,stdout=subprocess.PIPE)
+        text = result.stdout.readlines()
+        if ('not found' in text) or ('offline' in text):
+            restart_server()
+            time.sleep(60)
+            connect(startport)#递归重新执行一次
+    time.sleep(3)
+    
+def kill_adb():
+    subprocess.Popen('taskkill /f /t /im adb.exe',shell=True)
+    time.sleep(3)
+    
 class Thunder:
     def start(self):
         subprocess.Popen(r'"D:\Program Files\Thunder Network\Thunder\Program\Thunder.exe"',shell=True)
@@ -41,8 +57,8 @@ class Coc:
         time.sleep(3)
     
     def restart_server(self):
+        kill_adb()
         Coc().kill_server()
-        Coc().start_server()
         
     #开模拟器
     def start(self,qq,id,*args):
@@ -75,9 +91,9 @@ class Coc:
         else:
             startport = 52550 + id
         # 开启模拟器连接
-        Coc().start_server()
+        Coc().restart_server()
         #连接模拟器
-        subprocess.Popen('adb connect 127.0.0.1:%d' % (startport), shell=True)
+        connect(startport)
         #except:
             #print('============================= %d 实例启动失败 ===============================' %(id))
     #打开黑松鼠
@@ -139,7 +155,6 @@ def start_convert(action,startid,time_wait):
     # 开启模拟器连接
     Coc().start_server()
     #多连接几次确保连接上
-    subprocess.Popen('adb connect 127.0.0.1:%d' % (startport), shell=True)
-    time.sleep(3)
-        
+    connect(startport)
+
         

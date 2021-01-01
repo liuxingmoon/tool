@@ -268,8 +268,9 @@ def start_server():
     time.sleep(3)
 
 def restart_server():
+    kill_adb()
     kill_server()
-    start_server()
+    #start_server()
         
 def kill_adb():
     subprocess.Popen('taskkill /f /t /im adb.exe',shell=True)
@@ -277,14 +278,16 @@ def kill_adb():
     
 # 开始
 def connect(startport):
-    # 关闭模拟器连接
-    subprocess.Popen('adb kill-server', shell=True)
-    time.sleep(3)
-    # 开启模拟器连接
-    subprocess.Popen('adb start-server', shell=True)
-    time.sleep(3)
-    # 重启并连接连接
-    subprocess.Popen(r'adb connect 127.0.0.1:%d' % (startport), shell=True)
+    if startport == 5555:
+        subprocess.Popen(r'adb connect emulator-5554',shell = True)
+        subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
+    else:
+        result = subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True,stdout=subprocess.PIPE)
+        text = result.stdout.readlines()
+        if ('not found' in text) or ('offline' in text):
+            restart_server()
+            time.sleep(60)
+            connect(startport)#递归重新执行一次
     time.sleep(3)
 
 #根据字典值获取索引
@@ -629,8 +632,8 @@ def startcoc(startport,wait_time):
     if startport == 52555:#如果是星陨，尝试点击登录 
         click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
     else:
-        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
-        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
+        #click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+        #click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
         click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
     #点击取消位置取消广告
     click(pos['exitstore'][0], pos['exitstore'][1], startport)
@@ -1331,7 +1334,7 @@ def convert_mode(convert_id,*args):
             click(pos['relogin'][0], pos['relogin'][1], startport,3)
             #click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
             #启动coc
-            startcoc(startport,150)
+            startcoc(startport,40)
             #等待1分
             timewait(1,startport)
             #夜世界切换

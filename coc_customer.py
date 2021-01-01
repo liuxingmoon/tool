@@ -17,13 +17,15 @@ def update_tb(tbname,values):
         else:
             index += 1
     #替换需要替换的字段：结束服务时间,总服务时间,总消费金额
-
+    table[index] = table[index].replace('\r\n','')
     info = table[index].split(',')
     srv_time = int(info[5]) + int(values[5])
     money = int(info[6]) + int(values[6])
+    status = values[7]
     table[index] = table[index].replace(info[4],values[4])
     table[index] = table[index].replace(info[5],str(srv_time))
     table[index] = table[index].replace(info[6],str(money))
+    table[index] = table[index].replace(info[7],str(status))
     #将更新后的table直接覆盖写入到表中
     # 创建文件对象
     with open(tbname,'w',encoding='gb2312',newline="") as f:
@@ -87,8 +89,12 @@ def renewal(month,values):
     #捐兵服务时间31天算一个月
     srv_days_hr = 31 * month
     srv_days = datetime.timedelta(days=srv_days_hr)
-    #结束时间
-    dead_time = dead_time + srv_days
+    now_time = datetime.datetime.now()#当前时间
+    if now_time > dead_time:#当前时间已经超过了截止时间，从当前时间+续费时间
+        dead_time = now_time + srv_days
+    else:
+        #结束时间
+        dead_time = dead_time + srv_days
     dead_time_hr = dead_time.strftime('%Y-%m-%d %H:%M')
     #打印结果
     g.msgbox(msg='尊敬的用户，您的部落 %s\n捐兵服务已经续费成功！\n续费服务时间：%d 天\n服务结束时间：%s\n祝您游戏愉快！' %(coc_clan_name,srv_days_hr,dead_time_hr), title='用户信息')
@@ -103,18 +109,34 @@ def clarm(tbname):
     #去除表头
     table.pop(0)
     for column in table:
+        column = column.replace('\r\n','')
         info = column.split(',')
-        #截止时间
-        dead_time_hr = info[4]
-        #部落名称
-        coc_clan_name = info[2]
+        coc_id = info[0]
+        coc_name = info[1]#部落对应奶号
+        coc_clan_name = info[2]#部落名称
+        start_time_hr = info[3]#开始时间
+        dead_time_hr = info[4]#截止时间
+        srv_days_hr = 0 #不改变服务时间
+        money = 0 #不改变收入
+        try:
+            status = info[7]
+        except:
+            status = 'running'
         #转换截止时间
         dead_time = datetime.datetime.strptime(str(dead_time_hr), '%Y-%m-%d %H:%M')
         #一周时提醒
-        if datetime.timedelta(days=6) <= (dead_time - now_time) <= datetime.timedelta(days=7):
-            g.msgbox(msg='尊敬的用户，您的部落 %s\n捐兵服务在一周内即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,dead_time_hr))
-        elif datetime.timedelta(days=0) <= (dead_time - now_time) <= datetime.timedelta(days=1):
-            g.msgbox(msg='尊敬的用户，您的部落 %s\n捐兵服务在今天即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,dead_time_hr))
+        if status == 'running':#状态为正常运行服务的用户才需要提醒
+            if datetime.timedelta(days=6) <= (dead_time - now_time) <= datetime.timedelta(days=7):
+                g.msgbox(msg='尊敬的用户，您的部落 %s ，奶号 %s\n捐兵服务在一周内即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,coc_name,dead_time_hr))
+            elif datetime.timedelta(days=0) <= (dead_time - now_time) <= datetime.timedelta(days=1):
+                g.msgbox(msg='尊敬的用户，您的部落 %s ，奶号 %s\n捐兵服务在今天即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,coc_name,dead_time_hr))
+            elif (dead_time - now_time) < datetime.timedelta(days=0):#过期如果不点击已停止，会一直提醒
+                flag_deadtime = g.buttonbox(msg='部落 %s ，奶号 %s\n捐兵服务已经到期！\n服务结束时间：%s\n确认是否已停止！'%(coc_clan_name,coc_name,dead_time_hr), title='确认停止服务',
+                            choices=('已停止', '暂不停止服务'))
+                if flag_deadtime == '已停止':
+                    status = 'stop'
+                    update_tb(tbname, [coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money, status])
+
 #查询信息
 def query(tbname):
     clarm(tbname)
@@ -167,27 +189,33 @@ def submit(tbname):
             # 有用户，更新
             values = table[index].split(',')
             time_srv = renewal(srv_month,values)
+            try:
+                status = values[7]
+            except:
+                status = 'running'#续费后更新为running
             #print(time_srv)
             start_time_hr = time_srv[0]
             dead_time_hr = time_srv[1]
             srv_days_hr = time_srv[2]
-            update_tb(tbname,[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money])
+            update_tb(tbname,[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money, status])
         elif flag == False: #新用户，插入新数据
                 # 插入新用户信息
+                status = 'running'
                 time_srv = deadtime(srv_month)
                 start_time_hr = time_srv[0]
                 dead_time_hr = time_srv[1]
                 srv_days_hr = time_srv[2]
-                insert_tb('coc_customer.csv',[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money])
+                insert_tb('coc_customer.csv',[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money, status])
     else:
         # 如果不存在表，就直接建表，并插入数据
         # 插入新用户信息
+        status = 'running'
         time_srv = deadtime(srv_month)
         start_time_hr = time_srv[0]
         dead_time_hr = time_srv[1]
         srv_days_hr = time_srv[2]
-        create_tb('coc_customer.csv',["模拟器id", "模拟器别名", "用户部落名", "开始服务时间", "结束服务时间", "总服务时间(天)", "总消费金额"])
-        insert_tb('coc_customer.csv',[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money])
+        create_tb('coc_customer.csv',["模拟器id", "模拟器别名", "用户部落名", "开始服务时间", "结束服务时间", "总服务时间(天)", "总消费金额","运行状态"])
+        insert_tb('coc_customer.csv',[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money, status])
         select_tb('coc_customer.csv')
 
 def start():

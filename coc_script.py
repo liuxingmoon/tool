@@ -30,14 +30,7 @@ pos = {
 Coclog = r'E:\Program Files\Python\Python38\works\tool\coclog.txt'
 configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
 ddpath = r'D:\Program Files\DundiEmu\DunDiEmu.exe'
-
-def connect(startport):
-    if startport == 5555:
-        subprocess.Popen(r'adb connect emulator-5554',shell = True)
-        subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
-    else:
-        subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
-        
+    
 def kill_adb():
     subprocess.Popen('taskkill /f /t /im adb.exe',shell=True)
     time.sleep(3)
@@ -57,6 +50,19 @@ def restart_server():
     kill_server()
     #start_server()
 
+def connect(startport):
+    if startport == 5555:
+        subprocess.Popen(r'adb connect emulator-5554',shell = True)
+        subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
+    else:
+        result = subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True,stdout=subprocess.PIPE)
+        text = result.stdout.readlines()
+        if ('not found' in text) or ('offline' in text):
+            restart_server()
+            timewait(1)
+            connect(startport)#递归重新执行一次
+    time.sleep(3)
+    
 def start(action,startport,wait_time):
     #开模拟器
     subprocess.Popen(action,shell=True)
@@ -66,7 +72,7 @@ def start(action,startport,wait_time):
     #确保模拟器进程已经启动
     #等待系统开机
     time.sleep(40)
-    start_server()
+    #start_server()
     #重启并连接连接
     connect(startport)
     time.sleep(3)
@@ -84,17 +90,18 @@ def coc_script(startport,wait_time):
     time.sleep(wait_time)
     if startport == 5555:
         subprocess.Popen(r'adb -s emulator-5554 shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity',shell=True)
-        subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
-        #text = result.stdout.readlines()#元组存储
+        result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
+        text = result.stdout.readlines()#元组存储
     else:
-        subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
-        #text = result.stdout.readlines()#元组存储
-    '''
+        result = subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
+        text = result.stdout.readlines()#元组存储
+
     if 'not found' in text:
         with open(Coclog,'a') as Coclogfile:
-            Coclogfile.write('出现bug重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
-        reboot()
-    '''
+            Coclogfile.write('出现bug重启adb和模拟器,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+        restart_server()
+        connect(startport)
+        coc_script(startport,wait_time)#递归重新执行一次
     time.sleep(10)
     
     
@@ -519,6 +526,7 @@ if __name__ == "__main__":
     play_resource_switch = config.get("coc", "play_resource_switch")#是否开启持续打资源
     donate_switch = config.get("coc", "donate_switch")#是否开启自用捐兵
     play_switch = config.get("coc", "play_switch")#是否开启轮循打资源
+    war_donate_switch = config.get("coc", "war_donate_switch")#是否开启自动部落战捐兵
     donateids_for_paid = config.get("coc", "donateids_for_paid").split()#获取付费捐兵id的list
     donateids_for_paid_del_army = config.get("coc", "donateids_for_paid_del_army").split()#获取付费捐兵id删除兵的list
     donateids = config.get("coc", "donateids").split()#获取捐兵id的list
@@ -560,20 +568,7 @@ if __name__ == "__main__":
                     donatenames[donateid] = donatename
     print('============================= 当前的捐兵号id和名字如下 ===============================\n%s' %(donatenames))
 
-    #获取付费捐兵号数量
-    donateids_for_paid_num = len(donateids_for_paid)
-    #获取捐兵的数量
-    if donate_mode == "A":
-        donate_num = len(donateids)
-    elif donate_switch == "T":
-        donate_num = int(config.get("coc", "donate_num"))#捐兵号的个数
-    elif donate_switch == "F":
-        donate_num = 0
-    if play_resource_switch in ['True','1','T']:
-        #获取持续打资源id的list
-        resourceids_num = int(config.get("coc", "resourceids_num"))#打资源号的个数
-    elif play_resource_switch in ['False','0','F']:
-        resourceids_num = 0
+
     #查看捐兵号的开关是否打开，打开就跳过该id
     skipids.extend(donateids_for_paid)#添加捐兵的id到跳过id列表中
     skipids.extend(donateids)#添加捐兵的id到跳过id列表中
@@ -616,7 +611,15 @@ if __name__ == "__main__":
     # 获取捐兵号的状态（当前是在捐兵还是在打资源）
     donate_status = config.get("coc", "donate_status")
     result = instance(donate_switch,donate_status)
+    #获取付费捐兵号数量
+    donateids_for_paid_num = len(donateids_for_paid)
+    #时间段
     time_status = result[2]
+    if play_resource_switch in ['True','1','T']:
+        #获取持续打资源id的list
+        resourceids_num = int(config.get("coc", "resourceids_num"))#打资源号的个数
+    elif play_resource_switch in ['False','0','F']:
+        resourceids_num = 0
     #获取重启模拟器时间（小时）
     restart_time = int(config.get("coc", "restart_time"))
     #切换重启状态为'F'，表示已经过了那个重启的时间，把状态归零
@@ -629,7 +632,8 @@ if __name__ == "__main__":
     if ((time_status != '凌晨') and (donate_status == 'donate')) or ((time_status == '凌晨') and (donate_status == 'play')):
         #启动付费捐兵号
         kill_adb()
-        restart_emu(donatenames_for_paid,donateids_for_paid_2nd)
+        if donate_for_paid_switch in ['True','1','T']:
+            restart_emu(donatenames_for_paid,donateids_for_paid_2nd)
     while True:
         kill_adb()
         endtime_global = datetime.datetime.now()
@@ -638,9 +642,10 @@ if __name__ == "__main__":
         runtime_hours = round(runtime_global.total_seconds() / 3600)
         runtime_days = int(runtime_hours / 24)
         if (runtime_hours != 0) and ((runtime_hours % restart_time) == 0) and (restart_status == 'F'):
-            print(r'============================= 当前脚本每运行 %d 小时，全部模拟器重启一次! =============================' %(restart_time))
-            restart_status = 'T'#切换重启状态为'T'，表示已经重启过了，在这个小时内不要再重启了
-            restart_emu(donatenames_for_paid)#只重启付费捐兵号
+            if donate_for_paid_switch in ['True','1','T']:
+                print(r'============================= 当前脚本每运行 %d 小时，全部模拟器重启一次! =============================' %(restart_time))
+                restart_status = 'T'#切换重启状态为'T'，表示已经重启过了，在这个小时内不要再重启了
+                restart_emu(donatenames_for_paid)#只重启付费捐兵号
         elif (runtime_hours != 0) and ((runtime_hours % restart_time) != 0) and (restart_status == 'T'):
             restart_status = 'F'#切换重启状态为'F'，表示已经过了那个重启的时间，把状态归零
         print(r'============================= 当前脚本已运行 %d 天 %d 个小时! =============================' %(runtime_days , (runtime_hours - runtime_days*24)))
@@ -663,11 +668,26 @@ if __name__ == "__main__":
                 instance_num = 0
             else:
         '''
-        instance_num = instance_num - donate_num - donateids_for_paid_num - resourceids_num
         #等待时间
         instance_time = result[1]
         #现在时间
         time_status = result[2]
+        #获取捐兵的数量
+        if time_status == "凌晨":
+            if donate_mode == "A":
+                donate_num = len(donateids)
+            elif donate_switch == "T":
+                donate_num = int(config.get("coc", "donate_num_morning"))#捐兵号的个数
+            elif donate_switch == "F":
+                donate_num = 0
+        else:
+            if donate_mode == "A":
+                donate_num = len(donateids)
+            elif donate_switch == "T":
+                donate_num = int(config.get("coc", "donate_num"))#捐兵号的个数
+            elif donate_switch == "F":
+                donate_num = 0
+        instance_num = instance_num - donate_num - donateids_for_paid_num - resourceids_num
         #凌晨切换捐兵状态为打资源，顺便做一次部落战捐兵
         if (time_status == '凌晨') and (donate_status == 'donate'):
             close()#关闭kill_adb()
@@ -720,10 +740,12 @@ if __name__ == "__main__":
             '''
             config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
             #部落战捐兵
-            #coc_template.wardonate(warids)
-            restart_emu(donatenames_for_paid)#只重启付费捐兵号
+            if war_donate_switch in ['True', '1', 'T']:
+                coc_template.wardonate(warids)
+            if donate_for_paid_switch in ['True','1','T']:
+                restart_emu(donatenames_for_paid)#只重启付费捐兵号
         #早上切换打资源状态为捐兵
-        elif (time_status != '凌晨') and (donate_status == 'play'):
+        elif (time_status != '凌晨') and (donate_status == 'play') and donate_for_paid_switch in ['True','1','T']:
             close()#关闭所有模拟器kill_adb()
             print(r'============================= 等待15分钟避免切换时没有授权导致切换失败 ===============================')
             timewait(15)#等待15分钟避免启动时没有授权登录
@@ -767,7 +789,8 @@ if __name__ == "__main__":
             config.read(configpath, encoding="utf-8")
             config.set("coc", "donate_status", donate_status)#只能存储str类型数据
             config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
-            restart_emu(donatenames_for_paid,donateids_for_paid_2nd)#只重启付费捐兵号
+            if donate_for_paid_switch in ['True','1','T']:
+                restart_emu(donatenames_for_paid,donateids_for_paid_2nd)#只重启付费捐兵号
         #关闭持续打资源号
         close_emu_all(resource_names)
         #启动持续打资源号
