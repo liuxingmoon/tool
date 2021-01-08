@@ -18,8 +18,8 @@ from multiprocessing import Process
 pos = {
   'coc_script':[500,680],
   'start_script':[200,1070],
-  'login_wandoujia1': [640, 500],
-  'login_wandoujia2': [640, 300],
+  'login_wandoujia1': [640, 300],
+  'login_wandoujia2': [640, 500],
   'login_kunlun': [640, 250],
   'login_kunlun1': [640, 560],
   'login_kunlun2': [640, 620],
@@ -163,17 +163,24 @@ def play(wait_time,skipids):
     #为了指定关闭startid，全局
     try:
         global startid
-        startid = config.get("coc", "startid")
-        startid = int(startid)#取出数据为string
+        startid = config.get("coc", "startid")#获取的下一个准备开启的id
+        startid = int(startid)#取出数据为string，获取启动模拟器id
         startlist = getport(startid,skipids)
-        startid = int(startlist[0])#获取启动模拟器id
+        startid = int(startlist[0])#获取启动模拟器id,这里不能注释掉，因为getport函数会重新根据skipids递归获取新的startid
         startport = startlist[1]#获取port
+        play_index = play_ids.index(startid)#获取启动id的index
+        close_index = play_index - instance_num
+        if close_index < 0:
+            close_index = len(play_ids) + close_index
+        close_id = play_ids[close_index]
+        #关闭前一个模拟器
+        close_emu_id(close_id)
         action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(startid)
         #启动新id
         start(action,startport,wait_time)
         print('============================= 启动模拟器完成 =============================')
         time.sleep(3)
-        coc_script(startport,wait_time)
+        coc_script(startport,10)
         click(pos['sure'][0], pos['sure'][1],startport)
         time.sleep(5)
         click(pos['start_script'][0],pos['start_script'][1],startport)
@@ -214,10 +221,10 @@ def play_donate_for_paid(donateids):
     config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
     startport = getport(int(donateid_now))
     action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(donateid_now))
-    start(action,startport,30)
+    start(action,startport,40)
     print(r'============================= 启动付费捐兵模拟器完成 ===============================')
     time.sleep(3)
-    coc_script(startport,5)
+    coc_script(startport,10)
     time.sleep(5)
     click(pos['sure'][0], pos['sure'][1],startport)
     time.sleep(5)
@@ -256,10 +263,10 @@ def play_donate(donateids):
     config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
     startport = getport(int(donateid_now))
     action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(donateid_now))
-    start(action,startport,30)
+    start(action,startport,40)
     print(r'============================= 启动捐兵模拟器完成 ===============================')
     time.sleep(3)
-    coc_script(startport,5)
+    coc_script(startport,10)
     time.sleep(5)
     click(pos['sure'][0], pos['sure'][1],startport)
     time.sleep(5)
@@ -284,10 +291,16 @@ def play_resource(resourceids):
     else:
         resourceidindex = -1
     #获取即将运行的捐兵id
-    if (resourceidindex == len(resourceids) - 1) or (resourceidindex == -1):
+    if (resourceidindex == len(resourceids) - 1) or (resourceidindex == -1):#如果前一个id已经是最后一个
         resourceid_now = resourceids[0]
     else:
         resourceid_now = resourceids[resourceidindex + 1]
+    close_index = (resourceidindex + 1) - resourceids_num
+    if close_index < 0:
+        close_index = len(resourceids) + close_index
+    close_id = donateids[close_index]
+    #关闭前一个模拟器
+    close_emu_id(close_id)
     #写入config
     config.set("coc", "resourceid_now", resourceid_now)#只能存储str类型数据
     config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
@@ -297,10 +310,10 @@ def play_resource(resourceids):
         startport = 52550 + int(resourceid_now)
     startport = getport(int(resourceid_now))
     action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(resourceid_now))
-    start(action,startport,30)
+    start(action,startport,40)
     print(r'============================= 启动持续打资源模拟器完成 ===============================')
     time.sleep(3)
-    coc_script(startport,5)
+    coc_script(startport,10)
     time.sleep(10)
     click(pos['sure'][0], pos['sure'][1],startport)
     time.sleep(15)
@@ -423,22 +436,28 @@ def restart_emu(restartlist,*args):
             #start_emu_process.start()
             start_emu(int(restart_id),30)
     if len(donateids_for_paid_2nd) > 0:
-        timewait(15)
+        #timewait(15)
         for restart_id in donateids_for_paid_2nd[0]:
             #start_emu_process = Process(target=start_emu,args=(int(restart_id),30))
             #start_emu_process.start()
             start_emu(int(restart_id),30)#启动第二梯队
     restart_server()
+    for restart_id in restartlist:
+        #启动付费捐兵号防登录失败
+        login_click(int(restart_id))#点击一下星陨防止卡在登录页面
+
 #重启打资源
 def restartplay():
     restart_server()
     #同时运行几个实例
-    wait_time = 10
+    wait_time = 40
     #启动新一个打资源id前先关闭上一个打资源id
+    '''
     try:
         close_emu_all(playnames)
     except:
         print('关闭轮循打资源号失败')
+    '''
     for times in range(instance_num):
         play(wait_time,skipids)
         wait_time += 5
@@ -466,6 +485,7 @@ def restartdonate(donateids):
     
 def login_click(startid):
     startport = getport(startid)
+    restart_server()
     connect(startport)#连接        
     if int(startid) == 5:#如果是星陨，尝试点击登录
         click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
@@ -584,7 +604,7 @@ if __name__ == "__main__":
     notplaylist.extend(resourceids)
     notplaylist.extend(skipids)
     notplaylist = list(set(notplaylist))#去重
-    for playid in range(maxid +1):
+    for playid in range(maxid + 1):
         if str(playid) not in notplaylist:
             playconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' %(playid)
             with open(playconfig,'r') as playfile:
@@ -593,6 +613,7 @@ if __name__ == "__main__":
                     if 'EmulatorTitleName' in configline:
                         playname = configline.split('=')[-1].rstrip('\n')
                         playnames[playid] = playname
+    play_ids = list(playnames.keys())
     print('============================= 当前的打资源号和名字如下: ===============================\n%s' %(playnames))
 
     #白天和夜晚运行的实例数量和时间
@@ -747,8 +768,8 @@ if __name__ == "__main__":
         #早上切换打资源状态为捐兵
         elif (time_status != '凌晨') and (donate_status == 'play') and donate_for_paid_switch in ['True','1','T']:
             close()#关闭所有模拟器kill_adb()
-            print(r'============================= 等待15分钟避免切换时没有授权导致切换失败 ===============================')
-            timewait(15)#等待15分钟避免启动时没有授权登录
+            print(r'============================= 等待30分钟避免切换时没有授权导致切换失败 ===============================')
+            timewait(30)#等待30分钟避免启动时没有授权登录
             restart_server()
             restart_emu(donatenames_for_paid)#只重启付费捐兵号为了授权
             close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
@@ -764,10 +785,10 @@ if __name__ == "__main__":
                 for convert_id in donateids_for_paid:
                     coc_template.convert_mode(convert_id,donate_status)
                 restart_server()
-            #周5打资源，其他时间捐兵
+            #周1打资源，其他时间捐兵
             if donate_switch in ['True','1','T']:
                 try:
-                    if datetime.datetime.now().weekday() in [0,1,2,3,5,6]:
+                    if datetime.datetime.now().weekday() in [1,2,3,4,5,6]:
                         '''
                         for convert_id in donateids:
                             process_convert_donateids = Process(target=coc_template.convert_mode,args=(convert_id,donate_status))
@@ -792,7 +813,7 @@ if __name__ == "__main__":
             if donate_for_paid_switch in ['True','1','T']:
                 restart_emu(donatenames_for_paid,donateids_for_paid_2nd)#只重启付费捐兵号
         #关闭持续打资源号
-        close_emu_all(resource_names)
+        #close_emu_all(resource_names)
         #启动持续打资源号
         if play_resource_switch in ['True','1','T']:
             for n in range(resourceids_num):
@@ -808,9 +829,6 @@ if __name__ == "__main__":
         if play_switch in ['True','1','T']:
             #启动打资源号
             restartplay()
-        #启动付费捐兵号防登录失败
-        login_click(5)#点击一下星陨防止卡在登录页面
-        login_click(3)#点击一下星河，总是卡在启动脚本页面
         #运行该coc实例时间
         t = int(3600*instance_time)
         time.sleep(t)

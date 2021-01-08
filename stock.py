@@ -69,13 +69,16 @@ def update(tbname):
         update(tbname)
     else:
         table = select_tb(tbname)
+        # 去除表头
+        table.pop(0)
         now_time = get_time()
         info = get_info()
         money = info[0]
         market_value = info[1]
         #如果输入没有输入市值，只输入了汇款金额，市值复制上一条数据
         if (money != '') and (market_value == ''):
-            market_value = float(table[-1][3])
+            values = table[-1].split(',')
+            market_value = float(values[3])
         #如果输入没有输入汇款金额，只输入了市值，当前市值更新覆盖上一条市值
         elif (money == '') and (market_value != ''):
             values = table[-1].split(',')

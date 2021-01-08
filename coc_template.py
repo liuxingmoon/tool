@@ -173,6 +173,12 @@ pos = {
     'script_night_attackmode_no': [425, 840],
     'script_night_attackmode_prize': [425, 900],
     'script_night_attackmode_alltime': [425, 970],
+    'script_night_auto_collect': [250, 610],
+    'script_night_Accelerate_tower': [450, 610],
+    'script_night_wait_rebot': [250, 660],
+    'script_night_auto_weeding': [450, 660],
+    'script_night_auto_levelup': [270, 715],
+    'script_night_auto_research': [480, 715],
     'boat': [800, 300],
     'script_play': [340, 660],
     'script_donate': [340, 800],
@@ -581,7 +587,7 @@ def cancel_troop(startport):
     click(pos['trainning'][0], pos['trainning'][1], startport)
     print('取消兵种')
     click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport)
-    click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 500)
+    click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 600)
     time.sleep(3)
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
 
@@ -602,9 +608,9 @@ def cancel_army(startport):
     click(pos['trainningitem1'][0], pos['trainningitem1'][1], startport)
     click(pos['edit_army'][0], pos['edit_army'][1], startport)
     #取消兵种
-    click_short(pos['del_army_trp01'][0], pos['del_army_trp01'][1], startport, 100)
-    click_short(pos['del_army_trp02'][0], pos['del_army_trp02'][1], startport, 250)
-    click_short(pos['del_army_trp03'][0], pos['del_army_trp03'][1], startport, 30)
+    click_short(pos['del_army_trp01'][0], pos['del_army_trp01'][1], startport, 120)
+    click_short(pos['del_army_trp02'][0], pos['del_army_trp02'][1], startport, 380)
+    click_short(pos['del_army_trp03'][0], pos['del_army_trp03'][1], startport, 40)
     time.sleep(3)
     for n in range(1,8):#取消药水
         click_short(pos['del_army_pt0%d' %(n)][0], pos['del_army_pt0%d' %(n)][1], startport, 10)
@@ -617,14 +623,11 @@ def cancel_army(startport):
 
 #启动coc
 def startcoc(startport,wait_time):
-    connect(startport)
-    try:
-        #九游
-        subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
+    #connect(startport)
+    start_id = int(startport) - 52550
+    if start_id in [1,2,3,4,42]:#腾讯
         subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.tencent.tmgp.supercell.clashofclans/com.supercell.titan.tencent.GameAppTencent' % (startport), shell=True)
-    except:
-        #腾讯
-        subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.tencent.tmgp.supercell.clashofclans/com.supercell.titan.tencent.GameAppTencent' % (startport), shell=True)
+    else:#九游
         subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
     #豌豆荚
     #subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
@@ -1245,8 +1248,8 @@ def removeTree_night(startid):
     elif flag == 1:
         stop_thread(t1)
         stop_thread(t2)
-        flag = 0
-
+        flag = 0     
+        
 #启动黑松鼠
 def start_script(startport,*args):
     connect(startport)
@@ -1271,14 +1274,25 @@ def start_script(startport,*args):
             #切换夜世界不打资源
             click(pos['script_night_attackmode'][0], pos['script_night_attackmode'][1], startport, 3)
             click(pos['script_night_attackmode_no'][0], pos['script_night_attackmode_no'][1], startport, 3)
+            #点击夜世界模式
+            click(pos['script_night_auto_collect'][0], pos['script_night_auto_collect'][1], startport,)
+            click(pos['script_night_Accelerate_tower'][0], pos['script_night_Accelerate_tower'][1], startport)
+            click(pos['script_night_auto_weeding'][0], pos['script_night_auto_weeding'][1], startport)
+            click(pos['script_night_auto_levelup'][0], pos['script_night_auto_levelup'][1], startport)
+            click(pos['script_night_auto_research'][0], pos['script_night_auto_research'][1], startport)
         elif args[0] == "play":#切换为play
             click(pos['script_play'][0], pos['script_play'][1], startport, 3)
             # 从下往上滑动
-            for n in range(10):
+            for n in range(7):
                 swipeport(pos['script_swipebot'][0], 950, pos['script_swipetop'][0], 370, startport)
             click(pos['script_night_attackmode'][0], pos['script_night_attackmode'][1], startport, 3)
             click(pos['script_night_attackmode_prize'][0], pos['script_night_attackmode_prize'][1], startport, 3)
-            
+            #点击夜世界模式
+            click(pos['script_night_auto_collect'][0], pos['script_night_auto_collect'][1], startport)
+            click(pos['script_night_Accelerate_tower'][0], pos['script_night_Accelerate_tower'][1], startport)
+            click(pos['script_night_auto_weeding'][0], pos['script_night_auto_weeding'][1], startport)
+            click(pos['script_night_auto_levelup'][0], pos['script_night_auto_levelup'][1], startport)
+            click(pos['script_night_auto_research'][0], pos['script_night_auto_research'][1], startport)
     click(pos['script_start'][0], pos['script_start'][1], startport)
     time.sleep(20)
     #click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)

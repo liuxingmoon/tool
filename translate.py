@@ -72,10 +72,14 @@ def start():
                 result = json.loads(html)
                 #g.msgbox(msg=result['translateResult'][0][0]['tgt'])
                 result = result['translateResult']
-                tl_result = [x[0]['tgt'] for x in result]
+                trans_result = [x[0]['tgt'] for x in result]
                 result_message = tk.Tk()
-                tk.Message(result_message,text=tl_result).pack()
-                #g.msgbox(msg=tl_result)
+                result_message.title('翻译结果')
+                trans_Msg = tk.Text(result_message,relief='flat',bg='gray94',wrap='word',font=('consolas','9'))
+                #trans_Msg = tk.Message(result_message, text=trans_result, width=1000)
+                trans_Msg.insert(1.0,trans_result)
+                trans_Msg.configure(state='disabled')
+                trans_Msg.pack(padx=10,pady=10)
             except urllib.error.HTTPError as HTTPerror:
                 print(HTTPerror.read())
                 time.sleep(1)

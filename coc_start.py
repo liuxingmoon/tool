@@ -11,7 +11,8 @@ import win32gui
 pos = {
   'coc_script':[500,680],
   'start_script':[200,1070],
-  'login_wandoujia': [640, 500],
+  'login_wandoujia1': [640, 300],
+  'login_wandoujia2': [640, 500],
   'login_kunlun': [640, 250],
   'login_kunlun1': [640, 560],
   'login_kunlun2': [640, 620],
