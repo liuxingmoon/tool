@@ -46,14 +46,19 @@ def start():
                 for emu in emulist:
                     emunum.append(int(emu.replace('dundi', '')))
                 skipids = config.get("coc", "skipids").split()
-                resourceids = config.get("coc", "resourceids").split()
+                resourceids_work01 = config.get("coc", "resourceids_work01").split()#获取持续打资源id的list
+                resourceids_work02 = config.get("coc", "resourceids_work02").split()#获取持续打资源id的list
+                resourceids_work03 = config.get("coc", "resourceids_work03").split()#获取持续打资源id的list
                 warids = config.get("coc", "warids").split()
                 donateids_for_paid = config.get("coc", "donateids_for_paid").split()
+                resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]#在持续打资源的list去除付费捐兵的list
                 donateids = config.get("coc", "donateids").split()
                 skipids.extend(warids)  # 添加部落战控制的id到跳过id列表中
                 skipids.extend(donateids_for_paid)  # 添加部落战控制的id到跳过id列表中
                 skipids.extend(donateids)  # 添加捐兵控制的id到跳过id列表中
-                skipids.extend(resourceids)  # 添加捐兵控制的id到跳过id列表中
+                skipids.extend(resourceids_work01)#添加持续打资源的id到跳过id列表中
+                skipids.extend(resourceids_work02)#添加持续打资源的id到跳过id列表中
+                skipids.extend(resourceids_work03)#添加持续打资源的id到跳过id列表中
                 skipids = [int(x) for x in skipids] # 转换str型为int
                 #删除所有在emunum而也在skipids的
                 startidlist = [x for x in emunum if x not in skipids]

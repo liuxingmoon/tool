@@ -16,13 +16,21 @@ def update_tb(tbname,values):
             break  # 出现后立刻跳出
         else:
             index += 1
-    #替换需要替换的字段：结束服务时间,总服务时间,总消费金额
+    #替换需要替换的字段：奶号id，奶号名字，结束服务时间,总服务时间,总消费金额，状态
     table[index] = table[index].replace('\r\n','')
     info = table[index].split(',')
+    coc_id = str(values[0])
+    coc_name = str(values[1])
+    coc_clan_name = str(values[2])
+    start_time = values[3]
+    dead_time = values[4]
     srv_time = int(info[5]) + int(values[5])
     money = int(info[6]) + int(values[6])
     status = values[7]
-    table[index] = table[index].replace(info[4],values[4])
+    table[index] = table[index].replace(info[0],coc_id)
+    table[index] = table[index].replace(info[1],coc_name)
+    table[index] = table[index].replace(info[3],start_time)
+    table[index] = table[index].replace(info[4],dead_time)
     table[index] = table[index].replace(info[5],str(srv_time))
     table[index] = table[index].replace(info[6],str(money))
     table[index] = table[index].replace(info[7],str(status))
@@ -72,7 +80,7 @@ def deadtime(month):
     dead_time = start_time + srv_days
     dead_time_hr = dead_time.strftime('%Y-%m-%d %H:%M')
     #打印结果
-    g.msgbox(msg='尊敬的用户，您的服务已经开始为您服务！\n服务开始时间为：%s\n一共服务时间：%d 天\n服务结束时间：%s\n用户须知：\n1、每天凌晨0:30 - 6:00是打资源时间段；\n2、默认兵种：胖子、法师、气球、皮卡、飞龙、飞龙宝宝、雷龙、雪怪、野猪骑士、女武神、蓝胖；攻城武器：车、气球；可以指定兵种，也可以识别文字，如果文字识别失败默认捐气球；\n默认药水：雷电、狂暴、冰冻、毒药、地震、急速；\n3、如果游戏版本更新，我们会尽快在当天实现版本更新为您提供服务；\n4、为了不影响其他用户，原则上捐兵兵种仅在晚上做变更，兵种种类(包含攻城武器)<=14,总兵力<=500，药水种类<=7,总药水<=20；\n5、在线4小时会自动下线，会有15分钟强制下线时间，请等待20分钟，如果还是未上线，详情请联系我。\n有疑问请随时联系我,祝您游戏愉快！' %(start_time_hr,srv_days_hr,dead_time_hr),title='用户信息')
+    g.msgbox(msg='尊敬的用户，您的服务已经开始为您服务！\n服务开始时间为：%s\n一共服务时间：%d 天\n服务结束时间：%s\n用户须知：\n1、每天凌晨0:30 - 6:00是打资源时间段；\n2、默认兵种：胖子、法师、气球、皮卡、飞龙、飞龙宝宝、雷龙、雪怪、野猪骑士、女武神；攻城武器：车、气球；可以指定兵种，也可以识别文字，如果文字识别失败默认捐气球；\n默认药水：雷电、狂暴、冰冻、毒药、地震、急速；\n3、如果游戏版本更新，我们会尽快在当天实现版本更新为您提供服务；\n4、为了不影响其他用户，原则上捐兵兵种仅在晚上做变更，兵种种类(包含攻城武器)<=14,总兵力<=500，药水种类<=7,总药水<=20；\n5、在线4小时会自动下线，会有15分钟强制下线时间，请等待20分钟，如果还是未上线，详情请联系我。\n有疑问请随时联系我,祝您游戏愉快！' %(start_time_hr,srv_days_hr,dead_time_hr),title='用户信息')
     print('尊敬的用户，您的服务已经开始为您服务！\n服务开始时间为：%s\n一共服务时间：%d 天\n服务结束时间：%s' %(start_time_hr,srv_days_hr,dead_time_hr))
     return (start_time_hr,dead_time_hr,srv_days_hr)
 
@@ -189,10 +197,7 @@ def submit(tbname):
             # 有用户，更新
             values = table[index].split(',')
             time_srv = renewal(srv_month,values)
-            try:
-                status = values[7]
-            except:
-                status = 'running'#续费后更新为running
+            status = 'running'#续费后更新为running
             #print(time_srv)
             start_time_hr = time_srv[0]
             dead_time_hr = time_srv[1]

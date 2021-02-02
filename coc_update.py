@@ -30,16 +30,25 @@ src_makise = {
 'dir_src':r"E:\Program Files\Python\Python38\works\\tool\\",
 'Coclog_src':r'E:\Program Files\Python\Python38\works\tool\coclog.txt',
 'configpath_src':r"E:\Program Files\Python\Python38\works\tool\Config.ini",
-'ddpath_src':r'D:\Program Files\DundiEmu\DunDiEmu.exe'
+'ddpath_src':r'D:\Program Files\DundiEmu\DunDiEmu.exe',
+'resourceids':r"resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]"
 }
 
 dest_worker02 = {
 'dir_dest':r"\\worker02\\tool\\",
 'Coclog_dest':r'D:\Program Files\Python38\works\tool\\coclog.txt',
 'configpath_dest':r"D:\Program Files\Python38\works\tool\\Config.ini",
-'ddpath_dest':r'D:\Program Files\DundiEmu\\DunDiEmu.exe'
+'ddpath_dest':r'D:\Program Files\DundiEmu\\DunDiEmu.exe',
+'resourceids':r"resourceids = [x for x in resourceids_work02 if x not in donateids_for_paid]"
 }
 
+dest_worker03 = {
+'dir_dest':r"\\worker03\\tool\\",
+'Coclog_dest':r'D:\Program Files\Python38\works\tool\\coclog.txt',
+'configpath_dest':r"D:\Program Files\Python38\works\tool\\Config.ini",
+'ddpath_dest':r'D:\Program Files\DundiEmu\\DunDiEmu.exe',
+'resourceids':r"resourceids = [x for x in resourceids_work03 if x not in donateids_for_paid]"
+}
 
 
 
@@ -61,11 +70,14 @@ def update(src,dest):
     file_ctrl.replace(src['configpath_src'],dest['configpath_dest'],'coc_script.py')
     file_ctrl.replace(src['ddpath_src'],dest['ddpath_dest'],'coc_script.py')
     file_ctrl.replace(src['configpath_src'],dest['configpath_dest'],'coc_template.py')
+    file_ctrl.replace(src['resourceids'],dest['resourceids'],'coc_script.py')
+    file_ctrl.replace(src['resourceids'],dest['resourceids'],'coc.py')
     os.chdir(src['dir_src'])#返回原始目录
 
     
 def start():
     update(src_makise,dest_worker02)
+    update(src_makise,dest_worker03)
 
     '''
     filelist = get_files(dir_src)

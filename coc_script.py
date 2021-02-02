@@ -298,7 +298,7 @@ def play_resource(resourceids):
     close_index = (resourceidindex + 1) - resourceids_num
     if close_index < 0:
         close_index = len(resourceids) + close_index
-    close_id = donateids[close_index]
+    close_id = resourceids[close_index]
     #关闭前一个模拟器
     close_emu_id(close_id)
     #写入config
@@ -410,7 +410,6 @@ def start_emu(start_id,wait_time):
     click(pos['sure'][0], pos['sure'][1],startport)
     time.sleep(10)
     click(pos['start_script'][0],pos['start_script'][1],startport,5)
-    click(pos['start_script'][0],pos['start_script'][1],startport,10)
     time.sleep(20)
     login_click(start_id)
     print(r'============================= 启动付费捐兵号脚本完成 ===============================')
@@ -442,9 +441,6 @@ def restart_emu(restartlist,*args):
             #start_emu_process.start()
             start_emu(int(restart_id),30)#启动第二梯队
     restart_server()
-    for restart_id in restartlist:
-        #启动付费捐兵号防登录失败
-        login_click(int(restart_id))#点击一下星陨防止卡在登录页面
 
 #重启打资源
 def restartplay():
@@ -486,7 +482,8 @@ def restartdonate(donateids):
 def login_click(startid):
     startport = getport(startid)
     restart_server()
-    connect(startport)#连接        
+    connect(startport)#连接    
+    time.sleep(10)
     if int(startid) == 5:#如果是星陨，尝试点击登录
         click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
         click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
@@ -548,11 +545,12 @@ if __name__ == "__main__":
     play_switch = config.get("coc", "play_switch")#是否开启轮循打资源
     war_donate_switch = config.get("coc", "war_donate_switch")#是否开启自动部落战捐兵
     donateids_for_paid = config.get("coc", "donateids_for_paid").split()#获取付费捐兵id的list
-    donateids_for_paid_del_army = config.get("coc", "donateids_for_paid_del_army").split()#获取付费捐兵id删除兵的list
     donateids = config.get("coc", "donateids").split()#获取捐兵id的list
-    resourceids = config.get("coc", "resourceids").split()#获取持续打资源id的list
+    resourceids_work01 = config.get("coc", "resourceids_work01").split()#获取持续打资源id的list
+    resourceids_work02 = config.get("coc", "resourceids_work02").split()#获取持续打资源id的list
+    resourceids_work03 = config.get("coc", "resourceids_work03").split()#获取持续打资源id的list
     #在持续打资源的list去除付费捐兵的list
-    resourceids = [x for x in resourceids if x not in donateids_for_paid]
+    resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]
     #在捐兵列表中去除付费捐兵的list和持续打资源的list
     donateids = [x for x in donateids if (x not in donateids_for_paid) and (x not in resourceids)]
     donatenames_for_paid = {}
@@ -592,7 +590,9 @@ if __name__ == "__main__":
     #查看捐兵号的开关是否打开，打开就跳过该id
     skipids.extend(donateids_for_paid)#添加捐兵的id到跳过id列表中
     skipids.extend(donateids)#添加捐兵的id到跳过id列表中
-    skipids.extend(resourceids)#添加持续打资源的id到跳过id列表中
+    skipids.extend(resourceids_work01)#添加持续打资源的id到跳过id列表中
+    skipids.extend(resourceids_work02)#添加持续打资源的id到跳过id列表中
+    skipids.extend(resourceids_work03)#添加持续打资源的id到跳过id列表中
     skipids = list(set(skipids))#去重
     skipids.sort()
     print('============================= 跳过的实例id如下 ===============================\n%s' %(skipids))
@@ -633,7 +633,10 @@ if __name__ == "__main__":
     donate_status = config.get("coc", "donate_status")
     result = instance(donate_switch,donate_status)
     #获取付费捐兵号数量
-    donateids_for_paid_num = len(donateids_for_paid)
+    if donate_for_paid_switch in ['True','1','T']:
+        donateids_for_paid_num = len(donateids_for_paid)
+    else:
+        donateids_for_paid_num = 0
     #时间段
     time_status = result[2]
     if play_resource_switch in ['True','1','T']:
@@ -765,19 +768,23 @@ if __name__ == "__main__":
                 coc_template.wardonate(warids)
             if donate_for_paid_switch in ['True','1','T']:
                 restart_emu(donatenames_for_paid)#只重启付费捐兵号
-        #早上切换打资源状态为捐兵
-        elif (time_status != '凌晨') and (donate_status == 'play') and donate_for_paid_switch in ['True','1','T']:
-            close()#关闭所有模拟器kill_adb()
+        #早上切换打资源状态为捐兵()至少有1个需要切换才执行
+        elif (time_status != '凌晨') and (donate_status == 'play') and ( (donate_for_paid_switch in ['True','1','T']) or (donate_switch in ['True','1','T']) ):
+            close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
+            close_emu_all(donatenames)#关闭所有自用捐兵号
             print(r'============================= 等待30分钟避免切换时没有授权导致切换失败 ===============================')
             timewait(30)#等待30分钟避免启动时没有授权登录
             restart_server()
-            restart_emu(donatenames_for_paid)#只重启付费捐兵号为了授权
-            close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
-            restart_server()
+            if donate_for_paid_switch in ['True','1','T']:
+                restart_emu(donatenames_for_paid)#只重启付费捐兵号为了授权
+                close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
+                for convert_id in donateids_for_paid:
+                    coc_template.convert_mode(convert_id,donate_status)
+                restart_server()
             '''
             #多进程执行有不可预料失败可能
             for convert_id in donateids_for_paid:
-                process_convert_donateids_for_paid = Process(target=coc_template.convert_mode,args=(convert_id,donate_status,donateids_for_paid_del_army))
+                process_convert_donateids_for_paid = Process(target=coc_template.convert_mode,args=(convert_id,donate_status))
                 process_convert_donateids_for_paid.start()
             process_convert_donateids_for_paid.join()#主线程等待子线程运行完执行下一步
             '''
@@ -785,10 +792,10 @@ if __name__ == "__main__":
                 for convert_id in donateids_for_paid:
                     coc_template.convert_mode(convert_id,donate_status)
                 restart_server()
-            #周1打资源，其他时间捐兵
+            #所有时间捐兵
             if donate_switch in ['True','1','T']:
                 try:
-                    if datetime.datetime.now().weekday() in [1,2,3,4,5,6]:
+                    if datetime.datetime.now().weekday() in [0,1,2,3,4,5,6]:#所有时间捐兵，如果要打资源取消时间即可，0是周一，6是周日
                         '''
                         for convert_id in donateids:
                             process_convert_donateids = Process(target=coc_template.convert_mode,args=(convert_id,donate_status))

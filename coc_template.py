@@ -584,9 +584,9 @@ def train_siege_unit(startport):
 #取消训练中的兵种
 def cancel_troop(startport):
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
-    click(pos['trainning'][0], pos['trainning'][1], startport)
+    click(pos['trainning'][0], pos['trainning'][1], startport,2)
     print('取消兵种')
-    click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport)
+    click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport,2)
     click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 600)
     time.sleep(3)
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
@@ -1035,7 +1035,7 @@ def wardonate(startlist):
         startcoc(startport,35)
         cancel(startport)
         #等待1分
-        timewait(1,startport)
+        #timewait(1,startport)
         #夜世界切换
         #归到右上角
         swipe('top',startport)
@@ -1063,8 +1063,9 @@ def wardonate(startlist):
             back(startport)#返回到主页面
         #训练部落战兵种
         train_template('train_template01',startport,2)
-        #补一下气球兵
-        train_troop('train_troop13', 100 , startport)
+        #补一下飞龙、气球兵
+        train_troop('train_troop05', 22 , startport)
+        train_troop('train_troop13', 50 , startport)
         #造雷电药水
         train_potion('train_troop01', 22 , startport)
         #关闭
@@ -1252,6 +1253,7 @@ def removeTree_night(startid):
         
 #启动黑松鼠
 def start_script(startport,*args):
+    restart_server()
     connect(startport)
     # 启动黑松鼠
     subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' % (startport),shell=True)
@@ -1307,7 +1309,7 @@ def convert_mode(convert_id,*args):
     #for nowid in startlist:
     #读取一次配置文件
     config.read(configpath, encoding="utf-8")
-    donateids_for_paid_del_army = config.get("coc", "donateids_for_paid_del_army").split()
+    donateids_for_paid = config.get("coc", "donateids_for_paid").split()
     #nowid = int(nowid)
     convert_id = int(convert_id)
     startport = getport(convert_id)
@@ -1359,8 +1361,8 @@ def convert_mode(convert_id,*args):
             click(pos['boat'][0], pos['boat'][1], startport, 5)
             #取消训练中的兵种
             cancel_troop(startport)
-            if (str(convert_id) in donateids_for_paid_del_army):
-                print('开始执行删除现有兵种，需要全部删除的id为%s'%(donateids_for_paid_del_army))
+            if (str(convert_id) in donateids_for_paid):
+                print('开始执行删除现有兵种，需要全部删除的id为%s'%(donateids_for_paid))
                 print('删除%d的现有兵种和药水并造兵' %(convert_id))
                 # 取消训练中的药水
                 cancel_potion(startport)
