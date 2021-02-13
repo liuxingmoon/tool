@@ -10,42 +10,46 @@ import inspect
 import ctypes
 
 #分别定义a键的信号量对象
-semaphore_s_flag = threading.Semaphore(0)
+semaphore_s_flag_1 = threading.Semaphore(0)
 
 #定义全局变量作为监测线程介入的开关
-s_flag = 0
+s_flag_1 = 0
 #定义全局变量作为整个程序的开关
-flag = 0
+flag_1 = 0
 
-def on_press_s(key):#监听!键作为开始
+def on_press_start_1(key):#监听~键作为开始
     # 监听按键q
-    global s_flag
-    if str(key)=="'"+'!'+"'" and s_flag == 0:
-        print('开始',s_flag)
-        #s_flag信号量加一
-        semaphore_s_flag.release()
-    elif str(key)=="'"+'!'+"'" and s_flag == 1:
-        print("结束",s_flag)
-        s_flag = 0
+    global s_flag_1
+    if str(key)=="'"+'!'+"'" and s_flag_1 == 0:
+        print('开始',s_flag_1)
+        #s_flag_1信号量加一
+        semaphore_s_flag_1.release()
+    elif str(key)=="'"+'!'+"'" and s_flag_1 == 1:
+        print("结束",s_flag_1)
+        s_flag_1 = 0
+def on_press_start_2(key):#监听`键作为开始
+    # 监听按键q
+    if str(key)=="'"+'~'+"'":
+        k.mouse_click_long()
 
-def press_s():
-    global s_flag
+def press_stop_1():
+    global s_flag_1
     while True:
-    	#消费一个s_flag信号量
-        semaphore_s_flag.acquire()
-        #全局变量s_flag赋值为1，阻断监控函数的介入
-        s_flag = 1
+    	#消费一个s_flag_1信号量
+        semaphore_s_flag_1.acquire()
+        #全局变量s_flag_1赋值为1，阻断监控函数的介入
+        s_flag_1 = 1
         MapVirtualKey = ctypes.windll.user32.MapVirtualKeyA
         #time.sleep(0.1)
         try:
-            while s_flag==1:
+            while s_flag_1==1:
                 k.mouse_click()
                 time.sleep(0.05)#每秒点击20次
         except KeyboardInterrupt:
             sys.exit()
-        #全局变量s_flag赋值为0，监控函数又可以介入了
-        s_flag = 0
-        print('自动点击')
+        #全局变量s_flag_1赋值为0，监控函数又可以介入了
+        s_flag_1 = 0
+        print('连续点击')
 
 def _async_raise(tid, exctype):
     """raises the exception, performs cleanup if needed"""
@@ -66,21 +70,30 @@ def stop_thread(thread):
 
 
 
-def start():
-    global flag,flag_switch
+def start_1():
+    global flag_1
 
     # 运行进程
-    t1 = Listener(on_press=on_press_s)
+    t1 = Listener(on_press=on_press_start_1)
     t1.daemon = True
-    t2 = threading.Thread(target=press_s, name='sendThreads')
+    t2 = threading.Thread(target=press_stop_1, name='sendThreads_1')
     t2.daemon = True
-    if flag == 0:
+    if flag_1 == 0:
         t1.start()
         t2.start()
-        flag = 1
-    elif flag == 1:
+        flag_1 = 1
+    elif flag_1 == 1:
         stop_thread(t1)
         stop_thread(t2)
-        flag = 0
+        flag_1 = 0
 
-    #os.system("pause")#暂停
+def start_2():
+    # 运行进程
+    t3 = Listener(on_press=on_press_start_2)
+    t3.daemon = True
+    t3.start()
+
+
+def start():
+    start_1()
+    start_2()

@@ -41,7 +41,7 @@ autoclick_text = tk.Label(root,#放在框架1里面
 autoclick_text.grid(row=1,column=1,padx=10,pady=10)
 '''
 #开启鼠标连点
-autoclick_bt = tk.Button(root,text='连点"!"',command=ak.start,width=15)
+autoclick_bt = tk.Button(root,text='连点"!"长按"~"',command=ak.start,width=15)
 autoclick_bt.grid(row=1,column=1,
               padx=10,pady=10)
 
