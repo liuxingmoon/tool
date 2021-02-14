@@ -15,7 +15,7 @@ def select_tb(tbname):
             table.append(line)
         # 关闭文件
         f.close()
-        print(table)
+        #print(table)
         return (table)
 
 def create_tb(tbname,values):
