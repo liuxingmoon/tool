@@ -50,7 +50,7 @@ def query(tbname):
     table_new.append('总本金：%.2f' %(money))
     '''
     values = table[-1].split(',')
-    principal = float(values[2])
+    principal = float(values[2])#本金
     market_value = float(values[3])
     profit_amount = float(values[4])
     profit_percentage = values[5]
@@ -65,7 +65,7 @@ def get_time():
 def update(tbname):
     # 判断是否存在文件
     if tbname not in os.listdir():
-        create_tb(tbname, ["汇入时间", "汇入金额", "本金", "当前市值", "盈亏金额", "盈亏百分比"])
+        create_tb(tbname, ["变动时间", "汇入金额", "本金", "当前市值", "盈亏金额", "盈亏百分比"])
         update(tbname)
     else:
         table = select_tb(tbname)
@@ -82,19 +82,19 @@ def update(tbname):
         #如果输入没有输入汇款金额，只输入了市值，当前市值更新覆盖上一条市值
         elif (money == '') and (market_value != ''):
             values = table[-1].split(',')
-            now_time = values[0]
-            money = values[1]
+            now_time = get_time()
+            money = 0.0#此次汇入金额为0
             #删掉最后一条数据
             table.pop(-1)
         #插入新数据
         principal = 0.0
         for column in table:
-            info = column.split(',')
+            column_info = column.split(',')
             try:
-                principal += float(info[1])
+                principal += float(column_info[1])
             except ValueError as reason:
                 print('该字段数据：%s 不是正确格式' % (reason))
-        principal += float(money) #加上本次资金
+        principal += float(money) #加上本次汇入资金
         profit_amount = float(market_value) - principal
         #除数不能为0
         if principal == 0.0:
