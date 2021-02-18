@@ -1,6 +1,7 @@
 import csv,os
 
-def select_tb(tbname):
+def select_tb(tbname,*args):
+    '''args是一个列表，包含2个元素，每个元素又是一个列表，[[行1，行2……]，[列1，列2……]]'''
     # 判断是否存在文件
     if tbname not in os.listdir():
         print('%s 不存在，请确认！' %(tbname))
@@ -11,12 +12,32 @@ def select_tb(tbname):
         csv_reader = csv.reader(f)
         # 保存表结果
         table = []
-        for line in f:
-            table.append(line)
-        # 关闭文件
-        f.close()
-        #print(table)
-        return (table)
+        if len(args) == 0:
+            for line in f:
+                table.append(line)
+            # 关闭文件
+            f.close()
+            #print(table)
+            return (table)
+        else:
+            row = args[0][0]   #行
+            column = args[0][1]    #列
+            line_count = 0
+            for line in f:
+                if (line_count in row) or (line_count == row) or (row == []):
+                    line = line.split(',')
+                    line_select = ''
+                    for member in line:
+                        if (line.index(member) in column) or (line.index(member) == column) or (column == []):
+                            line_select += member
+                        else:
+                            continue
+                    table.append(line_select)
+                else:
+                    continue
+                line_count += 1
+            f.close()
+            return (table)
 
 def create_tb(tbname,values):
     # 排查是否已存在同名文件
