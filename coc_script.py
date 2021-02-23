@@ -662,7 +662,7 @@ if __name__ == "__main__":
         kill_adb()
         endtime_global = datetime.datetime.now()
         runtime_global = endtime_global - starttime_global
-        #每隔一天重启一次
+        #每隔一段时间重启一次
         runtime_hours = round(runtime_global.total_seconds() / 3600)
         runtime_days = int(runtime_hours / 24)
         if (runtime_hours != 0) and ((runtime_hours % restart_time) == 0) and (restart_status == 'F'):
@@ -714,6 +714,10 @@ if __name__ == "__main__":
         instance_num = instance_num - donate_num - donateids_for_paid_num - resourceids_num
         #凌晨切换捐兵状态为打资源，顺便做一次部落战捐兵
         if (time_status == '凌晨') and (donate_status == 'donate'):
+            flag_reboot = 'False'#设置flag为FALSE
+            config.read(configpath, encoding="utf-8")
+            config.set("coc", "flag_reboot", flag_reboot)#只能存储str类型数据，设置flag为True
+            config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
             close()#关闭kill_adb()
             restart_server()
             if donate_for_paid_switch in ['True','1','T']:
@@ -770,11 +774,18 @@ if __name__ == "__main__":
                 restart_emu(donatenames_for_paid)#只重启付费捐兵号
         #早上切换打资源状态为捐兵()至少有1个需要切换才执行
         elif (time_status != '凌晨') and (donate_status == 'play') and ( (donate_for_paid_switch in ['True','1','T']) or (donate_switch in ['True','1','T']) ):
-            close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
-            close_emu_all(donatenames)#关闭所有自用捐兵号
-            print(r'============================= 等待30分钟避免切换时没有授权导致切换失败 ===============================')
-            timewait(30)#等待30分钟避免启动时没有授权登录
-            restart_server()
+            config.read(configpath, encoding="utf-8")
+            flag_reboot = config.get("coc", "flag_reboot")#获取重启flag
+            if flag_reboot not in ['True','1','T']:
+                flag_reboot = 'True'
+                config.set("coc", "flag_reboot", flag_reboot)#只能存储str类型数据，设置flag为True
+                config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+                reboot()#重启
+            elif flag_reboot in ['True','1','T']:
+                close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
+                close_emu_all(donatenames)#关闭所有自用捐兵号
+                print(r'============================= 等待30分钟避免切换时没有授权导致切换失败 ===============================')
+                timewait(30)#等待30分钟避免启动时没有授权登录
             if donate_for_paid_switch in ['True','1','T']:
                 restart_emu(donatenames_for_paid)#只重启付费捐兵号为了授权
                 close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
@@ -788,7 +799,7 @@ if __name__ == "__main__":
                 process_convert_donateids_for_paid.start()
             process_convert_donateids_for_paid.join()#主线程等待子线程运行完执行下一步
             '''
-            if donate_for_paid_switch in ['True','1','T']:
+            if donate_for_paid_switch in ['True','1','T']:#保险机制，如果上一次切换失败但是startid还没有改，有机会重新执行一次切换成功
                 for convert_id in donateids_for_paid:
                     coc_template.convert_mode(convert_id,donate_status)
                 restart_server()

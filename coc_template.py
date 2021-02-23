@@ -829,7 +829,8 @@ def register(name,startid):
     click(pos['backcamp'][0], pos['backcamp'][1], startport)
     time.sleep(5)
     #造圣水收集器
-    click(pos['cancel'][0], pos['cancel'][1], startport)
+    for n in range(5):
+        click(pos['cancel'][0], pos['cancel'][1], startport)
     storebuild(startport)
     click(pos['store_3'][0], pos['store_3'][1], startport)
     click(pos['built04'][0], pos['built04'][1], startport)

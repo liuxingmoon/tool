@@ -22,7 +22,7 @@ def select_tb(tbname,*args):
         else:
             row = args[0][0]   #行
             column = args[0][1]    #列
-            line_count = 0
+            line_count = 1
             for line in f:
                 if (line_count in row) or (line_count == row) or (row == []):
                     line = line.split(',')
@@ -57,7 +57,7 @@ def insert_tb(tbname,values):
     # values为列表格式
     # 判断是否存在文件
     if tbname not in os.listdir():
-        create_tb(tbname)
+        create_tb(tbname,values)
     # 新建行存储新用户信息
     # 创建文件对象
     f = open(tbname,'a',encoding='gb2312',newline="")
