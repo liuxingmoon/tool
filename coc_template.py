@@ -1258,7 +1258,7 @@ def start_script(startport,*args):
     connect(startport)
     # 启动黑松鼠
     subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' % (startport),shell=True)
-    time.sleep(10)
+    time.sleep(20)
     #点击更新
     click(pos['sure'][0], pos['sure'][1], startport)
     time.sleep(10)

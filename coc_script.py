@@ -102,7 +102,7 @@ def coc_script(startport,wait_time):
         restart_server()
         connect(startport)
         coc_script(startport,wait_time)#递归重新执行一次
-    time.sleep(10)
+    time.sleep(20)
     
     
 #点击屏幕
@@ -700,16 +700,16 @@ if __name__ == "__main__":
         if time_status == "凌晨":
             if donate_mode == "A":
                 donate_num = len(donateids)
-            elif donate_switch == "T":
+            elif donate_switch in ['True','1','T']:
                 donate_num = int(config.get("coc", "donate_num_morning"))#捐兵号的个数
             elif donate_switch == "F":
                 donate_num = 0
         else:
             if donate_mode == "A":
                 donate_num = len(donateids)
-            elif donate_switch == "T":
+            elif donate_switch in ['True','1','T']:
                 donate_num = int(config.get("coc", "donate_num"))#捐兵号的个数
-            elif donate_switch == "F":
+            elif donate_switch in ['True','1','T']:
                 donate_num = 0
         instance_num = instance_num - donate_num - donateids_for_paid_num - resourceids_num
         #凌晨切换捐兵状态为打资源，顺便做一次部落战捐兵

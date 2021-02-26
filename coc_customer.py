@@ -21,6 +21,9 @@ def update_tb(tbname,values):
     info = table[index].split(',')
     coc_id = str(values[0])
     coc_name = str(values[1])
+    if coc_id in [0,'0','']:#id为空不更新id和coc_name
+        coc_id = info[0]
+        coc_name = info[1]
     coc_clan_name = str(values[2])
     start_time = values[3]
     dead_time = values[4]
