@@ -172,7 +172,7 @@ def query(tbname):
 
 #提交信息，保存到csv表中
 def submit(tbname):
-    clarm(tbname)
+    #clarm(tbname)
     # 获取输入信息
     info = get_coc_info()
     coc_id = info[0]

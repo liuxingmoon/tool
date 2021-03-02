@@ -403,7 +403,7 @@ def start_emu(start_id,wait_time):
     action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(start_id))
     start(action,startport,wait_time)
     print(r'============================= 启动付费捐兵号模拟器完成 ===============================')
-    time.sleep(3)
+    timewait(1)
     print(startport)
     coc_script(startport,5)
     time.sleep(10)
@@ -709,7 +709,7 @@ if __name__ == "__main__":
                 donate_num = len(donateids)
             elif donate_switch in ['True','1','T']:
                 donate_num = int(config.get("coc", "donate_num"))#捐兵号的个数
-            elif donate_switch in ['True','1','T']:
+            elif donate_switch not in ['True','1','T']:
                 donate_num = 0
         instance_num = instance_num - donate_num - donateids_for_paid_num - resourceids_num
         #凌晨切换捐兵状态为打资源，顺便做一次部落战捐兵

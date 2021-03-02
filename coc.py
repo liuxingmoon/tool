@@ -79,6 +79,12 @@ def start():
                 resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]
                 #在捐兵列表中去除付费捐兵的list和持续打资源的list
                 startidlist = [x for x in donateids if (x not in donateids_for_paid) and (x not in resourceids)]
+            elif info in ['u', 'U', 'up', 'UP']:#升级的模拟器id
+                config = configparser.ConfigParser()
+                config.read("Config.ini", encoding="utf-8")
+                startid = int(config.get("coc", "maxid")) + 1
+                endid = len(os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\')) - 2
+                startidlist = [x for x in range(startid,(endid + 1))]
             else:
                 #剩下的就是首尾格式的列表
                 startidlist = info.split()
