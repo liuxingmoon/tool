@@ -25,6 +25,7 @@ import wifi
 import threading
 import inspect
 import ctypes
+import work_table as work_tb
 
 
 root = tk.Tk()
@@ -320,7 +321,11 @@ poweroff_bt.grid(row=4,column=2,
 wifi_bt = tk.Button(root,text='wifi热点',command=wifi.start,width=15)
 wifi_bt.grid(row=5,column=2,
               padx=10,pady=10)
-              
+
+#筛选表格
+work_tb_bt = tk.Button(root,text='筛选表格',command=work_tb.start,width=15)
+work_tb_bt.grid(row=6,column=2,
+              padx=10,pady=10)
               
 def colorchoose():
     rgb = colorchooser.askcolor()

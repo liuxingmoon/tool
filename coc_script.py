@@ -847,6 +847,8 @@ if __name__ == "__main__":
         if play_switch in ['True','1','T']:
             #启动打资源号
             restartplay()
+        #确认星陨，点击登录，星陨总是掉线
+        login_click(5)
         #运行该coc实例时间
         t = int(3600*instance_time)
         time.sleep(t)
