@@ -512,7 +512,7 @@ if __name__ == "__main__":
     config.read(configpath, encoding="utf-8")
     #启动id范围
     minid = int(config.get("coc", "minid"))
-    maxid = len(os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\')) - 2
+    maxid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\') if x != 'vboxData'])
     #maxid = int(config.get("coc", "maxid"))
     #restart_time = float(config.get("coc", "restart_time"))
     #捐兵模式：一直捐兵（A)，还是半捐
