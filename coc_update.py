@@ -28,6 +28,8 @@ ddpath_old_dest = r'C:\Program Files\DundiEmu\\DunDiEmu.exe'
 
 src_makise = {
 'dir_src':r"E:\Program Files\Python\Python38\works\\tool\\",
+'backup_config_worker02':r"E:\Program Files\Python\Python38\works\\tool\\backup_worker02\\",
+'backup_config_worker03':r"E:\Program Files\Python\Python38\works\\tool\\backup_worker03\\",
 'Coclog_src':r'E:\Program Files\Python\Python38\works\tool\coclog.txt',
 'configpath_src':r"E:\Program Files\Python\Python38\works\tool\Config.ini",
 'ddpath_src':r'D:\Program Files\DundiEmu\DunDiEmu.exe',
@@ -72,12 +74,21 @@ def update(src,dest):
     file_ctrl.replace(src['configpath_src'],dest['configpath_dest'],'coc_template.py')
     file_ctrl.replace(src['resourceids'],dest['resourceids'],'coc_script.py')
     file_ctrl.replace(src['resourceids'],dest['resourceids'],'coc.py')
+    #更新coc_customer.csv stock_info.csv到各个机器
+    file_ctrl.copy_file('coc_customer.csv',src['dir_src'],dest['dir_dest'])
+    file_ctrl.copy_file('stock_info.csv',src['dir_src'],dest['dir_dest'])
     os.chdir(src['dir_src'])#返回原始目录
+
+def backup_config(src,dest_dir):
+    file_ctrl.copy_file('Config.ini',src['dir_dest'],dest_dir)
+    os.chdir(src_makise['dir_src'])#返回原始目录
 
     
 def start():
     update(src_makise,dest_worker02)
     update(src_makise,dest_worker03)
+    backup_config(dest_worker02,src_makise['backup_config_worker02'])
+    backup_config(dest_worker03,src_makise['backup_config_worker03'])
 
     '''
     filelist = get_files(dir_src)

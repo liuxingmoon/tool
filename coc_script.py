@@ -604,18 +604,20 @@ if __name__ == "__main__":
     notplaylist.extend(resourceids)
     notplaylist.extend(skipids)
     notplaylist = list(set(notplaylist))#去重
-    for playid in range(maxid + 1):
-        if str(playid) not in notplaylist:
-            playconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' %(playid)
-            with open(playconfig,'r') as playfile:
-                configlines = playfile.readlines()
-                for configline in configlines:
-                    if 'EmulatorTitleName' in configline:
-                        playname = configline.split('=')[-1].rstrip('\n')
-                        playnames[playid] = playname
-    play_ids = list(playnames.keys())
-    print('============================= 当前的打资源号和名字如下: ===============================\n%s' %(playnames))
-
+    try:
+        for playid in range(maxid + 1):
+            if str(playid) not in notplaylist:
+                playconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' %(playid)
+                with open(playconfig,'r') as playfile:
+                    configlines = playfile.readlines()
+                    for configline in configlines:
+                        if 'EmulatorTitleName' in configline:
+                            playname = configline.split('=')[-1].rstrip('\n')
+                            playnames[playid] = playname
+        play_ids = list(playnames.keys())
+        print('============================= 当前的打资源号和名字如下: ===============================\n%s' %(playnames))
+    except:
+        print('============================= 当前的打资源号不全 ===============================')
     #白天和夜晚运行的实例数量和时间
     instance_num_day = int(config.get("coc", "instance_num_day"))
     instance_time_day = float(config.get("coc", "instance_time_day"))
@@ -848,10 +850,12 @@ if __name__ == "__main__":
             #启动打资源号
             restartplay()
         #确认星陨，点击登录，星陨总是掉线
-        login_click(5)
+        #login_click(5)
         #运行该coc实例时间
-        t = int(3600*instance_time)
-        time.sleep(t)
+        t = int(60*instance_time)
+        for time_minite in  t:
+            print('============================= 进入等待,还剩 %d 分钟 =============================' %(time_minite))
+            timewait(1)
         restart_server()
 '''
     except Err as reason:

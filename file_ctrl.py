@@ -13,6 +13,11 @@ def copy_file(filename,src_dir,dest_dir):
         dest_dir = ",".join(dest_dir).replace(',','\\')#将列表连接为str
         #切换到目的目录
         os.chdir(dest_dir)
+    except FileNotFoundError as reason:
+        #没有目录，直接新建
+        os.mkdir(dest_dir)
+        #切换到目的目录
+        os.chdir(dest_dir)
     #获取文件名
     #file_name = src_file.split('\\')[-1]
     #备份目的目录文件
