@@ -554,38 +554,44 @@ if __name__ == "__main__":
     #在捐兵列表中去除付费捐兵的list和持续打资源的list
     donateids = [x for x in donateids if (x not in donateids_for_paid) and (x not in resourceids)]
     donatenames_for_paid = {}
-    for donateid_for_paid in donateids_for_paid:
-        donateconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%s\config.ini' %(donateid_for_paid)
-        with open(donateconfig,'r') as donatefile:
-            configlines = donatefile.readlines()
-            for configline in configlines:
-                if 'EmulatorTitleName' in configline:
-                    donatename = configline.split('=')[-1].rstrip('\n')
-                    donatenames_for_paid[donateid_for_paid] = donatename
-    print('============================= 当前的付费捐兵号id和名字如下 ===============================\n%s' %(donatenames_for_paid))
-
+    try:
+        for donateid_for_paid in donateids_for_paid:
+            donateconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%s\config.ini' %(donateid_for_paid)
+            with open(donateconfig,'r') as donatefile:
+                configlines = donatefile.readlines()
+                for configline in configlines:
+                    if 'EmulatorTitleName' in configline:
+                        donatename = configline.split('=')[-1].rstrip('\n')
+                        donatenames_for_paid[donateid_for_paid] = donatename
+        print('============================= 当前的付费捐兵号id和名字如下 ===============================\n%s' %(donatenames_for_paid))
+    except:
+        print('============================= 当前的付费捐兵号不全 ===============================')
     resource_names = {}
-    for resourceid in resourceids:
-        donateconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%s\config.ini' %(resourceid)
-        with open(donateconfig,'r') as donatefile:
-            configlines = donatefile.readlines()
-            for configline in configlines:
-                if 'EmulatorTitleName' in configline:
-                    donatename = configline.split('=')[-1].rstrip('\n')
-                    resource_names[resourceid] = donatename
-    print('============================= 当前的持续打资源号id和名字如下 ===============================\n%s' %(resource_names))
-
+    try:
+        for resourceid in resourceids:
+            donateconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%s\config.ini' %(resourceid)
+            with open(donateconfig,'r') as donatefile:
+                configlines = donatefile.readlines()
+                for configline in configlines:
+                    if 'EmulatorTitleName' in configline:
+                        donatename = configline.split('=')[-1].rstrip('\n')
+                        resource_names[resourceid] = donatename
+        print('============================= 当前的持续打资源号id和名字如下 ===============================\n%s' %(resource_names))
+    except:
+        print('============================= 当前的持续打资源号不全 ===============================')
     donatenames = {}
-    for donateid in donateids:
-        donateconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%s\config.ini' %(donateid)
-        with open(donateconfig,'r') as donatefile:
-            configlines = donatefile.readlines()
-            for configline in configlines:
-                if 'EmulatorTitleName' in configline:
-                    donatename = configline.split('=')[-1].rstrip('\n')
-                    donatenames[donateid] = donatename
-    print('============================= 当前的捐兵号id和名字如下 ===============================\n%s' %(donatenames))
-
+    try:
+        for donateid in donateids:
+            donateconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%s\config.ini' %(donateid)
+            with open(donateconfig,'r') as donatefile:
+                configlines = donatefile.readlines()
+                for configline in configlines:
+                    if 'EmulatorTitleName' in configline:
+                        donatename = configline.split('=')[-1].rstrip('\n')
+                        donatenames[donateid] = donatename
+        print('============================= 当前的捐兵号id和名字如下 ===============================\n%s' %(donatenames))
+    except:
+        print('============================= 当前的自用捐兵号不全 ===============================')
 
     #查看捐兵号的开关是否打开，打开就跳过该id
     skipids.extend(donateids_for_paid)#添加捐兵的id到跳过id列表中
@@ -790,6 +796,7 @@ if __name__ == "__main__":
                 timewait(30)#等待30分钟避免启动时没有授权登录
             if donate_for_paid_switch in ['True','1','T']:
                 restart_emu(donatenames_for_paid)#只重启付费捐兵号为了授权
+                #timewait(2)#等待2分钟缓冲一下
                 close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
                 for convert_id in donateids_for_paid:
                     coc_template.convert_mode(convert_id,donate_status)
@@ -852,8 +859,8 @@ if __name__ == "__main__":
         #确认星陨，点击登录，星陨总是掉线
         #login_click(5)
         #运行该coc实例时间
-        t = int(60*instance_time)
-        for time_minite in  t:
+        t = int(instance_time)
+        for time_minite in range(t,0,-1):
             print('============================= 进入等待,还剩 %d 分钟 =============================' %(time_minite))
             timewait(1)
         restart_server()

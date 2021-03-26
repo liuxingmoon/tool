@@ -20,7 +20,7 @@ from multiprocessing import Process
 # coc模板
 #方法：
 
-# 元素坐标
+# 元素坐标,建立新号都是用240的
 pos = {
     'pointleft': [149, 456],
     'pointtop': [622, 100],
@@ -35,6 +35,8 @@ pos = {
     'name_done': [640, 235],
     'alias_name': [640, 510],
     'idcard': [640, 470],
+    'agree1': [365, 110],
+    'agree2': [640, 170],
     'register': [760, 545],
     'store': [1200, 635],
     'relogin': [500, 825],
@@ -603,18 +605,21 @@ def cancel_potion(startport):
 #取消现有兵种和药水
 def cancel_army(startport):
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
-    click(pos['trainning'][0], pos['trainning'][1], startport)
+    click(pos['trainning'][0], pos['trainning'][1], startport,3)
     print('取消现有兵种和药水')
-    click(pos['trainningitem1'][0], pos['trainningitem1'][1], startport)
-    click(pos['edit_army'][0], pos['edit_army'][1], startport)
+    click(pos['trainningitem1'][0], pos['trainningitem1'][1], startport,3)
+    click(pos['edit_army'][0], pos['edit_army'][1], startport,3)
     #取消兵种
     click_short(pos['del_army_trp01'][0], pos['del_army_trp01'][1], startport, 120)
-    click_short(pos['del_army_trp02'][0], pos['del_army_trp02'][1], startport, 380)
+    click_short(pos['del_army_trp02'][0], pos['del_army_trp02'][1], startport, 400)
     click_short(pos['del_army_trp03'][0], pos['del_army_trp03'][1], startport, 40)
-    time.sleep(3)
+    time.sleep(5)
     for n in range(1,8):#取消药水
         click_short(pos['del_army_pt0%d' %(n)][0], pos['del_army_pt0%d' %(n)][1], startport, 10)
-    time.sleep(3)
+    #重启一下server
+    restart_server()
+    connect(startport)
+    time.sleep(5)
     click(pos['del_army'][0], pos['del_army'][1], startport, 3)#确定删除
     time.sleep(5)
     click(pos['del_army_sure'][0], pos['del_army_sure'][1], startport, 3)
@@ -804,6 +809,9 @@ def register(name,startid):
     #重启,菜单栏无效只能home然后等1分钟再重进
     restartcoc(startport)
     time.sleep(5)
+    #同意协议
+    click(pos['agree1'][0], pos['agree1'][1], startport)
+    click(pos['agree2'][0], pos['agree2'][1], startport)
     #取消广告
     click(pos['cancel'][0], pos['cancel'][1], startport)
     time.sleep(5)
@@ -831,6 +839,7 @@ def register(name,startid):
     #造圣水收集器
     for n in range(5):
         click(pos['cancel'][0], pos['cancel'][1], startport)
+        click(pos['backcamp'][0], pos['backcamp'][1], startport)#上一个点击无效
     storebuild(startport)
     click(pos['store_3'][0], pos['store_3'][1], startport)
     click(pos['built04'][0], pos['built04'][1], startport)
@@ -860,7 +869,7 @@ def register(name,startid):
     time.sleep(15)
     #造兵
     click(pos['cancel'][0], pos['cancel'][1], startport)
-    click(pos['camp'][0], pos['camp'][1], startport)
+    #click(pos['camp'][0], pos['camp'][1], startport)
     click(pos['trainning_bt'][0], pos['trainning_bt'][1], startport)
     click_short(pos['train_troop01'][0], pos['train_troop01'][1], startport,50)
     #等待造兵
@@ -934,9 +943,7 @@ def register(name,startid):
     time.sleep(60)
     #升级收集器1,2
     levelup_collector1(startport)
-    time.sleep(60)
-    #等待造兵完成
-    time.sleep(20)
+    time.sleep(80)
     #打哥布林
     click(pos['attack'][0], pos['attack'][1], startport)
     click(pos['attack_single'][0], pos['attack_single'][1], startport)
@@ -994,32 +1001,43 @@ def register(name,startid):
     #升级罐子和瓶子
     levelup_saver(startport)
     cancel(startport)
+    close_emu_id(startid)#关闭该实例
     g.msgbox(msg='初始化完成')
 
 #升级资源
-def resource(startid,endid):
-    for nowid in range(startid,endid+1):
-        action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' % (nowid)
-        c().start(action, nowid,1)#最小化
-        startport = getport(nowid)
-        connect(startport)
-        #重新登录qq
-        click(pos['relogin'][0], pos['relogin'][1], startport)
-        time.sleep(10)
-        startcoc(startport,35)
-        cancel(startport)
-        levelup_mine(startport)
-        cancel(startport)
-        levelup_collector(startport)
-        cancel(startport)
-        levelup_saver(startport)
-        cancel(startport)
-        levelup_train(startport)
-        #升级大本营
-        click(pos['base2'][0], pos['base2'][1], startport)
-        click(pos['levelup2'][0], pos['levelup2'][1], startport)
-        click(pos['enter'][0], pos['enter'][1], startport)
-        close_emu_id(int(nowid))
+def resource_up(resourceid):
+    action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' % (resourceid)
+    c().start(action, resourceid,1)#最小化
+    startport = getport(resourceid)
+    connect(startport)
+    #重新登录qq
+    click(pos['relogin'][0], pos['relogin'][1], startport)
+    time.sleep(10)
+    startcoc(startport,35)
+    cancel(startport)
+    levelup_mine(startport)
+    cancel(startport)
+    levelup_collector(startport)
+    cancel(startport)
+    levelup_saver(startport)
+    cancel(startport)
+    levelup_train(startport)
+    #升级大本营
+    click(pos['base2'][0], pos['base2'][1], startport)
+    click(pos['levelup2'][0], pos['levelup2'][1], startport)
+    click(pos['enter'][0], pos['enter'][1], startport)
+    close_emu_id(int(resourceid))
+    
+def resource_all(startid,*args):
+    if len(args) == 0:
+        for nowid in startid:
+            resource_up(nowid)
+    elif len(args) == 1:
+        for nowid in range(startid,endid+1):
+            resource_up(nowid)
+    elif len(args) == 2:
+        for nowid in args:
+            resource_up(nowid)
     g.msgbox(msg='升级完成')
 
 #部落战捐兵
@@ -1261,7 +1279,7 @@ def start_script(startport,*args):
     time.sleep(20)
     #点击更新
     click(pos['sure'][0], pos['sure'][1], startport)
-    time.sleep(10)
+    time.sleep(20)
     # 点击模式设置
     click(pos['script_item3'][0], pos['script_item3'][1], startport, 3)
     click(pos['script_switch_mode'][0], pos['script_switch_mode'][1], startport, 3)
@@ -1350,6 +1368,10 @@ def convert_mode(convert_id,*args):
             # 重新登录qq
             click(pos['relogin'][0], pos['relogin'][1], startport,3)
             #click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
+            #重启一下server
+            restart_server()
+            connect(startport)
+            time.sleep(5)
             #启动coc
             startcoc(startport,40)
             #等待1分

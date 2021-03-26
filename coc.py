@@ -5,8 +5,9 @@ import configparser
 import os
 import coc_customer
 import AutoClick as ak
-import coc_update,coc_resume
+import coc_update,coc_resume,coc_config
 
+basedir = os.getcwd()
 def start():
     #启动部落冲突自动启动鼠标连点
     try:
@@ -18,78 +19,82 @@ def start():
             info = coc_id.get()
             config = configparser.ConfigParser()
             config.read("Config.ini", encoding="utf-8")
-            if (info == "") or (info in ['w','W','war','War']):
+            if (info == "") or (info in ['w', 'W', 'war', 'War']):
                 # 不写就打开部落战id
                 startidlist = config.get("coc", "warids").split()
             elif info.isdigit():
                 # 如果输入的是数字
                 startidlist = [info]
-            elif info in ['a','A','all','ALL']:
-                #有All代表启动所有的
+            elif info in ['a', 'A', 'all', 'ALL']:
+                # 有All代表启动所有的
                 os.chdir(r'D:\Program Files\DundiEmu\DundiData\avd')
                 emulist = os.listdir()
                 emulist.remove('vboxData')
-                #选出模拟器的启动id
+                # 选出模拟器的启动id
                 emunum = []
                 for emu in emulist:
                     emunum.append(int(emu.replace('dundi', '')))
-                #排序
+                # 排序
                 emunum.sort()
                 startidlist = emunum
-            elif info in ['p','P','play','PLAY']:
-                #P代表启动除了捐兵号，跳过号以及部落战号剩下的play号
+            elif info in ['P', 'paid', 'Paid']:
+                # P代表付费捐兵号
+                startidlist = config.get("coc", "donateids_for_paid").split()
+            elif info in ['p', 'play', 'PLAY']:
+                # p代表启动除了捐兵号，跳过号以及部落战号剩下的play号
                 os.chdir(r'D:\Program Files\DundiEmu\DundiData\avd')
                 emulist = os.listdir()
                 emulist.remove('vboxData')
-                #选出模拟器的启动id
+                # 选出模拟器的启动id
                 emunum = []
                 for emu in emulist:
                     emunum.append(int(emu.replace('dundi', '')))
                 skipids = config.get("coc", "skipids").split()
-                resourceids_work01 = config.get("coc", "resourceids_work01").split()#获取持续打资源id的list
-                resourceids_work02 = config.get("coc", "resourceids_work02").split()#获取持续打资源id的list
-                resourceids_work03 = config.get("coc", "resourceids_work03").split()#获取持续打资源id的list
+                resourceids_work01 = config.get("coc", "resourceids_work01").split()  # 获取持续打资源id的list
+                resourceids_work02 = config.get("coc", "resourceids_work02").split()  # 获取持续打资源id的list
+                resourceids_work03 = config.get("coc", "resourceids_work03").split()  # 获取持续打资源id的list
                 warids = config.get("coc", "warids").split()
                 donateids_for_paid = config.get("coc", "donateids_for_paid").split()
-                resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]#在持续打资源的list去除付费捐兵的list
+                resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]  # 在持续打资源的list去除付费捐兵的list
                 donateids = config.get("coc", "donateids").split()
                 skipids.extend(warids)  # 添加部落战控制的id到跳过id列表中
                 skipids.extend(donateids_for_paid)  # 添加部落战控制的id到跳过id列表中
                 skipids.extend(donateids)  # 添加捐兵控制的id到跳过id列表中
-                skipids.extend(resourceids_work01)#添加持续打资源的id到跳过id列表中
-                skipids.extend(resourceids_work02)#添加持续打资源的id到跳过id列表中
-                skipids.extend(resourceids_work03)#添加持续打资源的id到跳过id列表中
-                skipids = [int(x) for x in skipids] # 转换str型为int
-                #删除所有在emunum而也在skipids的
+                skipids.extend(resourceids_work01)  # 添加持续打资源的id到跳过id列表中
+                skipids.extend(resourceids_work02)  # 添加持续打资源的id到跳过id列表中
+                skipids.extend(resourceids_work03)  # 添加持续打资源的id到跳过id列表中
+                skipids = [int(x) for x in skipids]  # 转换str型为int
+                # 删除所有在emunum而也在skipids的
                 startidlist = [x for x in emunum if x not in skipids]
-                #排序
+                # 排序
                 startidlist.sort()
             elif info in ['s', 'S', 'skip', 'SKIP']:
                 skipids = config.get("coc", "skipids").split()
-                #删除0和26
-                #startidlist = [x for x in skipids if x not in ['0','26','28','35','39']]
-                startidlist = [x for x in skipids if x not in ['0','26','1','2','3','4','5']]
+                # 删除0和15
+                # startidlist = [x for x in skipids if x not in ['0','15','28','35','39']]
+                startidlist = [x for x in skipids if x not in ['0', '15', '1', '2', '3', '4', '5']]
             elif info in ['d', 'D', 'donate', 'DONATE']:
                 donateids = config.get("coc", "donateids").split()
-                donateids_for_paid = config.get("coc", "donateids_for_paid").split()#获取付费捐兵id的list
+                donateids_for_paid = config.get("coc", "donateids_for_paid").split()  # 获取付费捐兵id的list
                 resourceids_work01 = config.get("coc", "resourceids_work01").split()  # 获取持续打资源id的list
                 resourceids_work02 = config.get("coc", "resourceids_work02").split()  # 获取持续打资源id的list
                 resourceids_work03 = config.get("coc", "resourceids_work03").split()  # 获取持续打资源id的list
                 # 在持续打资源的list去除付费捐兵的list
                 resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]
-                #在捐兵列表中去除付费捐兵的list和持续打资源的list
+                # 在捐兵列表中去除付费捐兵的list和持续打资源的list
                 startidlist = [x for x in donateids if (x not in donateids_for_paid) and (x not in resourceids)]
-            elif info in ['u', 'U', 'up', 'UP']:#升级的模拟器id
+            elif info in ['u', 'U', 'up', 'UP']:  # 升级的模拟器id
                 config = configparser.ConfigParser()
                 config.read("Config.ini", encoding="utf-8")
                 startid = int(config.get("coc", "maxid")) + 1
-                endid = len(os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\')) - 2
-                startidlist = [x for x in range(startid,(endid + 1))]
+                endid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\') if x != 'vboxData'])
+                startidlist = [x for x in range(startid, (endid + 1))]
             else:
-                #剩下的就是首尾格式的列表
+                # 剩下的就是首尾格式的列表
                 startidlist = info.split()
             print(startidlist, type(startidlist))
-            return startidlist
+            os.chdir(basedir)
+            return (startidlist)
         #部落战捐兵
         def wardonate():
             startidlist = getinfo()
@@ -130,17 +135,21 @@ def start():
         def cocRC():
             startidlist = getinfo()
             startid = coc_id.get()  # 获取输入框信息
+            config = configparser.ConfigParser()
+            config.read("Config.ini", encoding="utf-8")
+            skipids = config.get("coc", "skipids").split()
+            levelupids = [int(x) for x in skipids if x not in ['0', '15']]
             #输入框为空自动定义为最大id
             if startid == "":
-                config = configparser.ConfigParser()
-                config.read("Config.ini", encoding="utf-8")
                 startid = int(config.get("coc", "maxid")) + 1
-                endid = len(os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\')) - 2
-            #print(startidlist, type(startidlist))
+                endid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\') if x != 'vboxData'])
+                if startid > endid:#maxid后没有新建模拟器，只升级levelupids
+                    for levelupid in levelupids:
+                        coc_template.resource_up(levelupid)
+                else:
+                    coc_template.resource_all(startid,endid,levelupids)
             else:
-                startid = int(startidlist[0])
-                endid = int(startidlist[-1])
-            coc_template.resource(startid,endid)
+                coc_template.resource_all(levelupids)
         #启动部落冲突
         def cocst():
             startidlist = getinfo()
@@ -220,7 +229,10 @@ def start():
         coc_resume_bt = tk.Button(root,text='恢复代码',command=coc_resume.start,width=15)
         coc_resume_bt.grid(row=6,column=1,
               padx=10,pady=10)
-
+        #脚本配置
+        coc_config_bt = tk.Button(root,text='脚本配置',command=coc_config.start,width=15)
+        coc_config_bt.grid(row=6,column=2,
+              padx=10,pady=10)
         root.mainloop()
     except:
         root.destroy()
