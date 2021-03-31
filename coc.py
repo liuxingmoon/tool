@@ -68,6 +68,10 @@ def start():
                 startidlist = [x for x in emunum if x not in skipids]
                 # 排序
                 startidlist.sort()
+            #9本升级的id，用于主pc升级完后放到worker03去打资源
+            elif info in ['l', 'L', 'levelup', 'LEVELUP']:
+                levelupids = config.get("coc", "levelupids").split()
+                startidlist = [x for x in levelupids]
             elif info in ['s', 'S', 'skip', 'SKIP']:
                 skipids = config.get("coc", "skipids").split()
                 # 删除0和15

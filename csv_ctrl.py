@@ -29,7 +29,7 @@ def select_tb(tbname,*args):
                     line_select = ''
                     for member in line:
                         if (line.index(member) in column) or (line.index(member) == column) or (column == []):
-                            line_select += member
+                            line_select += member + ","
                         else:
                             continue
                     table.append(line_select)

@@ -1187,7 +1187,7 @@ def levelup_3(startid,endid):
         time.sleep(1)
         for n in range(45):
             click(pos['built24'][0], pos['built24'][1], startport)
-        close_emu_id(int(nowid))
+        #close_emu_id(int(nowid))
     g.msgbox(msg='升级完成')
 
 
@@ -1352,7 +1352,7 @@ def convert_mode(convert_id,*args):
             status = "play"
             #启动模拟器
             action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (convert_id)
-            coc_start.start_convert(action, convert_id, 30)
+            coc_start.start_convert(action, convert_id, 40)
             # 重新登录qq
             click(pos['relogin'][0], pos['relogin'][1], startport,3)
             #切换为打资源
@@ -1362,7 +1362,7 @@ def convert_mode(convert_id,*args):
             status = "donate"
             #启动模拟器
             action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (convert_id)
-            coc_start.start_convert(action, convert_id, 30)
+            coc_start.start_convert(action, convert_id, 120)
             #等待1分
             timewait(1,startport)
             # 重新登录qq
