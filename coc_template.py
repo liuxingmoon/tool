@@ -77,7 +77,7 @@ pos = {
     'built21': [1160, 215],
     'built22': [370, 370],
     'built23': [970, 360],
-    'built24': [600, 220],
+    'built24': [610, 220],
     'backcamp': [640, 640],
     'camp': [420, 420],
     'ruins': [850, 220],
@@ -588,10 +588,11 @@ def cancel_troop(startport):
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     click(pos['trainning'][0], pos['trainning'][1], startport,2)
     print('取消兵种')
-    click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport,2)
+    click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport,5)
     click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 600)
     time.sleep(3)
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
+    time.sleep(5)
 
 #取消训练中的药水
 def cancel_potion(startport):
@@ -601,7 +602,8 @@ def cancel_potion(startport):
     click(pos['trainningitem3'][0], pos['trainningitem3'][1], startport)
     click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 50)
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
-
+    time.sleep(5)
+    
 #取消现有兵种和药水
 def cancel_army(startport):
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
@@ -619,7 +621,7 @@ def cancel_army(startport):
     #重启一下server
     restart_server()
     connect(startport)
-    time.sleep(5)
+    time.sleep(8)
     click(pos['del_army'][0], pos['del_army'][1], startport, 3)#确定删除
     time.sleep(5)
     click(pos['del_army_sure'][0], pos['del_army_sure'][1], startport, 3)
@@ -797,10 +799,10 @@ def register(name,startid):
     #click(pos['name'][0],pos['name'][1],startport)
     #text(IDcard['01'][0])
     #注册身份证
-    g.msgbox(msg=IDcard['18'][0])
+    g.msgbox(msg=IDcard['19'][0])
     click(pos['idcard'][0], pos['idcard'][1],startport)
     time.sleep(1)
-    text(IDcard['18'][1],startport)
+    text(IDcard['19'][1],startport)
     time.sleep(2)
     click(pos['register'][0], pos['register'][1],startport)
     time.sleep(15)
@@ -1001,7 +1003,7 @@ def register(name,startid):
     #升级罐子和瓶子
     levelup_saver(startport)
     cancel(startport)
-    close_emu_id(startid)#关闭该实例
+    #close_emu_id(startid)#关闭该实例
     g.msgbox(msg='初始化完成')
 
 #升级资源
@@ -1033,10 +1035,12 @@ def resource_all(startid,*args):
         for nowid in startid:
             resource_up(nowid)
     elif len(args) == 1:
-        for nowid in range(startid,endid+1):
+        for nowid in range(startid,args[0]+1):
             resource_up(nowid)
     elif len(args) == 2:
-        for nowid in args:
+        for nowid in range(startid,args[0]+1):
+            resource_up(nowid)
+        for nowid in args[1]:
             resource_up(nowid)
     g.msgbox(msg='升级完成')
 
@@ -1106,90 +1110,104 @@ def start_coc(startidlist):
     g.msgbox(msg='启动各个部落完成')
     
 #3本新建
-def levelup_3(startid,endid):
-    for nowid in range(startid,endid+1):
-        action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' % (nowid)
-        c().start(action, nowid,1)#最小化
-        startport = getport(nowid)
-        connect(startport)
-        #重新登录qq
-        click(pos['relogin'][0], pos['relogin'][1], startport)
-        time.sleep(10)
-        startcoc(startport,35)
-        cancel(startport)
-        #收集资源
-        click(pos['mine1'][0], pos['mine1'][1], startport)
-        click(pos['mine2'][0], pos['mine2'][1], startport)
-        click(pos['collector1'][0], pos['collector1'][1], startport)
-        click(pos['collector2'][0], pos['collector2'][1], startport)
-        click(pos['cancel'][0], pos['cancel'][1], startport)
-        #点击废墟
-        for n in range(50):
-            click_short(random.randint(400,900), random.randint(100,600), startport,1)
-        cancel(startport)
-        # 造炸弹
-        storebuild(startport)
-        click(pos['storeitem4'][0], pos['storeitem4'][1], startport)
-        click(pos['store_1'][0], pos['store_1'][1], startport)
-        click(pos['built16'][0], pos['built16'][1], startport)
-        click(pos['built16'][0], pos['built16'][1], startport)
-        # 造收集器
-        storebuild(startport)
-        click(pos['storeitem2'][0], pos['storeitem2'][1], startport)
-        click(pos['store_2'][0], pos['store_2'][1], startport)
-        click(pos['built17'][0], pos['built17'][1], startport)
-        # 造瓶子
-        storebuild(startport)
-        click(pos['storeitem2'][0], pos['storeitem2'][1], startport)
-        click(pos['store_2'][0], pos['store_2'][1], startport)
-        click(pos['built18'][0], pos['built18'][1], startport)
-        time.sleep(5)
-        # 造矿场
-        storebuild(startport)
-        click(pos['storeitem2'][0], pos['storeitem2'][1], startport)
-        click(pos['store_2'][0], pos['store_2'][1], startport)
-        click(pos['built19'][0], pos['built19'][1], startport)
-        # 造罐子
-        storebuild(startport)
-        click(pos['storeitem2'][0], pos['storeitem2'][1], startport)
-        click(pos['store_2'][0], pos['store_2'][1], startport)
-        time.sleep(1)
-        click(pos['built20'][0], pos['built20'][1], startport)
-        time.sleep(5)
-        # 造兵营
-        storebuild(startport)
-        click(pos['storeitem1'][0], pos['storeitem1'][1], startport)
-        click(pos['store_2'][0], pos['store_2'][1], startport)
-        time.sleep(1)
-        click(pos['built21'][0], pos['built21'][1], startport)
-        # 造迫击炮
-        storebuild(startport)
-        click(pos['storeitem3'][0], pos['storeitem3'][1], startport)
-        click(pos['store_2'][0], pos['store_2'][1], startport)
-        time.sleep(1)
-        click(pos['built22'][0], pos['built22'][1], startport)
-        timewait(5,startport)
-        # 造实验室
-        storebuild(startport)
-        click(pos['storeitem1'][0], pos['storeitem1'][1], startport)
-        click(pos['store_2'][0], pos['store_2'][1], startport)
-        time.sleep(2)
-        click(pos['built23'][0], pos['built23'][1], startport)
-        #退出一次
-        home(startport)
-        #造城墙
-        for n in range(2):
-            swipe('top', startport)
-        storebuild(startport)
-        click(pos['storeitem3'][0], pos['storeitem3'][1], startport)
-        click(pos['store_1'][0], pos['store_1'][1], startport)
-        subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 647 368 550 290' % (startport), shell=True)
-        time.sleep(1)
-        for n in range(45):
-            click(pos['built24'][0], pos['built24'][1], startport)
-        #close_emu_id(int(nowid))
-    g.msgbox(msg='升级完成')
+    
+def levelup_3(nowid):
 
+    action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' % (nowid)
+    c().start(action, nowid,1)#最小化
+    startport = getport(nowid)
+    connect(startport)
+    #重新登录qq
+    click(pos['relogin'][0], pos['relogin'][1], startport)
+    time.sleep(10)
+    startcoc(startport,50)
+    cancel(startport)
+    #收集资源
+    click(pos['mine1'][0], pos['mine1'][1], startport)
+    click(pos['mine2'][0], pos['mine2'][1], startport)
+    click(pos['collector1'][0], pos['collector1'][1], startport)
+    click(pos['collector2'][0], pos['collector2'][1], startport)
+    click(pos['cancel'][0], pos['cancel'][1], startport)
+    #点击废墟
+    '''
+    for n in range(50):
+        click_short(random.randint(400,900), random.randint(100,600), startport,1)'''
+    cancel(startport)
+    # 造炸弹
+    storebuild(startport)
+    click(pos['storeitem4'][0], pos['storeitem4'][1], startport)
+    click(pos['store_1'][0], pos['store_1'][1], startport)
+    click(pos['built16'][0], pos['built16'][1], startport)
+    click(pos['built16'][0], pos['built16'][1], startport)
+    # 造收集器
+    storebuild(startport)
+    click(pos['storeitem2'][0], pos['storeitem2'][1], startport)
+    click(pos['store_2'][0], pos['store_2'][1], startport)
+    click(pos['built17'][0], pos['built17'][1], startport)
+    # 造瓶子
+    storebuild(startport)
+    click(pos['storeitem2'][0], pos['storeitem2'][1], startport)
+    click(pos['store_2'][0], pos['store_2'][1], startport)
+    click(pos['built18'][0], pos['built18'][1], startport)
+    time.sleep(5)
+    # 造矿场
+    storebuild(startport)
+    click(pos['storeitem2'][0], pos['storeitem2'][1], startport)
+    click(pos['store_2'][0], pos['store_2'][1], startport)
+    click(pos['built19'][0], pos['built19'][1], startport)
+    # 造罐子
+    storebuild(startport)
+    click(pos['storeitem2'][0], pos['storeitem2'][1], startport)
+    click(pos['store_2'][0], pos['store_2'][1], startport)
+    time.sleep(1)
+    click(pos['built20'][0], pos['built20'][1], startport)
+    time.sleep(5)
+    # 造兵营
+    storebuild(startport)
+    click(pos['storeitem1'][0], pos['storeitem1'][1], startport)
+    click(pos['store_2'][0], pos['store_2'][1], startport)
+    time.sleep(1)
+    click(pos['built21'][0], pos['built21'][1], startport)
+    # 造迫击炮
+    storebuild(startport)
+    click(pos['storeitem3'][0], pos['storeitem3'][1], startport)
+    click(pos['store_2'][0], pos['store_2'][1], startport)
+    time.sleep(1)
+    click(pos['built22'][0], pos['built22'][1], startport)
+    timewait(5,startport)
+    # 造实验室
+    storebuild(startport)
+    click(pos['storeitem1'][0], pos['storeitem1'][1], startport)
+    click(pos['store_2'][0], pos['store_2'][1], startport)
+    time.sleep(2)
+    click(pos['built23'][0], pos['built23'][1], startport)
+    #退出一次
+    #home(startport)
+    #造城墙
+    for n in range(2):
+        swipe('top', startport)
+    storebuild(startport)
+    click(pos['storeitem3'][0], pos['storeitem3'][1], startport)
+    click(pos['store_1'][0], pos['store_1'][1], startport)
+    subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 647 368 580 310' % (startport), shell=True)
+    time.sleep(1)
+    for n in range(45):
+        click(pos['built24'][0], pos['built24'][1], startport)
+    #close_emu_id(int(nowid))
+    
+def levelup_3_all(startid,*args):
+    if len(args) == 0:
+        for nowid in startid:
+            levelup_3(nowid)
+    elif len(args) == 1:
+        for nowid in range(startid,args[0]+1):
+            levelup_3(nowid)
+    elif len(args) == 2:
+        for nowid in range(startid,args[0]+1):
+            levelup_3(nowid)
+        for nowid in args[1]:
+            levelup_3(nowid)
+    g.msgbox(msg='升级完成')
 
 
 def on_press_s(key):#监听@键作为开始
@@ -1381,8 +1399,9 @@ def convert_mode(convert_id,*args):
             swipe('top',startport)
             swipe('right',startport)
             #船
-            click(pos['boat'][0], pos['boat'][1], startport, 5)
-            #取消训练中的兵种
+            click(pos['boat'][0], pos['boat'][1], startport, 10)
+            #取消训练中的兵种,2次确保删除
+            cancel_troop(startport)
             cancel_troop(startport)
             if (str(convert_id) in donateids_for_paid):
                 print('开始执行删除现有兵种，需要全部删除的id为%s'%(donateids_for_paid))

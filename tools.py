@@ -27,6 +27,9 @@ import inspect
 import ctypes
 import work_table as work_tb
 
+from PIL import Image
+from io import BytesIO
+import win32clipboard
 
 root = tk.Tk()
 root.title('流梦星璃')
@@ -47,6 +50,54 @@ autoclick_bt.grid(row=1,column=1,
               padx=10,pady=10)
 
 #截屏~
+# import pyscreenshot as ImageGrab
+def send_msg_to_clip(type_data, msg):
+    """
+    操作剪贴板分四步：
+    1. 打开剪贴板：OpenClipboard()
+    2. 清空剪贴板，新的数据才好写进去：EmptyClipboard()
+    3. 往剪贴板写入数据：SetClipboardData()
+    4. 关闭剪贴板：CloseClipboard()
+
+    :param type_data: 数据的格式，
+    unicode字符通常是传 win32con.CF_UNICODETEXT
+    :param msg: 要写入剪贴板的数据
+    """
+    win32clipboard.OpenClipboard()
+    win32clipboard.EmptyClipboard()
+    win32clipboard.SetClipboardData(type_data, msg)
+    win32clipboard.CloseClipboard()
+def paste_img(file_img):
+    """
+    图片转换成二进制字符串，然后以位图的格式写入剪贴板
+
+    主要思路是用Image模块打开图片，
+    用BytesIO存储图片转换之后的二进制字符串
+
+    :param file_img: 图片的路径
+    """
+    # 把图片写入image变量中
+    # 用open函数处理后，图像对象的模式都是 RGB
+    image = Image.open(file_img)
+
+    # 声明output字节对象
+    output = BytesIO()
+
+    # 用BMP (Bitmap) 格式存储
+    # 这里是位图，然后用output字节对象来存储
+    image.save(output, 'BMP')
+
+    # BMP图片有14字节的header，需要额外去除
+    data = output.getvalue()[14:]
+
+    # 关闭
+    output.close()
+
+    # DIB: 设备无关位图(device-independent bitmap)，名如其意
+    # BMP的图片有时也会以.DIB和.RLE作扩展名
+    # 设置好剪贴板的数据格式，再传入对应格式的数据，才能正确向剪贴板写入数据
+    send_msg_to_clip(win32clipboard.CF_DIB, data)
+    
 class FreeCapture():
     """ 用来显示全屏幕截图并响应二次截图的窗口类
     """
@@ -68,7 +119,13 @@ class FreeCapture():
         self.canvas.create_image(screenWidth // 2, screenHeight // 2, image=self.image)
 
         self.lastDraw = None
-
+        
+        try:
+            os.remove('temp.png')
+            os.remove('select.png')
+        except FileNotFoundError as reason:
+            print(reason)
+            
         # 鼠标左键按下的位置
         def onLeftButtonDown(event):
             self.X.set(event.x)
@@ -101,12 +158,14 @@ class FreeCapture():
             left, right = sorted([self.X.get(), event.x])
             top, bottom = sorted([self.Y.get(), event.y])
             pic = ImageGrab.grab((left + 1, top + 1, right, bottom))
-            # 弹出保存截图对话框
-            fileName = tkinter.filedialog.asksaveasfilename(title='保存截图', filetypes=[('image', '*.jpg *.png')],
-                                                            defaultextension='.png')
 
-            if fileName:
-                pic.save(fileName)
+            # 弹出保存截图对话框
+            '''fileName = tkinter.filedialog.asksaveasfilename(title='保存截图', filetypes=[('image', '*.jpg *.png')],
+                                                defaultextension='.png')
+
+if fileName:'''
+            pic.save('select.png')#保存截图
+            paste_img('select.png')#复制截图到剪切板
             # 关闭当前窗口
             self.top.destroy()
 
@@ -114,7 +173,6 @@ class FreeCapture():
         self.canvas.bind('<ButtonRelease-1>', onLeftButtonUp)  # 抬起左键
         # 让canvas充满窗口，并随窗口自动适应大小
         self.canvas.pack(fill=tkinter.BOTH, expand=tkinter.YES)
-
 
 def screenShot():
     """ 自由截屏的函数 (button按钮的事件)
@@ -129,8 +187,13 @@ def screenShot():
     # 进行自由截屏
     w = FreeCapture(root, 'temp.png')
     # 截图结束，恢复主窗口，并删除temp.png文件
-    root.state('normal')
-    os.remove('temp.png')
+    while True:
+        if 'select.png' in os.listdir():
+            root.state('normal')
+            break
+        else:
+            time.sleep(0.5)
+            print('1')
 
 def on_press(key):
     pass

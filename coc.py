@@ -45,6 +45,7 @@ def start():
                 os.chdir(r'D:\Program Files\DundiEmu\DundiData\avd')
                 emulist = os.listdir()
                 emulist.remove('vboxData')
+                emulist = [x for x in emulist if "rar" not in x]
                 # 选出模拟器的启动id
                 emunum = []
                 for emu in emulist:
@@ -153,7 +154,7 @@ def start():
                 else:
                     coc_template.resource_all(startid,endid,levelupids)
             else:
-                coc_template.resource_all(levelupids)
+                coc_template.resource_all(startidlist)
         #启动部落冲突
         def cocst():
             startidlist = getinfo()
@@ -161,18 +162,25 @@ def start():
         #升级3本
         def levelup_3():
             startidlist = getinfo()
+            startidlist = [int(x) for x in startidlist]
             startid = coc_id.get()  # 获取输入框信息
+            config = configparser.ConfigParser()
+            config.read("Config.ini", encoding="utf-8")
+            skipids = config.get("coc", "skipids").split()
+            levelupids = [int(x) for x in skipids if x not in ['0', '15']]
             #输入框为空自动定义为最大id
             if startid == "":
                 config = configparser.ConfigParser()
                 config.read("Config.ini", encoding="utf-8")
                 startid = int(config.get("coc", "maxid")) + 1
-                endid = len(os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\')) - 2
-            #print(startidlist, type(startidlist))
+                endid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\') if x != 'vboxData'])
+                if startid > endid:#maxid后没有新建模拟器，只升级levelupids
+                    for levelupid in levelupids:
+                        coc_template.levelup_3(levelupid)
+                else:
+                    coc_template.levelup_3_all(startid,endid,levelupids)
             else:
-                startid = int(startidlist[0])
-                endid = int(startidlist[1])
-            coc_template.levelup_3(startid,endid)
+                coc_template.levelup_3_all(startidlist)
 
         root = tk.Tk()
         root.title('部落冲突')

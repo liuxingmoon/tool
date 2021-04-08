@@ -859,7 +859,7 @@ if __name__ == "__main__":
             #启动打资源号
             restartplay()
         #确认星陨，点击登录，星陨总是掉线
-        #login_click(5)
+        login_click(5)
         #运行该coc实例时间
         t = int(instance_time)
         for time_minite in range(t,0,-1):
