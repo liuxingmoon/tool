@@ -63,12 +63,14 @@ def download_video_m3u8(url):
                 name.append(filename)  # 添加文件名到列表
             except IndexError as reason:
                 print(str(reason))
-
-    if str(max(name)).isalnum() == False:#如果返回的不是数字
-        newfilename = '1.mp4'
+    if name != []:
+        if str(max(name)).isalnum() == False:#如果返回的不是数字
+            newfilename = '1.mp4'
+        else:
+            newfilename = str(max(name) + 1) + '.mp4'  # 新文件名比最大的+1
+        filename = hdownloadpath + os.sep + newfilename
     else:
-        newfilename = str(max(name) + 1) + '.mp4'  # 新文件名比最大的+1
-    filename = hdownloadpath + os.sep + newfilename
+        filename = '1.mp4'
     print(filename)
     process = p.Popen(r'ffmpeg -i %s -vcodec copy -acodec copy -absf aac_adtstoasc %s' %(downurl , filename) ,shell=True)#下载
     # 日志

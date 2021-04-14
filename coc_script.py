@@ -334,7 +334,7 @@ def instance(donate_switch,donate_status):
     now_time = datetime.datetime.now()
     # 判断当前时间是否在范围时间内
     if now_time >= night_time_end or now_time < morning_time_end:
-        print('目前处于晚上,可以执行 %d 实例, %d 分钟，可以运行捐兵实例' %(instance_num_night,instance_time_night*60))
+        print('目前处于晚上,可以执行 %d 实例, %d 分钟，可以运行捐兵实例' %(instance_num_night,instance_time_night))
         #付费捐兵号(晚上运行启动)
         if donate_switch in ['True','1','T']:
             print(r'============================= 自用捐兵号运行！ ===============================')
@@ -342,10 +342,10 @@ def instance(donate_switch,donate_status):
             print('没有自用捐兵号需要运行！')
         return [instance_num_night,instance_time_night,'晚上']
     elif now_time >= morning_time_end and now_time < day_time_end:
-        print('目前处于凌晨,可以执行 %d 实例, %d 分钟，不需要运行捐兵实例' %(instance_num_morning,instance_time_morning*60))
+        print('目前处于凌晨,可以执行 %d 实例, %d 分钟，不需要运行捐兵实例' %(instance_num_morning,instance_time_morning))
         return [instance_num_morning,instance_time_morning,'凌晨']
     elif now_time >= day_time_end and now_time < night_time_end:
-        print('目前处于白天,可以执行%d实例,%d分钟' %(instance_num_day,instance_time_day*60))
+        print('目前处于白天,可以执行%d实例,%d分钟' %(instance_num_day,instance_time_day))
         #付费捐兵号(白天运行启动)
         if donate_switch in ['True','1','T']:
             print(r'============================= 自用捐兵号开始运行！ ===============================')
@@ -374,13 +374,15 @@ def handle_window_play(hwnd,extra):
             win32gui.PostMessage(hwnd,win32con.WM_CLOSE,0,0)
 
 #关闭模拟器列表（列表中所有）
-def close_emu_all(closelist):
+def close_emu_all(closelist,*args):
     for close_id in closelist:
         close_name = closelist[close_id]
         close_window = win32gui.FindWindow(None, close_name)
         # 关闭一个捐兵号
         win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
         print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
+        if len(args) >0:#暂停args[0]分钟关闭
+            timewait(args[0])
 
 #关闭模拟器（关闭id）
 def close_emu_id(close_id):
@@ -667,18 +669,21 @@ if __name__ == "__main__":
         #启动付费捐兵号
         kill_adb()
         if donate_for_paid_switch in ['True','1','T']:
-            restart_emu(donatenames_for_paid,donateids_for_paid_2nd)
+            restart_emu(donatenames_for_paid,donateids_for_paid_2nd)#启动了第二梯队
     while True:
         kill_adb()
         endtime_global = datetime.datetime.now()
         runtime_global = endtime_global - starttime_global
         #每隔一段时间重启一次
-        runtime_hours = round(runtime_global.total_seconds() / 3600)
+        runtime_hours = int(runtime_global.total_seconds() / 3600)
         runtime_days = int(runtime_hours / 24)
         if (runtime_hours != 0) and ((runtime_hours % restart_time) == 0) and (restart_status == 'F'):
             if donate_for_paid_switch in ['True','1','T']:
                 print(r'============================= 当前脚本每运行 %d 小时，全部模拟器重启一次! =============================' %(restart_time))
                 restart_status = 'T'#切换重启状态为'T'，表示已经重启过了，在这个小时内不要再重启了
+                close_emu_all(donatenames_for_paid,2)#关闭所有付费捐兵号,每个模拟器中间间隔2分钟
+                relax_time = 30 - (len(donatenames_for_paid) * 2)
+                timewait(relax_time)#休息半小时
                 restart_emu(donatenames_for_paid)#只重启付费捐兵号
         elif (runtime_hours != 0) and ((runtime_hours % restart_time) != 0) and (restart_status == 'T'):
             restart_status = 'F'#切换重启状态为'F'，表示已经过了那个重启的时间，把状态归零

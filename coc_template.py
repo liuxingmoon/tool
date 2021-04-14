@@ -1,12 +1,8 @@
 # coding:utf-8
 import subprocess
 import time
-import easygui as g
 import random
-from coc_start import Coc as c
-import coc_start
-import win32gui
-from win32.lib import win32con
+from coc_start import *
 import keyboard as k
 import threading
 import inspect
@@ -16,6 +12,7 @@ from pynput.keyboard import Key, Listener
 import configparser
 import random
 from multiprocessing import Process
+import easygui as g
 
 # coc模板
 #方法：
@@ -77,7 +74,8 @@ pos = {
     'built21': [1160, 215],
     'built22': [370, 370],
     'built23': [970, 360],
-    'built24': [610, 220],
+    'built24': [660, 240],
+    'built24': [240, 560],
     'backcamp': [640, 640],
     'camp': [420, 420],
     'ruins': [850, 220],
@@ -254,126 +252,8 @@ IDcard = {
 
 #配置文件路径
 configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
+ 
 
-#获取启动port
-def getport(startid):
-    #获取启动端口
-    if startid == 0:
-        startport = 5555
-        return startport
-    else:
-        startport = 52550 + startid
-        return startport
-        
-def kill_server():
-    # 关闭模拟器连接
-    subprocess.Popen('adb kill-server', shell=True)
-    time.sleep(3)
-
-def start_server():
-    #开启模拟器连接
-    subprocess.Popen('adb start-server', shell=True)
-    time.sleep(3)
-
-def restart_server():
-    kill_adb()
-    kill_server()
-    #start_server()
-        
-def kill_adb():
-    subprocess.Popen('taskkill /f /t /im adb.exe',shell=True)
-    time.sleep(3)
-    
-# 开始
-def connect(startport):
-    if startport == 5555:
-        subprocess.Popen(r'adb connect emulator-5554',shell = True)
-        subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
-    else:
-        result = subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True,stdout=subprocess.PIPE)
-        text = result.stdout.readlines()
-        if ('not found' in text) or ('offline' in text):
-            restart_server()
-            time.sleep(60)
-            connect(startport)#递归重新执行一次
-    time.sleep(3)
-
-#根据字典值获取索引
-def get_keys(dict, value):
-     temp = [k for k,v in dict.items() if v == value]
-     return temp[0]
-# 结束
-def finish(startport):
-    process = subprocess.Popen('adb disconnect %s' % (startport), shell=True)
-    time.sleep(3)
-# 点击屏幕
-def click(x,y,startport,*args):
-    if startport == 5555:
-        subprocess.Popen(r'adb -s emulator-5554 shell input tap %d %d' %(x,y),shell=True)
-    subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
-    print(x,y)
-    time.sleep(3)
-    if len(args) > 0:
-        time.sleep(args[0])
-# 快速点击屏幕
-def click_short(x,y,startport,times):
-    for n in range(times):
-        process = subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
-        time.sleep(0.1)
-        print(x,y)
-#长按屏幕
-def click_long(x,y,time,startport):
-    process = subprocess.Popen(r'adb -s 127.0.0.1:%d shell input swipe %d %d %d %d %d' %(startport,x,y,x,y,time*1000),shell=True)
-    print(x,y)
-# 滑屏
-def swipe(drt,startport):
-    if drt == 'top':
-        process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 640 200 640 700' % (startport), shell=True)
-        time.sleep(2)
-    elif drt == 'bot':
-        process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 640 650 640 150' % (startport), shell=True)
-        time.sleep(2)
-    elif drt == 'left':
-        process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 100 360 1000 360' % (startport), shell=True)
-        time.sleep(2)
-    elif drt == 'right':
-        process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 1000 360 100 360' % (startport), shell=True)
-        time.sleep(2)
-#定点滑动
-def swipeport(x1,y1,x2,y2,startport):
-    subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe %d %d %d %d' % (startport,x1,y1,x2,y2), shell=True)
-    time.sleep(3)
-# 输入文本
-def text(text,startport):
-    subprocess.Popen('adb -s 127.0.0.1:%s shell input text %s' % (startport, text), shell=True)
-    time.sleep(1)
-# 返回
-def back(startport):
-    print('back')
-    subprocess.Popen('adb -s 127.0.0.1:%s shell input keyevent 4' % (startport), shell=True)
-    time.sleep(3)
-# HOME
-def home(startport):
-    subprocess.Popen('adb -s 127.0.0.1:%s shell input keyevent 3' % (startport), shell=True)
-    time.sleep(3)
-# HOME
-def menu(startport):
-    subprocess.Popen('adb -s 127.0.0.1:%s shell input keyevent 82' % (startport), shell=True)
-    time.sleep(3)
-
-# 熄灭
-def interest(startport):
-    subprocess.Popen('adb -s 127.0.0.1:%s shell input keyevent 223' % (startport), shell=True)
-    time.sleep(3)
-# 点亮
-def light(startport):
-    subprocess.Popen('adb -s 127.0.0.1:%s shell input keyevent 224' % (startport), shell=True)
-    time.sleep(3)
-# 静音
-def silence(startport):
-    process = subprocess.Popen('adb -s 127.0.0.1:%s shell input keyevent 164' % (startport), shell=True)
-    time.sleep(1.5)
-    click(pos['silence'][0], pos['silence'][1])
 #获取位置信息
 def get_pos():
     #归到右上角
@@ -619,8 +499,8 @@ def cancel_army(startport):
     for n in range(1,8):#取消药水
         click_short(pos['del_army_pt0%d' %(n)][0], pos['del_army_pt0%d' %(n)][1], startport, 10)
     #重启一下server
-    restart_server()
-    connect(startport)
+    #restart_server()
+    #connect(startport)
     time.sleep(8)
     click(pos['del_army'][0], pos['del_army'][1], startport, 3)#确定删除
     time.sleep(5)
@@ -628,54 +508,6 @@ def cancel_army(startport):
     time.sleep(5)
     click(pos['exitstore'][0], pos['exitstore'][1], startport, 3)#退出
 
-#启动coc
-def startcoc(startport,wait_time):
-    #connect(startport)
-    start_id = int(startport) - 52550
-    if start_id in [1,2,3,4,42]:#腾讯
-        subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.tencent.tmgp.supercell.clashofclans/com.supercell.titan.tencent.GameAppTencent' % (startport), shell=True)
-    else:#九游
-        subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
-    #豌豆荚
-    #subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
-    time.sleep(wait_time)
-    if startport == 52555:#如果是星陨，尝试点击登录 
-        click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
-    else:
-        #click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
-        #click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
-        click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
-    #点击取消位置取消广告
-    click(pos['exitstore'][0], pos['exitstore'][1], startport)
-    click(pos['cancel'][0], pos['cancel'][1], startport)
-#重启coc
-def restartcoc(startport):
-    home(startport)
-    time.sleep(60)
-    startcoc(startport,35)
-
-def close():
-    subprocess.Popen('taskkill /f /t /im DunDiEmu.exe & taskkill /f /t /im DdemuHandle.exe & taskkill /f /t /im adb.exe',shell=True)
-    time.sleep(3)
-    
-#关闭模拟器名字    
-def close_emu_id(close_id):
-    close_id = int(close_id)
-    close_config = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' %(close_id)
-    with open(close_config,'r') as close_file:
-        configlines = close_file.readlines()
-        for configline in configlines:
-            if 'EmulatorTitleName' in configline:
-                close_name = configline.split('=')[-1].rstrip('\n')
-        close_window = win32gui.FindWindow(None, close_name)
-        win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)# 关闭一个捐兵号
-        print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
-        
-#等待
-def timewait(min,startport):
-    for n in range(min):
-        time.sleep(60)
-        click(pos['cancel'][0], pos['cancel'][1], startport)
 
 #取消
 def cancel(startport):
@@ -1009,7 +841,7 @@ def register(name,startid):
 #升级资源
 def resource_up(resourceid):
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' % (resourceid)
-    c().start(action, resourceid,1)#最小化
+    start_emu_id(action, resourceid,1)#最小化
     startport = getport(resourceid)
     connect(startport)
     #重新登录qq
@@ -1049,7 +881,7 @@ def wardonate(startlist):
     for nowid in startlist:
         nowid = int(nowid)
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (nowid)
-        c().start(action, nowid,1)#最小化
+        start_emu_id(action, nowid,1)#最小化
         startport = getport(nowid)
         connect(startport)
         #重新登录qq
@@ -1099,7 +931,7 @@ def wardonate(startlist):
 def start_coc(startidlist):
     for nowid in startidlist:
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(nowid))
-        c().start(action, int(nowid),0)
+        start_emu_id(action, int(nowid),0)
         startport = getport(int(nowid))
         connect(startport)
         #重新登录qq
@@ -1114,7 +946,7 @@ def start_coc(startidlist):
 def levelup_3(nowid):
 
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' % (nowid)
-    c().start(action, nowid,1)#最小化
+    start_emu_id(action, nowid,1)#最小化
     startport = getport(nowid)
     connect(startport)
     #重新登录qq
@@ -1189,10 +1021,14 @@ def levelup_3(nowid):
     storebuild(startport)
     click(pos['storeitem3'][0], pos['storeitem3'][1], startport)
     click(pos['store_1'][0], pos['store_1'][1], startport)
-    subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 647 368 580 310' % (startport), shell=True)
+    subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 647 368 630 300' % (startport), shell=True)
     time.sleep(1)
+    x = pos['built24'][0]
+    y = pos['built24'][1]
     for n in range(45):
-        click(pos['built24'][0], pos['built24'][1], startport)
+        click(x, y, startport)
+        x -= 16.8
+        y += 12.8
     #close_emu_id(int(nowid))
     
 def levelup_3_all(startid,*args):
@@ -1370,7 +1206,7 @@ def convert_mode(convert_id,*args):
             status = "play"
             #启动模拟器
             action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (convert_id)
-            coc_start.start_convert(action, convert_id, 40)
+            start_convert(action, convert_id, 40)
             # 重新登录qq
             click(pos['relogin'][0], pos['relogin'][1], startport,3)
             #切换为打资源
@@ -1380,7 +1216,7 @@ def convert_mode(convert_id,*args):
             status = "donate"
             #启动模拟器
             action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (convert_id)
-            coc_start.start_convert(action, convert_id, 120)
+            start_convert(action, convert_id, 120)
             #等待1分
             timewait(1,startport)
             # 重新登录qq
@@ -1391,19 +1227,17 @@ def convert_mode(convert_id,*args):
             connect(startport)
             time.sleep(5)
             #启动coc
-            startcoc(startport,40)
-            #等待1分
-            timewait(1,startport)
+            startcoc(startport,120)
             #夜世界切换
             #归到右上角
             swipe('top',startport)
             swipe('right',startport)
             #船
-            click(pos['boat'][0], pos['boat'][1], startport, 10)
+            click(pos['boat'][0], pos['boat'][1], startport, 15)
             #取消训练中的兵种,2次确保删除
             cancel_troop(startport)
-            cancel_troop(startport)
-            if (str(convert_id) in donateids_for_paid):
+            #cancel_troop(startport)
+            if (str(convert_id) in donateids_for_paid):#付费捐兵删完造2轮兵
                 print('开始执行删除现有兵种，需要全部删除的id为%s'%(donateids_for_paid))
                 print('删除%d的现有兵种和药水并造兵' %(convert_id))
                 # 取消训练中的药水

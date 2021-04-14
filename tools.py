@@ -26,7 +26,7 @@ import threading
 import inspect
 import ctypes
 import work_table as work_tb
-
+import get_x86report as report
 from PIL import Image
 from io import BytesIO
 import win32clipboard
@@ -325,11 +325,6 @@ thundertask_bt = tk.Button(root,text='迅雷任务',command=tdtask.start,width=1
 thundertask_bt.grid(row=5,column=1,
               padx=10,pady=10)
               
-#过滤迅雷链接
-translateurl_bt = tk.Button(root,text='过滤链接',command=translate_url.start,width=15)
-translateurl_bt.grid(row=5,column=3,
-              padx=10,pady=10)
-
 #部落冲突脚本
 coc_bt = tk.Button(root,text='部落冲突',command=coc.start,width=15)
 coc_bt.grid(row=6,column=1,
@@ -421,6 +416,16 @@ netmask_bt.grid(row=3,column=3,
 #股票信息
 stock_bt = tk.Button(root,text='股票信息',command=stock.start,width=15)
 stock_bt.grid(row=4,column=3,
+              padx=10,pady=10)
+              
+#过滤迅雷链接
+translateurl_bt = tk.Button(root,text='过滤链接',command=translate_url.start,width=15)
+translateurl_bt.grid(row=5,column=3,
+              padx=10,pady=10)
+              
+#周报汇总
+report_bt = tk.Button(root,text='周报汇总',command=report.start,width=15)
+report_bt.grid(row=6,column=3,
               padx=10,pady=10)
               
 #伊人av下载
