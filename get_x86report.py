@@ -9,11 +9,18 @@ import pdb
 from file_ctrl import *
 import threading
 import datetime
+import remind_write_weekreport as remind
+import easygui as g
+import svnconfig,svn_ctrl
+from remind_write_weekreport import x86_members
+import time
 
 weekReportDir = r"D:\Program Files\Python38\works\tool\weekReport"
 weekReportDir_tradition = r"D:\SVNdata\Public\01.AB组周报\传统架构组\2021年"
 weekReportDir_cloud = r"D:\SVNdata\Public\01.AB组周报\云平台组周报"
 totalFile = r"C:\Users\Administrator.PC-20200904VSVM\Desktop\x86_weekreport.txt"
+dist_tradition = svnconfig.setting['dist_tradition']
+dist_cloud = svnconfig.setting['dist_cloud']
 
 def turnStr(L):
     """ 把列表里所有元素转换为字符串型 """
@@ -132,7 +139,13 @@ def getfilelist(filedir):
     
 def copy_file_to_weekdir(filedir):
     last_dir = getfilelist(filedir)[0]
-    file_list = getfilelist(filedir)[1]
+    file_list_temp = getfilelist(filedir)[1]
+    file_list = []
+    for member in x86_members:
+        for file in file_list_temp:
+            if member in file:#周报文件在x86member中，就加入到复制列表中
+                file_list.append(file)
+    file_list = list(set(file_list))#去重
     for filename in file_list:
         thread_copyfile =threading.Thread(target=copy_file,args=(filename,filedir + os.sep + last_dir,weekReportDir))#从当前目录拷贝文件到汇总目录
         thread_copyfile.start()
@@ -140,53 +153,79 @@ def copy_file_to_weekdir(filedir):
 def start():
     # TODO: 检查周报是否交齐,
     # x86_members = ["任德强","张文强","刁强",]
+    #更新svn周报到本地仓库
+    svn_ctrl.update(dist_tradition)
+    svn_ctrl.update(dist_cloud)
+    #提交我的周报
+    last_dir = getfilelist(dist_cloud)[0]
+    dist_dir = dist_cloud + os.sep + last_dir
+    locallist = os.listdir("D:\工作\周报\\")
+    my_report = [x for x in locallist if '工作周报-刘兴' in x][0]
+    #检查自己是否已提交周报
+    if '刘兴' in [x for x in os.listdir(dist_dir) if '工作周报-刘兴' in x][0]:
+        print('刘兴已提交，跳过自己上传周报')
+    else:
+        print('刘兴未提交，自己上传周报')
+        copy_file(my_report,"D:\工作\周报\\",dist_dir)
+        commit_file = dist_dir + os.sep + my_report
+        svn_ctrl.add(commit_file)
+        svn_ctrl.commit(commit_file)
     
-    work = {"生产运行保障":[], 
-        "高可用性管理":[], 
-        "项目支持":[],
-        "工具建设":[],
-        "专项工作": [],
-        "其他工作":[]
-    }
-    
-    clean_weekdir()#清空周报文件
-    copy_file_to_weekdir(weekReportDir_tradition)#复制周报文件
-    copy_file_to_weekdir(weekReportDir_cloud)#复制周报文件
-    
-    os.chdir(weekReportDir)
-    for excel in glob.glob('工作周报-*.xls*'):
-        print(f"正在处理 {excel} ...")
-        if os.path.splitext(excel)[-1] == ".xlsx":  
-            data = readXlsx(excel)
-        elif os.path.splitext(excel)[-1] == ".xls":  
-            data = readXls(excel)
-        else:
-            print(f"{excel} excel格式不支持...")
-            continue
-            
-        if data[0]:
-            work["生产运行保障"] += data[0]
-        if data[1]:        
-            work["高可用性管理"] += data[1]
-        if data[2]: 
-            work["项目支持"] += data[2]
-        if data[3]: 
-            work["工具建设"] += data[3]
-        if data[4]: 
-            work["专项工作"] += data[4]
-        if data[5]:
-            work["其他工作"] += data[5]
-    ignore_keywords = ["","无","暂无","不涉及","本周不涉及","上周安排工作完成情况"] + list(work.keys())
-    with open(totalFile, "w") as fw:
-        fw.write("农信x86组周报\n")
-        for work_type, work_contents in work.items():
-            fw.write("\n")
-            fw.write("[{}]\n".format(work_type))
-            if work_contents:
-                for line in set(turnStr(work_contents)):
-                    if line.strip() not in ignore_keywords or "本周主要工作内容如下" in line:
-                        fw.write("{}\n".format(line.strip()))
-            fw.write("\n")
-    os.system("start %s" %(totalFile))
-    os.chdir(weekReportDir)
+    #检查下周报结果，如果都交了就统计,没交完就不汇总统计
+    result = remind.start()
+    if result != "周报已全部提交，可以汇总了":
+        g.msgbox(title='周报检查',msg=result)
+    else:#汇总
+        work = {"生产运行保障":[], 
+            "高可用性管理":[], 
+            "项目支持":[],
+            "工具建设":[],
+            "专项工作": [],
+            "其他工作":[]
+        }
+        
+        clean_weekdir()#清空周报文件
+        copy_file_to_weekdir(weekReportDir_tradition)#复制周报文件
+        copy_file_to_weekdir(weekReportDir_cloud)#复制周报文件
+        time.sleep(1)
+        os.chdir(weekReportDir)
+        files_count = len([x for x in os.listdir() if '工作周报-' in x])#周报文件数量
+        files_deal = 0#已汇总周报文件数量
+        for excel in glob.glob('工作周报-*.xls*'):
+            print(f"正在处理 {excel} ...")
+            if os.path.splitext(excel)[-1] == ".xlsx":  
+                data = readXlsx(excel)
+            elif os.path.splitext(excel)[-1] == ".xls":  
+                data = readXls(excel)
+            else:
+                print(f"{excel} excel格式不支持...")
+                continue
+                
+            if data[0]:
+                work["生产运行保障"] += data[0]
+            if data[1]:        
+                work["高可用性管理"] += data[1]
+            if data[2]: 
+                work["项目支持"] += data[2]
+            if data[3]: 
+                work["工具建设"] += data[3]
+            if data[4]: 
+                work["专项工作"] += data[4]
+            if data[5]:
+                work["其他工作"] += data[5]
+            files_deal += 1
+        ignore_keywords = ["","无","暂无","不涉及","本周不涉及","上周安排工作完成情况"] + list(work.keys())
+        with open(totalFile, "w") as fw:
+            fw.write("农信x86组周报\n")
+            for work_type, work_contents in work.items():
+                fw.write("\n")
+                fw.write("[{}]\n".format(work_type))
+                if work_contents:
+                    for line in set(turnStr(work_contents)):
+                        if line.strip() not in ignore_keywords or "本周主要工作内容如下" in line:
+                            fw.write("{}\n".format(line.strip()))
+                fw.write("\n")
+        print("汇总结束，总共周报文件数量：%s ;\n已汇总周报文件数量： %s" %(files_count,files_deal))
+        os.system("start %s" %(totalFile))
+        os.chdir(weekReportDir)
         

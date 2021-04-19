@@ -209,7 +209,7 @@ def getport(startid):
         startport = 5555
         return startport
     else:
-        startport = 52550 + startid
+        startport = 52550 + int(startid)
         return startport
 
 #获取启动id
@@ -348,7 +348,10 @@ def start_emu_id(action,startid,*args):
             #确保最小化
             for n in range(2):
                 wnd = win32gui.FindWindow(u'Qt5QWindowIcon', None)  # 获取窗口句柄
-                win32gui.CloseWindow(wnd)  # 窗口最小化
+                try:
+                    win32gui.CloseWindow(wnd)  # 窗口最小化
+                except:
+                    pass
                 time.sleep(3)
     #等待系统开机
     time.sleep(60)

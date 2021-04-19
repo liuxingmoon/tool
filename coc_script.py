@@ -681,9 +681,11 @@ if __name__ == "__main__":
             if donate_for_paid_switch in ['True','1','T']:
                 print(r'============================= 当前脚本每运行 %d 小时，全部模拟器重启一次! =============================' %(restart_time))
                 restart_status = 'T'#切换重启状态为'T'，表示已经重启过了，在这个小时内不要再重启了
-                close_emu_all(donatenames_for_paid,2)#关闭所有付费捐兵号,每个模拟器中间间隔2分钟
-                relax_time = 30 - (len(donatenames_for_paid) * 2)
-                timewait(relax_time)#休息半小时
+                #close_emu_all(donatenames_for_paid,2)#关闭所有付费捐兵号,每个模拟器中间间隔2分钟
+                close_emu_all(donatenames_for_paid)
+                #relax_time = 30 - (len(donatenames_for_paid) * 2)
+                relax_time = 30#休息半小时
+                timewait(relax_time)
                 restart_emu(donatenames_for_paid)#只重启付费捐兵号
         elif (runtime_hours != 0) and ((runtime_hours % restart_time) != 0) and (restart_status == 'T'):
             restart_status = 'F'#切换重启状态为'F'，表示已经过了那个重启的时间，把状态归零

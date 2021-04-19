@@ -1217,8 +1217,6 @@ def convert_mode(convert_id,*args):
             #启动模拟器
             action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (convert_id)
             start_convert(action, convert_id, 120)
-            #等待1分
-            timewait(1,startport)
             # 重新登录qq
             click(pos['relogin'][0], pos['relogin'][1], startport,3)
             #click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
@@ -1227,7 +1225,7 @@ def convert_mode(convert_id,*args):
             connect(startport)
             time.sleep(5)
             #启动coc
-            startcoc(startport,120)
+            startcoc(startport,60)
             #夜世界切换
             #归到右上角
             swipe('top',startport)
@@ -1236,7 +1234,7 @@ def convert_mode(convert_id,*args):
             click(pos['boat'][0], pos['boat'][1], startport, 15)
             #取消训练中的兵种,2次确保删除
             cancel_troop(startport)
-            #cancel_troop(startport)
+            cancel_troop(startport)
             if (str(convert_id) in donateids_for_paid):#付费捐兵删完造2轮兵
                 print('开始执行删除现有兵种，需要全部删除的id为%s'%(donateids_for_paid))
                 print('删除%d的现有兵种和药水并造兵' %(convert_id))

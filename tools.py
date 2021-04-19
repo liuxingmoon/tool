@@ -26,10 +26,11 @@ import threading
 import inspect
 import ctypes
 import work_table as work_tb
-import get_x86report as report
+#import get_x86report as report
 from PIL import Image
 from io import BytesIO
 import win32clipboard
+import packpy
 
 root = tk.Tk()
 root.title('流梦星璃')
@@ -422,14 +423,19 @@ stock_bt.grid(row=4,column=3,
 translateurl_bt = tk.Button(root,text='过滤链接',command=translate_url.start,width=15)
 translateurl_bt.grid(row=5,column=3,
               padx=10,pady=10)
+#打包程序
+packpy_bt = tk.Button(root,text='打包程序',command=packpy.start,width=15)
+packpy_bt.grid(row=6,column=3,
+              padx=10,pady=10)
               
+'''
 #周报汇总
 report_bt = tk.Button(root,text='周报汇总',command=report.start,width=15)
 report_bt.grid(row=6,column=3,
               padx=10,pady=10)
               
 #伊人av下载
-'''
+
 avyrdownload_text = tk.Label(root,#放在框架1里面
                 text = '伊人下载',
                 justify='left',#左对齐
