@@ -1,6 +1,5 @@
 #用于处理文件
 import os
-import pathlib
 
 def copy_file(filename,src_dir,dest_dir):
     try:
@@ -32,8 +31,6 @@ def copy_file(filename,src_dir,dest_dir):
     #os.system('copy /y "%s" "%s"' %(src_file,dest_dir))
     src_path = src_dir + os.sep + filename
     dest_path = dest_dir + os.sep + filename
-    src_path = pathlib.Path(src_path)
-    dest_path = pathlib.Path(dest_path)
     #方法一：使用os的拷贝
     #os.system('copy /y "%s" "%s"'%(src_path , dest_path))
     #方法二：使用python拷贝文件，更通用各个平台
