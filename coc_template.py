@@ -1216,9 +1216,9 @@ def convert_mode(convert_id,*args):
             status = "donate"
             #启动模拟器
             action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (convert_id)
-            start_convert(action, convert_id, 120)
+            start_convert(action, convert_id, 80)
             # 重新登录qq
-            click(pos['relogin'][0], pos['relogin'][1], startport,3)
+            #click(pos['relogin'][0], pos['relogin'][1], startport,3)
             #click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
             #重启一下server
             restart_server()

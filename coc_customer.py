@@ -31,14 +31,14 @@ def update_tb(tbname,values):
     money_last = int(values[6]) #本月收入替换上月收入
     money_all = int(info[7]) + int(values[7])
     status = values[8]
-    table[index] = table[index].replace(info[0],coc_id)
-    table[index] = table[index].replace(info[1],coc_name)
-    table[index] = table[index].replace(info[3],start_time)
-    table[index] = table[index].replace(info[4],dead_time)
-    table[index] = table[index].replace(info[5],str(srv_time))
-    table[index] = table[index].replace(info[6],str(money_last))
-    table[index] = table[index].replace(info[7],str(money_all))
-    table[index] = table[index].replace(info[8],str(status))
+    table[index] = table[index].replace(info[0],coc_id,1)
+    table[index] = table[index].replace(info[1],coc_name,1)
+    table[index] = table[index].replace(info[3],start_time,1)
+    table[index] = table[index].replace(info[4],dead_time,1)
+    table[index] = table[index].replace(info[5],str(srv_time),1)
+    table[index] = table[index].replace(info[6],str(money_last),1)#加上替换次数，不然会因为一个月收入与总收入一致导致把总收入也替换了
+    table[index] = table[index].replace(info[7],str(money_all),1)
+    table[index] = table[index].replace(info[8],str(status),1)
     #将更新后的table直接覆盖写入到表中
     # 创建文件对象
     with open(tbname,'w',encoding='gb2312',newline="") as f:
@@ -57,7 +57,7 @@ def get_coc_info():
     coc_clan_name = coc_clan_name_ny.get()
     srv_month = coc_srv_month_ny.get()
     money_last = coc_money_ny.get()
-    if (coc_id,coc_clan_name,srv_month) == (None,None,None) and money_last != None:
+    if (coc_id,coc_clan_name,srv_month) == ("","","") and money_last != "":
         coc_id,coc_clan_name,srv_month = 0,'部落首领转让',0
     return (int(coc_id),coc_clan_name,int(srv_month),int(money_last))
 
@@ -149,7 +149,7 @@ def clarm(tbname):
                             choices=('已停止', '暂不停止服务'))
                 if flag_deadtime == '已停止':
                     status = 'stop'
-                    update_tb(tbname, [coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, money_all, status])
+                    update_tb(tbname, [coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, 0, status])
 
 #查询信息
 def query(tbname):

@@ -122,7 +122,7 @@ class FreeCapture():
         self.lastDraw = None
         
         try:
-            os.remove('temp.png')
+            #os.remove('temp.png')
             os.remove('select.png')
         except FileNotFoundError as reason:
             print(reason)
@@ -185,16 +185,11 @@ def screenShot():
     # 暂存全屏截图
     im.save('temp.png')
     im.close()
+    time.sleep(0.5)
     # 进行自由截屏
     w = FreeCapture(root, 'temp.png')
     # 截图结束，恢复主窗口，并删除temp.png文件
-    while True:
-        if 'select.png' in os.listdir():
-            root.state('normal')
-            break
-        else:
-            time.sleep(0.5)
-            print('1')
+    root.state('normal')
 
 def on_press(key):
     pass
@@ -295,8 +290,8 @@ def startscreenShot():
         t2.start()
         flag = 1
     elif flag == 1:
-        stop_thread(t1)
-        stop_thread(t2)
+        #stop_thread(t1)
+        #stop_thread(t2)
         flag = 0
     
 screenShot_bt = tk.Button(root,text='截屏"#"',command=startscreenShot,width=15)
