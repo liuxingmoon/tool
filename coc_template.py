@@ -62,9 +62,9 @@ pos = {
     'built09': [700, 280],
     'built10': [570, 320],
     'built11': [820, 320],
-    'built12': [730, 390],
+    'built12': [670, 400],
     'built13': [440, 270],
-    'built14': [710, 195],
+    'built14': [660, 285],
     'built15': [643, 416],
     'built16': [770, 310],
     'built17': [430, 105],
@@ -76,6 +76,9 @@ pos = {
     'built23': [970, 360],
     'built24': [660, 240],
     'built24': [240, 560],
+    'worker': [460, 50],
+    'season_1': [200, 660],
+    'season_2': [700, 50],
     'backcamp': [640, 640],
     'camp': [420, 420],
     'ruins': [850, 220],
@@ -630,7 +633,7 @@ def register(name,startid):
     connect(startport)
     #click(pos['name'][0],pos['name'][1],startport)
     #text(IDcard['01'][0])
-    #注册身份证
+    print("注册身份证")
     g.msgbox(msg=IDcard['19'][0])
     click(pos['idcard'][0], pos['idcard'][1],startport)
     time.sleep(1)
@@ -640,75 +643,75 @@ def register(name,startid):
     time.sleep(15)
     click(pos['alias_name'][0], pos['alias_name'][1], startport)
     back(startport)
-    #重启,菜单栏无效只能home然后等1分钟再重进
+    print("重启,菜单栏无效只能home然后等1分钟再重进")
     restartcoc(startport)
     time.sleep(5)
-    #同意协议
+    print("同意协议")
     click(pos['agree1'][0], pos['agree1'][1], startport)
     click(pos['agree2'][0], pos['agree2'][1], startport)
-    #取消广告
+    print("取消广告")
     click(pos['cancel'][0], pos['cancel'][1], startport)
     time.sleep(5)
     #开始默认教程
     #教程
     for n in range(5):
         click(pos['cancel'][0], pos['cancel'][1], startport)
-    #造加农炮
+    print("造加农炮")
     storebuild(startport)
     click(pos['store_3'][0], pos['store_3'][1], startport)
     click(pos['built01'][0], pos['built01'][1], startport)
     time.sleep(15)
-    #哥布林攻打
+    print("哥布林攻打")
     click(pos['built02'][0], pos['built02'][1], startport)
     time.sleep(15)
     for n in range(5):
         click(pos['cancel'][0], pos['cancel'][1], startport)
     click(pos['built03'][0], pos['built03'][1], startport)
-    #打哥布林
+    print("打哥布林")
     time.sleep(5)
     click_short(pos['built03'][0], pos['built03'][1], startport, 20)
     time.sleep(40)
     click(pos['backcamp'][0], pos['backcamp'][1], startport)
     time.sleep(5)
-    #造圣水收集器
     for n in range(5):
         click(pos['cancel'][0], pos['cancel'][1], startport)
         click(pos['backcamp'][0], pos['backcamp'][1], startport)#上一个点击无效
+    print("造圣水收集器")
     storebuild(startport)
     click(pos['store_3'][0], pos['store_3'][1], startport)
     click(pos['built04'][0], pos['built04'][1], startport)
-    # 造圣水瓶
+    print("造圣水瓶")
     click(pos['cancel'][0], pos['cancel'][1], startport)
     storebuild(startport)
     click(pos['store_3'][0], pos['store_3'][1], startport)
     click(pos['built05'][0], pos['built05'][1], startport)
     time.sleep(15)
-    # 造矿场
+    print("造矿场")
     click(pos['cancel'][0], pos['cancel'][1], startport)
     storebuild(startport)
     click(pos['store_3'][0], pos['store_3'][1], startport)
     click(pos['built06'][0], pos['built06'][1], startport)
     time.sleep(15)
-    # 造储金罐
+    print("造储金罐")
     click(pos['cancel'][0], pos['cancel'][1], startport)
     storebuild(startport)
     click(pos['store_3'][0], pos['store_3'][1], startport)
     click(pos['built07'][0], pos['built07'][1], startport)
     time.sleep(15)
-    # 造训练营
+    print("造训练营")
     click(pos['cancel'][0], pos['cancel'][1], startport)
     storebuild(startport)
     click(pos['store_1'][0], pos['store_1'][1], startport)
     click(pos['built08'][0], pos['built08'][1], startport)
     time.sleep(15)
-    #造兵
+    print("造兵")
     click(pos['cancel'][0], pos['cancel'][1], startport)
     #click(pos['camp'][0], pos['camp'][1], startport)
     click(pos['trainning_bt'][0], pos['trainning_bt'][1], startport)
     click_short(pos['train_troop01'][0], pos['train_troop01'][1], startport,50)
-    #等待造兵
+    print("等待造兵")
     timewait(7,startport)
-    #进攻哥布林
+    print("进攻哥布林")
     time.sleep(5)
     click(pos['cancel'][0], pos['cancel'][1], startport)
     time.sleep(1)
@@ -720,65 +723,78 @@ def register(name,startid):
     click(pos['backcamp'][0], pos['backcamp'][1], startport)
     click(pos['cancel'][0], pos['cancel'][1], startport)
     time.sleep(1)
-    #取名
+    print("取名")
     text(name,startport)
     click(pos['name_done'][0], pos['name_done'][1], startport)
     time.sleep(10)
-    #升级大本营
+    print("升级大本营")
     click(pos['cancel'][0], pos['cancel'][1], startport)
     click(pos['base'][0], pos['base'][1], startport)
     click(pos['levelup'][0], pos['levelup'][1], startport)
     click(pos['enter'][0], pos['enter'][1], startport)
     time.sleep(15)
-    #成就
+    print("成就")
     click(pos['cancel'][0], pos['cancel'][1], startport)
     click(pos['achievement'][0], pos['achievement'][1], startport)
     click(pos['achievement4'][0], pos['achievement4'][1], startport)
     for n in range(3):
         click(pos['cancel'][0], pos['cancel'][1], startport)
     click(pos['exitstore'][0], pos['exitstore'][1], startport)
-    time.sleep(10)
-    #重启
+    print("重启")
     restartcoc(startport)
-    #造兵营
+    print("造兵营")
     storebuild(startport)
     click(pos['store_2'][0], pos['store_2'][1], startport)
     click(pos['built09'][0], pos['built09'][1], startport)
-    # 造收集器
+    print("造收集器")
     time.sleep(10)
     storebuild(startport)
     click(pos['storeitem2'][0], pos['storeitem2'][1], startport)
     click(pos['store_2'][0], pos['store_2'][1], startport)
     click(pos['built10'][0], pos['built10'][1], startport)
     time.sleep(7)
-    #造矿场
+    print("造矿场")
     storebuild(startport)
     click(pos['storeitem2'][0], pos['storeitem2'][1], startport)
     click(pos['store_2'][0], pos['store_2'][1], startport)
     click(pos['built11'][0], pos['built11'][1], startport)
     time.sleep(7)
-    #造加农炮
+    print("造加农炮")
     storebuild(startport)
     click(pos['storeitem3'][0], pos['storeitem3'][1], startport)
     click(pos['store_1'][0], pos['store_1'][1], startport)
     click(pos['built12'][0], pos['built12'][1], startport)
     time.sleep(7)
-    #造弓箭
+    print("造弓箭")
     storebuild(startport)
     click(pos['storeitem3'][0], pos['storeitem3'][1], startport)
     click(pos['store_1'][0], pos['store_1'][1], startport)
     click(pos['built13'][0], pos['built13'][1], startport)
     time.sleep(7)
-    #造兵
+    print("点击教程：工人")
+    click(pos['worker'][0], pos['worker'][1], startport)
+    time.sleep(1)
+    click_short(pos['cancel'][0], pos['cancel'][1], startport,5)
+    click(pos['cancel'][0], pos['cancel'][1], startport)
+    print("点击教程：赛季奖励")
+    click(pos['season_1'][0], pos['season_1'][1], startport)
+    click_short(pos['cancel'][0], pos['cancel'][1], startport,5)
+    time.sleep(2)
+    click(pos['season_2'][0], pos['season_2'][1], startport)
+    time.sleep(1)
+    click_short(pos['cancel'][0], pos['cancel'][1], startport,5)
+    time.sleep(2)
+    click(pos['cancel'][0], pos['cancel'][1], startport)
+    print("造兵")
     train_troop('train_troop01',40,startport)
     timewait(25,startport)
-    #升级矿场1,2
+    print("升级矿场1,2")
     levelup_mine1(startport)
     time.sleep(60)
-    #升级收集器1,2
+    print("升级收集器1,2")
     levelup_collector1(startport)
     time.sleep(80)
-    #打哥布林
+    print("打哥布林")
     click(pos['attack'][0], pos['attack'][1], startport)
     click(pos['attack_single'][0], pos['attack_single'][1], startport)
     click(pos['goblin02'][0], pos['goblin02'][1], startport)
@@ -789,9 +805,9 @@ def register(name,startid):
     click(pos['backcamp'][0], pos['backcamp'][1], startport)
     time.sleep(5)
     click(pos['cancel'][0], pos['cancel'][1], startport)
-    #造城墙
+    print("造城墙")
     timewait(15,startport)
-    #收集一次资源确保选中不会出意外
+    print("收集一次资源确保选中不会出意外")
     click(pos['mine1'][0], pos['mine1'][1], startport)
     click(pos['mine2'][0], pos['mine2'][1], startport)
     click(pos['collector1'][0], pos['collector1'][1], startport)
@@ -802,20 +818,20 @@ def register(name,startid):
     storebuild(startport)
     click(pos['storeitem3'][0], pos['storeitem3'][1], startport)
     click(pos['store_1'][0], pos['store_1'][1], startport)
-    subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 623 349 651 274' % (startport), shell=True)
+    #subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 623 349 651 274' % (startport), shell=True)
     time.sleep(1)
     for n in range(40):
         click(pos['built14'][0], pos['built14'][1], startport)
-    #重启
+    print("重启")
     restartcoc(startport)
-    #升级矿场
+    print("升级矿场")
     levelup_mine(startport)
     cancel(startport)
-    #造兵
+    print("造兵")
     train_troop('train_troop01', 40, startport)
-    #等待矿场升级完毕
+    print("等待矿场升级完毕")
     timewait(20, startport)
-    #打哥布林
+    print("打哥布林")
     click(pos['attack'][0], pos['attack'][1], startport)
     click(pos['attack_single'][0], pos['attack_single'][1], startport)
     click(pos['goblin03'][0], pos['goblin03'][1], startport)
@@ -825,14 +841,14 @@ def register(name,startid):
     time.sleep(60)
     click(pos['backcamp'][0], pos['backcamp'][1], startport)
     time.sleep(5)
-    #升级收集器
+    print("升级收集器")
     levelup_collector(startport)
     cancel(startport)
-    #造兵
+    print("造兵")
     train_troop('train_troop01', 40, startport)
-    #等待收集器升级完毕
+    print("等待收集器升级完毕")
     timewait(20, startport)
-    #升级罐子和瓶子
+    print("升级罐子和瓶子")
     levelup_saver(startport)
     cancel(startport)
     #close_emu_id(startid)#关闭该实例
@@ -1216,7 +1232,7 @@ def convert_mode(convert_id,*args):
             status = "donate"
             #启动模拟器
             action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (convert_id)
-            start_convert(action, convert_id, 80)
+            start_convert(action, convert_id, 60)
             # 重新登录qq
             #click(pos['relogin'][0], pos['relogin'][1], startport,3)
             #click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
@@ -1226,6 +1242,10 @@ def convert_mode(convert_id,*args):
             time.sleep(5)
             #启动coc
             startcoc(startport,60)
+            #有可能上线正在被打,等待3分钟后尝试返回
+            timewait(3,startport)
+            click(pos['attack'][0], pos['attack'][1], startport,1)
+            click(pos['cancel'][0], pos['cancel'][1], startport,1)
             #夜世界切换
             #归到右上角
             swipe('top',startport)
