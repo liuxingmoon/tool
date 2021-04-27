@@ -15,10 +15,13 @@ import svnconfig,svn_ctrl
 from remind_write_weekreport import x86_members
 import time
 
-weekReportDir = r"D:\Program Files\Python38\works\tool\weekReport"
+weekReportDir = r"D:\Users\user\Desktop\weekReport"
 weekReportDir_tradition = r"D:\SVNdata\Public\01.AB组周报\传统架构组\2021年"
 weekReportDir_cloud = r"D:\SVNdata\Public\01.AB组周报\云平台组周报"
-totalFile = r"C:\Users\Administrator.PC-20200904VSVM\Desktop\x86_weekreport.txt"
+totalFile = r"D:\Users\user\Desktop\x86_weekreport.txt"
+
+
+
 dist_tradition = svnconfig.setting['dist_tradition']
 dist_cloud = svnconfig.setting['dist_cloud']
 
@@ -132,7 +135,16 @@ def clean_weekdir():
 def getfilelist(filedir):
     os.chdir(filedir)
     last_dir = max([ datetime.datetime.strptime( dir_name, '%Y-%m-%d') for dir_name in os.listdir() ])#最新的时间的目录
-    last_dir = last_dir.strftime("%Y-%m-%d")
+    today_date = datetime.datetime.today()#今天日期
+    if ((today_date - last_dir).days >= 7):#如果当前时间比上周的提交目录已经过了一周，自动创建周报目录并提交
+        last_dir = today_date.strftime("%Y-%m-%d")
+        os.system("mkdir %s" %(last_dir))
+        #提交周报目录
+        commit_dir = filedir + os.sep + last_dir
+        svn_ctrl.add(commit_dir)
+        svn_ctrl.commit(commit_dir)
+    else:
+        last_dir = last_dir.strftime("%Y-%m-%d")
     os.chdir(last_dir)#进入到最新的目录
     file_list = os.listdir()#周报列表
     return(last_dir,file_list)
@@ -150,7 +162,7 @@ def copy_file_to_weekdir(filedir):
         thread_copyfile =threading.Thread(target=copy_file,args=(filename,filedir + os.sep + last_dir,weekReportDir))#从当前目录拷贝文件到汇总目录
         thread_copyfile.start()
     
-def start():
+if __name__ == "__main__":
     # TODO: 检查周报是否交齐,
     # x86_members = ["任德强","张文强","刁强",]
     #更新svn周报到本地仓库
@@ -158,19 +170,29 @@ def start():
     svn_ctrl.update(dist_cloud)
     #提交我的周报
     last_dir = getfilelist(dist_cloud)[0]
-    dist_dir = dist_cloud + os.sep + last_dir
-    locallist = os.listdir("D:\工作\周报\\")
-    my_report = [x for x in locallist if '工作周报-刘兴' in x][0]
+    dist_dir = dist_cloud + os.sep + last_dir#目标目录
+    locallist = os.listdir(r"D:\Users\user\Desktop\工作\周报\\")
     #检查自己是否已提交周报
-    if '刘兴' in [x for x in os.listdir(dist_dir) if '工作周报-刘兴' in x][0]:
-        print('刘兴已提交，跳过自己上传周报')
+    check_day_file = last_dir.replace("-","")#提取周报日
+    my_report = [x for x in locallist if '工作周报-刘兴%s' %(check_day_file) in x]
+    if my_report != []:
+        my_report = my_report[0]
     else:
-        print('刘兴未提交，自己上传周报')
-        copy_file(my_report,"D:\工作\周报\\",dist_dir)
-        commit_file = dist_dir + os.sep + my_report
-        svn_ctrl.add(commit_file)
-        svn_ctrl.commit(commit_file)
-    
+        print('刘兴的周报还没写！')
+        g.msgbox(title='刘兴周报检查',msg='刘兴的周报（工作周报-刘兴%s）还没写！写完后确认' %(check_day_file))
+        my_report = '工作周报-刘兴%s' %(check_day_file)
+    commited_files = os.listdir(dist_dir)#已提交周报的list
+    if commited_files != []:#已提交周报不为空
+        if [x for x in commited_files if '工作周报-刘兴%s' %(check_day_file) in x] != []:
+            print('刘兴已提交，跳过自己上传周报')
+        else:
+            print('刘兴未提交，自己上传周报')
+            copy_file(my_report,r"D:\Users\user\Desktop\工作\周报\\",dist_dir)
+            commit_file = dist_dir + os.sep + my_report
+            svn_ctrl.add(commit_file)
+            svn_ctrl.commit(commit_file)
+    else:
+        print("无人已提交周报！")
     #检查下周报结果，如果都交了就统计,没交完就不汇总统计
     result = remind.start()
     if result != "周报已全部提交，可以汇总了":

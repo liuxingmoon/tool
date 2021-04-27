@@ -44,11 +44,12 @@ def get_weekreports():
             if 'xls' in line:
                 r = re.search(r'xlsx?"\>(.*xlsx?)\<', line)
                 weekreports.append(r.groups()[0])
-    return weekreports
+    return (weekreports,check_date)
 
 def start():
     date_hour = datetime.datetime.strftime(datetime.datetime.now(),"%Y-%m-%d %H:%M:%S")
-    weekreports = get_weekreports()
+    weekreports = get_weekreports()[0]
+    commit_dir = get_weekreports()[1]
     uncommit_users = []
     #sendsms_cmd = "/usr/bin/python /data/scrcu_x86/scrcu_tools/sendsms.py '18708112761' '{}'"
     for name in x86_members:
@@ -57,7 +58,7 @@ def start():
             uncommit_users.append(name)
 
     if uncommit_users:
-        result = "%s 周报检查："%(date_hour) + "、".join(uncommit_users) + "未交周报，请尽快提交至SVN"
+        result = "%s 周报检查："%(date_hour) + "、".join(uncommit_users) + "未交周报，请尽快提交至SVN %s目录"%(commit_dir)
     else:
         result = "周报已全部提交，可以汇总了"
     #sms_text = f"[周报检查]{result}"
