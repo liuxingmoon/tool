@@ -23,6 +23,7 @@ pos = {
   'login_kunlun': [640, 250],
   'login_kunlun1': [640, 560],
   'login_kunlun2': [640, 620],
+  'cancel': [1200, 50],
   'sure':[360,935]
   }
 
@@ -804,11 +805,19 @@ if __name__ == "__main__":
                 print(r'============================= 等待30分钟避免切换时没有授权导致切换失败 ===============================')
                 timewait(30)#等待30分钟避免启动时没有授权登录
             if donate_for_paid_switch in ['True','1','T']:
-                restart_emu(donatenames_for_paid)#只重启付费捐兵号为了授权
-                #timewait(2)#等待2分钟缓冲一下
-                close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
                 for convert_id in donateids_for_paid:
-                    coc_template.convert_mode(convert_id,donate_status)
+                    action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (
+                        int(convert_id))
+                    coc_template.start_convert(action, convert_id, 80)#启动
+                    startport = getport(convert_id)
+                    coc_template.start_script(startport,'donate')#切换
+                    timewait(3)#等待4分钟避免切换的时候刚好被打导致切换失败
+                    click(pos['cancel'][0], pos['cancel'][1],startport)
+                    time.sleep(30)
+                    close_emu_id(convert_id)#关闭模拟器
+                #close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
+                for convert_id in donateids_for_paid:
+                    coc_template.convert_mode(convert_id,donate_status)#删除兵+造兵
                 restart_server()
             '''
             #多进程执行有不可预料失败可能
@@ -825,12 +834,16 @@ if __name__ == "__main__":
             if donate_switch in ['True','1','T']:
                 try:
                     if datetime.datetime.now().weekday() in [0,1,2,3,4,5,6]:#所有时间捐兵，如果要打资源取消时间即可，0是周一，6是周日
-                        '''
                         for convert_id in donateids:
-                            process_convert_donateids = Process(target=coc_template.convert_mode,args=(convert_id,donate_status))
-                            process_convert_donateids.start()
-                        process_convert_donateids.join()
-                        '''
+                            action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (
+                                int(convert_id))
+                            coc_template.start_convert(action, convert_id, 80)#启动
+                            startport = getport(convert_id)
+                            coc_template.start_script(startport,'donate')#切换
+                            timewait(3)#等待4分钟避免切换的时候刚好被打导致切换失败
+                            click(pos['cancel'][0], pos['cancel'][1],startport)
+                            time.sleep(30)
+                            close_emu_id(convert_id)#关闭模拟器
                         for convert_id in donateids:
                             coc_template.convert_mode(convert_id,donate_status)
                         restart_server()

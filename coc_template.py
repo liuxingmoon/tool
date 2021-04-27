@@ -1160,7 +1160,7 @@ def start_script(startport,*args):
         if args[0] == "donate":#切换为donate
             click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
             # 从下往上滑动
-            for n in range(5):
+            for n in range(7):
                 swipeport(pos['script_swipebot'][0], pos['script_swipebot'][1], pos['script_swipetop'][0],pos['script_swipetop'][1], startport)
             #切换夜世界不打资源
             click(pos['script_night_attackmode'][0], pos['script_night_attackmode'][1], startport, 3)
@@ -1242,16 +1242,19 @@ def convert_mode(convert_id,*args):
             time.sleep(5)
             #启动coc
             startcoc(startport,60)
+            '''
             #有可能上线正在被打,等待3分钟后尝试返回
             timewait(3,startport)
             click(pos['attack'][0], pos['attack'][1], startport,1)
             click(pos['cancel'][0], pos['cancel'][1], startport,1)
+            '''
             #夜世界切换
             #归到右上角
             swipe('top',startport)
             swipe('right',startport)
             #船
             click(pos['boat'][0], pos['boat'][1], startport, 15)
+
             #取消训练中的兵种,2次确保删除
             cancel_troop(startport)
             cancel_troop(startport)
@@ -1270,9 +1273,6 @@ def convert_mode(convert_id,*args):
             #造捐兵兵种
             train_template('train_template03', startport)
             #train_template('train_template03', startport)
-            #切换为捐兵
-            home(startport)
-            start_script(startport,status)
         #暂停几秒钟保存切换后状态
         time.sleep(5)
         close_emu_id(convert_id)#关闭该模拟器
