@@ -73,7 +73,7 @@ def start(action,startport,wait_time):
     #确保模拟器进程已经启动
     #等待系统开机
     time.sleep(40)
-    #start_server()
+    restart_server()
     #重启并连接连接
     connect(startport)
     time.sleep(3)
@@ -487,7 +487,7 @@ def login_click(startid):
     restart_server()
     connect(startport)#连接    
     time.sleep(10)
-    if int(startid) == 5:#如果是星陨，尝试点击登录
+    if int(startid) == 1:#如果是星陨，尝试点击登录
         click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
         click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
     #elif str(startid) not in notplaylist:#双重否定表肯定，在轮循打资源列表中的id
@@ -498,7 +498,7 @@ def login_click(startid):
         click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
         click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
         '''
-    elif int(startid) in [0,1,2,3,4,42]:#QQ
+    elif int(startid) in [2,3,4,5,6]:#QQ
         click(pos['start_script'][0],pos['start_script'][1],startport,5)
     else:
         click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
@@ -879,7 +879,7 @@ if __name__ == "__main__":
             #启动打资源号
             restartplay()
         #确认星陨，点击登录，星陨总是掉线
-        login_click(5)
+        login_click(1)
         #运行该coc实例时间
         t = int(instance_time)
         for time_minite in range(t,0,-1):

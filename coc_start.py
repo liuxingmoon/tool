@@ -370,14 +370,14 @@ def timewait(min,startport):
 def startcoc(startport,wait_time):
     #connect(startport)
     start_id = int(startport) - 52550
-    if start_id in [1,2,3,4,42]:#腾讯
+    if start_id in [2,3,4,5,6]:#腾讯
         subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.tencent.tmgp.supercell.clashofclans/com.supercell.titan.tencent.GameAppTencent' % (startport), shell=True)
     else:#九游
         subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
     #豌豆荚
     #subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
     time.sleep(wait_time)
-    if startport == 52555:#如果是星陨，尝试点击登录 
+    if startport == 52551:#如果是星陨，尝试点击登录 
         click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
     else:
         #click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
@@ -439,7 +439,7 @@ def start(startid):
     time.sleep(3)
     click(pos['start_script'][0],pos['start_script'][1],startport)
     time.sleep(5)
-    if int(startid) == 5:#如果是星陨，尝试点击登录
+    if int(startid) == 1:#如果是星陨，尝试点击登录
         click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport)
         time.sleep(3)
         click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport)
