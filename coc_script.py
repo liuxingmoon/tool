@@ -162,42 +162,39 @@ def play(wait_time,skipids):
     #config = configparser.ConfigParser()
     #config.read(configpath, encoding="utf-8")
     #为了指定关闭startid，全局
-    try:
-        global startid
-        startid = config.get("coc", "startid")#获取的下一个准备开启的id
-        startid = int(startid)#取出数据为string，获取启动模拟器id
-        startlist = getport(startid,skipids)
-        startid = int(startlist[0])#获取启动模拟器id,这里不能注释掉，因为getport函数会重新根据skipids递归获取新的startid
-        startport = startlist[1]#获取port
-        play_index = play_ids.index(startid)#获取启动id的index
-        close_index = play_index - instance_num
-        if close_index < 0:
-            close_index = len(play_ids) + close_index
-        close_id = play_ids[close_index]
-        #关闭前一个模拟器
-        close_emu_id(close_id)
-        action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(startid)
-        #启动新id
-        start(action,startport,wait_time)
-        print('============================= 启动模拟器完成 =============================')
-        time.sleep(3)
-        coc_script(startport,10)
-        click(pos['sure'][0], pos['sure'][1],startport)
-        time.sleep(5)
-        click(pos['start_script'][0],pos['start_script'][1],startport)
-        print('============================= 启动打资源脚本完成 =============================')
-        time.sleep(20)
-        login_click(startid)
-        #打印分割线
-        read_id = playnames[startid]
-        print(r'============================= %s 实例启动完成 ===============================' %(read_id))
-        #回滚startid
-        if startid == maxid:   #结束id
-            startid = minid-1   #开始id - 1
-        config.set("coc", "startid", str(startid + 1))#只能存储str类型数据
-        config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
-    except:
-        print('============================= 实例启动失败 ===============================')
+    global startid
+    startid = config.get("coc", "startid")#获取的下一个准备开启的id
+    startid = int(startid)#取出数据为string，获取启动模拟器id
+    startlist = getport(startid,skipids)
+    startid = int(startlist[0])#获取启动模拟器id,这里不能注释掉，因为getport函数会重新根据skipids递归获取新的startid
+    startport = startlist[1]#获取port
+    play_index = play_ids.index(startid)#获取启动id的index
+    close_index = play_index - instance_num
+    if close_index < 0:
+        close_index = len(play_ids) + close_index
+    close_id = play_ids[close_index]
+    #关闭前一个模拟器
+    close_emu_id(close_id)
+    action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(startid)
+    #启动新id
+    start(action,startport,wait_time)
+    print('============================= 启动模拟器完成 =============================')
+    time.sleep(3)
+    coc_script(startport,10)
+    click(pos['sure'][0], pos['sure'][1],startport)
+    time.sleep(5)
+    click(pos['start_script'][0],pos['start_script'][1],startport)
+    print('============================= 启动打资源脚本完成 =============================')
+    time.sleep(20)
+    login_click(startid)
+    #打印分割线
+    read_id = playnames[startid]
+    print(r'============================= %s 实例启动完成 ===============================' %(read_id))
+    #回滚startid
+    if startid == maxid:   #结束id
+        startid = minid-1   #开始id - 1
+    config.set("coc", "startid", str(startid + 1))#只能存储str类型数据
+    config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
 
 #付费捐兵号
 def play_donate_for_paid(donateids):
@@ -300,29 +297,33 @@ def play_resource(resourceids):
     if close_index < 0:
         close_index = len(resourceids) + close_index
     close_id = resourceids[close_index]
-    #关闭前一个模拟器
-    close_emu_id(close_id)
-    #写入config
-    config.set("coc", "resourceid_now", resourceid_now)#只能存储str类型数据
-    config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
-    if int(resourceid_now) == 0:
-        startport = 5555
+    
+    if (len(resourceids) > resourceids_num):#如果持续打资源号数量要大于设定数量才关闭切换，不然就直接一直运行不切换了
+        #关闭前一个模拟器
+        close_emu_id(close_id)
+        #写入config
+        config.set("coc", "resourceid_now", resourceid_now)#只能存储str类型数据
+        config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+        if int(resourceid_now) == 0:
+            startport = 5555
+        else:
+            startport = 52550 + int(resourceid_now)
+        startport = getport(int(resourceid_now))
+        action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(resourceid_now))
+        start(action,startport,40)
+        print(r'============================= 启动持续打资源模拟器完成 ===============================')
+        time.sleep(3)
+        coc_script(startport,10)
+        time.sleep(10)
+        click(pos['sure'][0], pos['sure'][1],startport)
+        time.sleep(15)
+        click(pos['start_script'][0],pos['start_script'][1],startport,5)
+        time.sleep(20)
+        login_click(resourceid_now)
+        print(r'============================= 启动持续打资源脚本完成 ===============================')
     else:
-        startport = 52550 + int(resourceid_now)
-    startport = getport(int(resourceid_now))
-    action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(resourceid_now))
-    start(action,startport,40)
-    print(r'============================= 启动持续打资源模拟器完成 ===============================')
-    time.sleep(3)
-    coc_script(startport,10)
-    time.sleep(10)
-    click(pos['sure'][0], pos['sure'][1],startport)
-    time.sleep(15)
-    click(pos['start_script'][0],pos['start_script'][1],startport,5)
-    time.sleep(20)
-    login_click(resourceid_now)
-    print(r'============================= 启动持续打资源脚本完成 ===============================')
-   
+        print(r'============================= 跳过持续打资源号切换 ===============================')
+       
     
     
 #根据时间判断运行实例数量
@@ -671,6 +672,10 @@ if __name__ == "__main__":
         kill_adb()
         if donate_for_paid_switch in ['True','1','T']:
             restart_emu(donatenames_for_paid,donateids_for_paid_2nd)#启动了第二梯队
+        #启动持续打资源号
+        if play_resource_switch in ['True','1','T']:
+            restart_emu(resource_names)
+            
     while True:
         kill_adb()
         endtime_global = datetime.datetime.now()
