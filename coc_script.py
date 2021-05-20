@@ -439,7 +439,7 @@ def restart_emu(restartlist,*args):
             #start_emu_process.start()
             start_emu(int(restart_id),30)
     if len(donateids_for_paid_2nd) > 0:
-        #timewait(15)
+        timewait(15)
         for restart_id in donateids_for_paid_2nd[0]:
             #start_emu_process = Process(target=start_emu,args=(int(restart_id),30))
             #start_emu_process.start()
@@ -762,6 +762,7 @@ if __name__ == "__main__":
                 '''
                 for convert_id in resourceids:
                     coc_template.convert_mode(convert_id,donate_status)
+                restart_emu(resource_names)#启动一下持续打资源号
             if donate_switch in ['True','1','T']:
                 '''
                 for convert_id in donateids:
@@ -854,7 +855,8 @@ if __name__ == "__main__":
                         restart_server()
                 except:
                     print('============================= 出故障，不捐兵，继续打资源 =============================')
-            
+            if play_resource_switch in ['True','1','T']:
+                restart_emu(resource_names)#启动一下持续打资源号
             #点击中间关闭adb.exe弹出的错误按钮
             #for n in range(15):
                 #k.mouse_click(894, 544)

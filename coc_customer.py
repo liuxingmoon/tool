@@ -138,10 +138,10 @@ def clarm(tbname):
             status = 'running'
         #转换截止时间
         dead_time = datetime.datetime.strptime(str(dead_time_hr), '%Y-%m-%d %H:%M')
-        #一周时提醒
+        #3天时提醒
         if status == 'running':#状态为正常运行服务的用户才需要提醒
-            if datetime.timedelta(days=6) <= (dead_time - now_time) <= datetime.timedelta(days=7):
-                g.msgbox(msg='尊敬的用户，您的部落 %s ，奶号 %s\n捐兵服务在一周内即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,coc_name,dead_time_hr,money_last))
+            if datetime.timedelta(days=2) <= (dead_time - now_time) <= datetime.timedelta(days=3):
+                g.msgbox(msg='尊敬的用户，您的部落 %s ，奶号 %s\n捐兵服务在3天内即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,coc_name,dead_time_hr,money_last))
             elif datetime.timedelta(days=0) <= (dead_time - now_time) <= datetime.timedelta(days=1):
                 g.msgbox(msg='尊敬的用户，您的部落 %s ，奶号 %s\n捐兵服务在 24 小时内 即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,coc_name,dead_time_hr,money_last))
             elif (dead_time - now_time) < datetime.timedelta(days=0):#过期如果不点击已停止，会一直提醒

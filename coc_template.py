@@ -66,16 +66,15 @@ pos = {
     'built13': [440, 270],
     'built14': [660, 285],
     'built15': [643, 416],
-    'built16': [770, 310],
-    'built17': [430, 105],
-    'built18': [370, 230],
-    'built19': [935, 420],
-    'built20': [1035, 160],
-    'built21': [1160, 215],
-    'built22': [370, 370],
-    'built23': [970, 360],
-    'built24': [660, 240],
-    'built24': [240, 560],
+    'built16': [720, 280],
+    'built17': [770, 425],
+    'built18': [900, 380],
+    'built19': [1000, 300],
+    'built20': [980, 110],
+    'built21': [300, 165],
+    'built22': [1090, 230],
+    'built23': [870, 500],
+    'built24': [750, 240],
     'worker': [460, 50],
     'season_1': [200, 660],
     'season_2': [700, 50],
@@ -1037,7 +1036,7 @@ def levelup_3(nowid):
     storebuild(startport)
     click(pos['storeitem3'][0], pos['storeitem3'][1], startport)
     click(pos['store_1'][0], pos['store_1'][1], startport)
-    subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 647 368 630 300' % (startport), shell=True)
+    subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 647 368 680 340' % (startport), shell=True)
     time.sleep(1)
     x = pos['built24'][0]
     y = pos['built24'][1]
