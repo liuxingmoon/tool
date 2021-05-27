@@ -14,6 +14,7 @@ import AutoClick as ak
 import keyboard as k
 import coc_start
 from multiprocessing import Process
+import file_ctrl as fc
 #元素坐标
 pos = {
   'coc_script':[500,680],
@@ -31,6 +32,8 @@ pos = {
 Coclog = r'E:\Program Files\Python\Python38\works\tool\coclog.txt'
 configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
 ddpath = r'D:\Program Files\DundiEmu\DunDiEmu.exe'
+configdir = os.path.dirname(os.path.abspath(configpath))#配置文件目录
+backupdir = configdir + os.sep + "backup"
     
 def kill_adb():
     subprocess.Popen('taskkill /f /t /im adb.exe',shell=True)
@@ -735,8 +738,9 @@ if __name__ == "__main__":
             elif donate_switch not in ['True','1','T']:
                 donate_num = 0
         instance_num = instance_num - donate_num - donateids_for_paid_num - resourceids_num
-        #凌晨切换捐兵状态为打资源，顺便做一次部落战捐兵
+        #凌晨切换捐兵状态为打资源，备份Config.ini配置文件
         if (time_status == '凌晨') and (donate_status == 'donate'):
+            fc.copy_file("Config.ini",configdir,backupdir)#备份
             flag_reboot = 'False'#设置flag为FALSE
             config.read(configpath, encoding="utf-8")
             config.set("coc", "flag_reboot", flag_reboot)#只能存储str类型数据，设置flag为True
@@ -886,7 +890,7 @@ if __name__ == "__main__":
             #启动打资源号
             restartplay()
         #确认星陨，点击登录，星陨总是掉线
-        login_click(1)
+        #login_click(1)
         #运行该coc实例时间
         t = int(instance_time)
         for time_minite in range(t,0,-1):

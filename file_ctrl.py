@@ -2,6 +2,7 @@
 import os
 
 def copy_file(filename,src_dir,dest_dir):
+    curdir = os.getcwd()#当前目录
     try:
         #切换到目的目录
         os.chdir(dest_dir)
@@ -43,6 +44,7 @@ def copy_file(filename,src_dir,dest_dir):
                     dest_file.write(data)
                 else:
                     break# 空文件跳过
+    os.chdir(curdir)#返回原始目录
     
     
 #恢复
