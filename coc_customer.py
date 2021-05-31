@@ -3,6 +3,12 @@ from csv_ctrl import *
 import os
 import tkinter as tk
 import easygui as g
+import win32gui
+import win32con
+import win32clipboard as w
+import win32api
+import time
+from pandas import read_excel 
 
 def update_tb(tbname,values):
     table = select_tb(tbname)
@@ -114,6 +120,55 @@ def renewal(month,values):
     print('尊敬的用户，您的服务已经续费成功！\n续费服务时间：%d 天\n服务结束时间：%s\n祝您游戏愉快！' %(srv_days_hr,dead_time_hr))
     return (start_time_hr,dead_time_hr,srv_days_hr)
 
+def setText(massage):   #重设剪贴板文本
+    w.OpenClipboard()
+    w.EmptyClipboard()
+    w.SetClipboardData(win32con.CF_UNICODETEXT, massage)
+    w.CloseClipboard()    
+    
+def send_qq(massage):   #发送消息给QQ用户
+    setText(massage)
+    hwnd_title = dict()    
+    def get_all_hwnd(hwnd,mouse):
+        if win32gui.IsWindow(hwnd) and win32gui.IsWindowEnabled(hwnd) and win32gui.IsWindowVisible(hwnd):
+            hwnd_title.update({hwnd:win32gui.GetWindowText(hwnd)})
+    
+    win32gui.EnumWindows(get_all_hwnd, 0)
+    for h,t in hwnd_title.items():
+        if t != "":                    
+            hwnd = win32gui.FindWindow('TXGuiFoundation', t)    # 获取qq窗口句柄    
+            if hwnd != 0:
+                #win32gui.SendMessage(hwnd, win32con.WM_SYSCOMMAND, win32con.SC_RESTORE, 0)    #虽然可以还原最小化的会话窗口，但经过测试发现并不能解决还原后不发送消息的问题。
+                win32gui.ShowWindow(hwnd,win32con.SW_SHOW)
+                time.sleep(0.1)
+                win32gui.SetForegroundWindow(hwnd)
+                win32gui.SetActiveWindow(hwnd)
+                time.sleep(0.1)
+                win32gui.SendMessage(hwnd,770, 0, 0)    # 将剪贴板文本发送到QQ窗体
+                win32gui.SendMessage(hwnd, win32con.WM_KEYDOWN, win32con.VK_RETURN, 0)  #模拟按下回车键
+                win32gui.SendMessage(hwnd, win32con.WM_KEYUP, win32con.VK_RETURN, 0)  #模拟松开回车键
+                
+    
+def open_windows(coc_clan_dict):     #打开QQ会话窗口，不发送消息
+    qq_hwnd = win32gui.FindWindow(None, 'QQ') 
+    print("捕捉到QQ主窗体的句柄为:"+str(qq_hwnd))
+    win32gui.ShowWindow(qq_hwnd,win32con.SW_SHOW)
+    print("正在打开会话窗口...\n")
+    time.sleep(1)
+    for coc_clan_name in coc_clan_dict:
+        setText(coc_clan_name)
+        win32api.keybd_event(13, 0, 0, 0)
+        win32gui.SetForegroundWindow(qq_hwnd)
+        win32gui.SetActiveWindow(qq_hwnd)
+        time.sleep(1)
+        win32gui.SendMessage(qq_hwnd,770, 0, 0)
+        time.sleep(1)
+        win32gui.SetForegroundWindow(qq_hwnd)
+        win32gui.SetActiveWindow(qq_hwnd)
+        win32api.keybd_event(0x0D, win32api.MapVirtualKey(0x0D, 0), 0, 0)   
+        win32api.keybd_event(0x0D, win32api.MapVirtualKey(0x0D, 0), win32con.KEYEVENTF_KEYUP, 0)
+        send_qq(coc_clan_dict[coc_clan_name])
+        
 #提醒续费
 def clarm(tbname):
     # 当前时间
@@ -121,6 +176,7 @@ def clarm(tbname):
     table = select_tb(tbname)
     #去除表头
     table.pop(0)
+    coc_clan_dict = {}#到期部落和信息 {'部落':'信息'}
     for column in table:
         column = column.replace('\r\n','')
         info = column.split(',')
@@ -141,16 +197,22 @@ def clarm(tbname):
         #3天时提醒
         if status == 'running':#状态为正常运行服务的用户才需要提醒
             if datetime.timedelta(days=2) <= (dead_time - now_time) <= datetime.timedelta(days=3):
-                g.msgbox(msg='尊敬的用户，您的部落 %s ，奶号 %s\n捐兵服务在3天内即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,coc_name,dead_time_hr,money_last))
+                message = '尊敬的用户，您的部落 %s ，奶号 %s\n捐兵服务在3天内即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,coc_name,dead_time_hr,money_last)
+                coc_clan_dict[coc_clan_name] = message#添加到到期部落和信息 {'部落':'信息'}
+                g.msgbox(msg=message)
             elif datetime.timedelta(days=0) <= (dead_time - now_time) <= datetime.timedelta(days=1):
-                g.msgbox(msg='尊敬的用户，您的部落 %s ，奶号 %s\n捐兵服务在 24 小时内 即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,coc_name,dead_time_hr,money_last))
+                message = '尊敬的用户，您的部落 %s ，奶号 %s\n捐兵服务在 24 小时内 即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,coc_name,dead_time_hr,money_last)
+                coc_clan_dict[coc_clan_name] = message#添加到到期部落和信息 {'部落':'信息'}
+                g.msgbox(msg=message)
             elif (dead_time - now_time) < datetime.timedelta(days=0):#过期如果不点击已停止，会一直提醒
                 flag_deadtime = g.buttonbox(msg='部落 %s ，奶号 %s\n捐兵服务已经到期！\n服务结束时间：%s\n确认是否已停止！'%(coc_clan_name,coc_name,dead_time_hr), title='确认停止服务',
                             choices=('已停止', '暂不停止服务'))
                 if flag_deadtime == '已停止':
                     status = 'stop'
                     update_tb(tbname, [coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, 0, status])
+    open_windows(coc_clan_dict)#打开对应部落冲突部落QQ会话窗口，并发送消息
 
+    
 #查询信息
 def query(tbname):
     clarm(tbname)

@@ -56,7 +56,7 @@ def start():
                 resourceids_work03 = config.get("coc", "resourceids_work03").split()  # 获取持续打资源id的list
                 warids = config.get("coc", "warids").split()
                 donateids_for_paid = config.get("coc", "donateids_for_paid").split()
-                resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]  # 在持续打资源的list去除付费捐兵的list
+                resourceids = [x for x in resourceids_work02 if x not in donateids_for_paid]  # 在持续打资源的list去除付费捐兵的list
                 donateids = config.get("coc", "donateids").split()
                 skipids.extend(warids)  # 添加部落战控制的id到跳过id列表中
                 skipids.extend(donateids_for_paid)  # 添加部落战控制的id到跳过id列表中
@@ -85,7 +85,7 @@ def start():
                 resourceids_work02 = config.get("coc", "resourceids_work02").split()  # 获取持续打资源id的list
                 resourceids_work03 = config.get("coc", "resourceids_work03").split()  # 获取持续打资源id的list
                 # 在持续打资源的list去除付费捐兵的list
-                resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]
+                resourceids = [x for x in resourceids_work02 if x not in donateids_for_paid]
                 # 在捐兵列表中去除付费捐兵的list和持续打资源的list
                 startidlist = [x for x in donateids if (x not in donateids_for_paid) and (x not in resourceids)]
             elif info in ['u', 'U', 'up', 'UP']:  # 升级的模拟器id

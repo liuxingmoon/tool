@@ -316,7 +316,11 @@ def silence(startport):
     time.sleep(1.5)
     click(pos['silence'][0], pos['silence'][1])
     
-
+#关闭模拟器已停止工作报错        
+def close_emu_err():
+    close_window = win32gui.FindWindow(None, "VirtualBox Headless Frontend")
+    win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
+    
 #关闭模拟器名字    
 def close_emu_id(close_id):
     close_id = int(close_id)
@@ -326,9 +330,13 @@ def close_emu_id(close_id):
         for configline in configlines:
             if 'EmulatorTitleName' in configline:
                 close_name = configline.split('=')[-1].rstrip('\n')
+        close_emu_err()
         close_window = win32gui.FindWindow(None, close_name)
         win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)# 关闭一个捐兵号
         print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
+        
+
+    
 
 #开模拟器
 def start_emu_id(action,startid,*args):

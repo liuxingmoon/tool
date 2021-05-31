@@ -29,9 +29,9 @@ pos = {
   }
 
 #日志路径
-Coclog = r'E:\Program Files\Python\Python38\works\tool\coclog.txt'
-configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
-ddpath = r'D:\Program Files\DundiEmu\DunDiEmu.exe'
+Coclog = r'D:\Program Files\Python38\works\tool\\coclog.txt'
+configpath = r"D:\Program Files\Python38\works\tool\\Config.ini"
+ddpath = r'D:\Program Files\DundiEmu\\DunDiEmu.exe'
 configdir = os.path.dirname(os.path.abspath(configpath))#配置文件目录
 backupdir = configdir + os.sep + "backup"
     
@@ -558,7 +558,7 @@ if __name__ == "__main__":
     resourceids_work02 = config.get("coc", "resourceids_work02").split()#获取持续打资源id的list
     resourceids_work03 = config.get("coc", "resourceids_work03").split()#获取持续打资源id的list
     #在持续打资源的list去除付费捐兵的list
-    resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]
+    resourceids = [x for x in resourceids_work02 if x not in donateids_for_paid]
     #在捐兵列表中去除付费捐兵的list和持续打资源的list
     donateids = [x for x in donateids if (x not in donateids_for_paid) and (x not in resourceids)]
     donatenames_for_paid = {}
@@ -816,7 +816,7 @@ if __name__ == "__main__":
                 timewait(30)#等待30分钟避免启动时没有授权登录
             if donate_for_paid_switch in ['True','1','T']:
                 for convert_id in donateids_for_paid:
-                    action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (
+                    action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (
                         int(convert_id))
                     coc_template.start_convert(action, convert_id, 80)#启动
                     startport = getport(convert_id)
@@ -845,7 +845,7 @@ if __name__ == "__main__":
                 try:
                     if datetime.datetime.now().weekday() in [0,1,2,3,4,5,6]:#所有时间捐兵，如果要打资源取消时间即可，0是周一，6是周日
                         for convert_id in donateids:
-                            action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (
+                            action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (
                                 int(convert_id))
                             coc_template.start_convert(action, convert_id, 80)#启动
                             startport = getport(convert_id)
