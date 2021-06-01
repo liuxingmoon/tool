@@ -95,31 +95,6 @@ def deadtime(month):
     print('尊敬的用户，您的服务已经开始为您服务！\n服务开始时间为：%s\n一共服务时间：%d 天\n服务结束时间：%s' %(start_time_hr,srv_days_hr,dead_time_hr))
     return (start_time_hr,dead_time_hr,srv_days_hr)
 
-#续费
-def renewal(month,values):
-    #获取原始信息
-    start_time_hr = values[3]
-    dead_time_hr = values[4]
-    coc_clan_name = values[2]
-    #转换原截止时间
-    #print(dead_time_hr)
-    dead_time = datetime.datetime.strptime(str(dead_time_hr),'%Y-%m-%d %H:%M')
-    #dead_tiem = datetime.datetime.strptime()
-    #捐兵服务时间31天算一个月
-    srv_days_hr = 31 * month
-    srv_days = datetime.timedelta(days=srv_days_hr)
-    now_time = datetime.datetime.now()#当前时间
-    if now_time > dead_time:#当前时间已经超过了截止时间，从当前时间+续费时间
-        dead_time = now_time + srv_days
-    else:
-        #结束时间
-        dead_time = dead_time + srv_days
-    dead_time_hr = dead_time.strftime('%Y-%m-%d %H:%M')
-    #打印结果
-    g.msgbox(msg='尊敬的用户，您的部落 %s\n捐兵服务已经续费成功！\n续费服务时间：%d 天\n服务结束时间：%s\n祝您游戏愉快！' %(coc_clan_name,srv_days_hr,dead_time_hr), title='用户信息')
-    print('尊敬的用户，您的服务已经续费成功！\n续费服务时间：%d 天\n服务结束时间：%s\n祝您游戏愉快！' %(srv_days_hr,dead_time_hr))
-    return (start_time_hr,dead_time_hr,srv_days_hr)
-
 def setText(massage):   #重设剪贴板文本
     w.OpenClipboard()
     w.EmptyClipboard()
@@ -168,6 +143,37 @@ def open_windows(coc_clan_dict):     #打开QQ会话窗口，不发送消息
         win32api.keybd_event(0x0D, win32api.MapVirtualKey(0x0D, 0), 0, 0)   
         win32api.keybd_event(0x0D, win32api.MapVirtualKey(0x0D, 0), win32con.KEYEVENTF_KEYUP, 0)
         send_qq(coc_clan_dict[coc_clan_name])
+        
+#续费
+def renewal(month,values):
+    #获取原始信息
+    start_time_hr = values[3]
+    dead_time_hr = values[4]
+    coc_clan_name = values[2]
+    #转换原截止时间
+    #print(dead_time_hr)
+    dead_time = datetime.datetime.strptime(str(dead_time_hr),'%Y-%m-%d %H:%M')
+    #dead_tiem = datetime.datetime.strptime()
+    #捐兵服务时间31天算一个月
+    srv_days_hr = 31 * month
+    srv_days = datetime.timedelta(days=srv_days_hr)
+    now_time = datetime.datetime.now()#当前时间
+    if now_time > dead_time:#当前时间已经超过了截止时间，从当前时间+续费时间
+        dead_time = now_time + srv_days
+    else:
+        #结束时间
+        dead_time = dead_time + srv_days
+    dead_time_hr = dead_time.strftime('%Y-%m-%d %H:%M')
+    coc_clan_dict = {}#续费部落和信息 {'部落':'信息'}
+    coc_clan_dict[coc_clan_name] = message#添加到续费部落和信息 {'部落':'信息'}
+    #打印结果
+    message = '尊敬的用户，您的部落 %s\n捐兵服务已经续费成功！\n续费服务时间：%d 天\n服务结束时间：%s\n祝您游戏愉快！' %(coc_clan_name,srv_days_hr,dead_time_hr)
+    g.msgbox(msg=message, title='用户信息')
+    print('尊敬的用户，您的服务已经续费成功！\n续费服务时间：%d 天\n服务结束时间：%s\n祝您游戏愉快！' %(srv_days_hr,dead_time_hr))
+    open_windows(coc_clan_dict)#打开对应部落冲突部落QQ会话窗口，并发送消息
+    return (start_time_hr,dead_time_hr,srv_days_hr)
+
+
         
 #提醒续费
 def clarm(tbname):
