@@ -115,22 +115,23 @@ def send_qq(massage):   #发送消息给QQ用户
             if hwnd != 0:
                 #win32gui.SendMessage(hwnd, win32con.WM_SYSCOMMAND, win32con.SC_RESTORE, 0)    #虽然可以还原最小化的会话窗口，但经过测试发现并不能解决还原后不发送消息的问题。
                 win32gui.ShowWindow(hwnd,win32con.SW_SHOW)
-                time.sleep(0.1)
+                time.sleep(1)
                 win32gui.SetForegroundWindow(hwnd)
                 win32gui.SetActiveWindow(hwnd)
-                time.sleep(0.1)
+                time.sleep(1)
                 win32gui.SendMessage(hwnd,770, 0, 0)    # 将剪贴板文本发送到QQ窗体
                 win32gui.SendMessage(hwnd, win32con.WM_KEYDOWN, win32con.VK_RETURN, 0)  #模拟按下回车键
                 win32gui.SendMessage(hwnd, win32con.WM_KEYUP, win32con.VK_RETURN, 0)  #模拟松开回车键
                 
     
-def open_windows(coc_clan_dict):     #打开QQ会话窗口，不发送消息
+def open_windows(coc_clan_dict):     #打开QQ会话窗口，发送消息
     qq_hwnd = win32gui.FindWindow(None, 'QQ') 
     print("捕捉到QQ主窗体的句柄为:"+str(qq_hwnd))
     win32gui.ShowWindow(qq_hwnd,win32con.SW_SHOW)
     print("正在打开会话窗口...\n")
     time.sleep(1)
     for coc_clan_name in coc_clan_dict:
+        #打开会话窗口
         setText(coc_clan_name)
         win32api.keybd_event(13, 0, 0, 0)
         win32gui.SetForegroundWindow(qq_hwnd)
@@ -142,6 +143,7 @@ def open_windows(coc_clan_dict):     #打开QQ会话窗口，不发送消息
         win32gui.SetActiveWindow(qq_hwnd)
         win32api.keybd_event(0x0D, win32api.MapVirtualKey(0x0D, 0), 0, 0)   
         win32api.keybd_event(0x0D, win32api.MapVirtualKey(0x0D, 0), win32con.KEYEVENTF_KEYUP, 0)
+        #发送信息
         send_qq(coc_clan_dict[coc_clan_name])
         
 #续费

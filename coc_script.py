@@ -66,6 +66,15 @@ def connect(startport):
             timewait(1)
             connect(startport)#递归重新执行一次
     time.sleep(3)
+
+def close_windows(close_name):
+    close_window = win32gui.FindWindow(None, close_name)
+    win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
+    
+def close_VirtualBox():
+    #关闭模拟器报错
+    close_name = 'VirtualBox Headless Frontend'
+    close_windows(close_name)
     
 def start(action,startport,wait_time):
     #开模拟器
@@ -189,7 +198,7 @@ def play(wait_time,skipids):
     click(pos['start_script'][0],pos['start_script'][1],startport)
     print('============================= 启动打资源脚本完成 =============================')
     time.sleep(20)
-    login_click(startid)
+    #login_click(startid)
     #打印分割线
     read_id = playnames[startid]
     print(r'============================= %s 实例启动完成 ===============================' %(read_id))
@@ -231,7 +240,7 @@ def play_donate_for_paid(donateids):
     time.sleep(5)
     click(pos['start_script'][0],pos['start_script'][1],startport)
     time.sleep(20)
-    login_click(donateid_now)
+    #login_click(donateid_now)
     print(r'============================= 启动付费捐兵脚本完成 ===============================')
 
     
@@ -273,7 +282,7 @@ def play_donate(donateids):
     time.sleep(5)
     click(pos['start_script'][0],pos['start_script'][1],startport)
     time.sleep(20)
-    login_click(donateid_now)
+    #login_click(donateid_now)
     print(r'============================= 启动自用捐兵脚本完成 ===============================')
     #打印分割线
     read_id = donatenames[donateid_now]
@@ -322,7 +331,7 @@ def play_resource(resourceids):
         time.sleep(15)
         click(pos['start_script'][0],pos['start_script'][1],startport,5)
         time.sleep(20)
-        login_click(resourceid_now)
+        #login_click(resourceid_now)
         print(r'============================= 启动持续打资源脚本完成 ===============================')
     else:
         print(r'============================= 跳过持续打资源号切换 ===============================')
@@ -400,6 +409,7 @@ def close_emu_id(close_id):
                     close_name = configline.split('=')[-1].rstrip('\n')
     except:
         print("============================= 没有该模拟器:%d ===============================" %(int(close_id)))
+    coc_start.close_emu_err()#关闭模拟器已停止工作报错
     close_window = win32gui.FindWindow(None, close_name)
     win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
     print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
@@ -418,7 +428,7 @@ def start_emu(start_id,wait_time):
     time.sleep(10)
     click(pos['start_script'][0],pos['start_script'][1],startport,5)
     time.sleep(20)
-    login_click(start_id)
+    #login_click(start_id)
     print(r'============================= 启动付费捐兵号脚本完成 ===============================')
    
         
@@ -450,10 +460,8 @@ def restart_emu(restartlist,*args):
     restart_server()
 
 #重启打资源
-def restartplay():
+def restartplay(wait_time):
     restart_server()
-    #同时运行几个实例
-    wait_time = 40
     #启动新一个打资源id前先关闭上一个打资源id
     '''
     try:
@@ -850,7 +858,7 @@ if __name__ == "__main__":
                             coc_template.start_convert(action, convert_id, 80)#启动
                             startport = getport(convert_id)
                             coc_template.start_script(startport,'donate')#切换
-                            timewait(3)#等待4分钟避免切换的时候刚好被打导致切换失败
+                            timewait(3)#等待3分钟避免切换的时候刚好被打导致切换失败
                             click(pos['cancel'][0], pos['cancel'][1],startport)
                             time.sleep(30)
                             close_emu_id(convert_id)#关闭模拟器
@@ -888,7 +896,7 @@ if __name__ == "__main__":
             restart_server()
         if play_switch in ['True','1','T']:
             #启动打资源号
-            restartplay()
+            restartplay(60)
         #确认星陨，点击登录，星陨总是掉线
         #login_click(1)
         #运行该coc实例时间

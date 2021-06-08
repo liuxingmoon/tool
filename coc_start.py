@@ -362,7 +362,7 @@ def start_emu_id(action,startid,*args):
                     pass
                 time.sleep(3)
     #等待系统开机
-    time.sleep(60)
+    time.sleep(80)
     
 def close():
     subprocess.Popen('taskkill /f /t /im DunDiEmu.exe & taskkill /f /t /im DdemuHandle.exe & taskkill /f /t /im adb.exe',shell=True)
@@ -385,15 +385,18 @@ def startcoc(startport,wait_time):
     #豌豆荚
     #subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
     time.sleep(wait_time)
+    '''
     if startport == 52551:#如果是星陨，尝试点击登录 
         click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
     else:
         #click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
         #click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
         click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+    '''
     #点击取消位置取消广告
     click(pos['exitstore'][0], pos['exitstore'][1], startport)
     click(pos['cancel'][0], pos['cancel'][1], startport)
+    
     
 #重启coc
 def restartcoc(startport):
