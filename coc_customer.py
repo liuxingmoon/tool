@@ -131,7 +131,7 @@ def open_windows(coc_clan_dict):     #打开QQ和wechat会话窗口，发送消�
     print("捕捉到QQ主窗体的句柄为:"+str(qq_hwnd))
     print("捕捉到微信主窗体的句柄为:"+str(wechat_hwnd))
     win32gui.ShowWindow(qq_hwnd,win32con.SW_SHOW)
-    win32gui.ShowWindow(wechat_hwnd,win32con.SW_SHOW)
+    #win32gui.ShowWindow(wechat_hwnd,win32con.SW_SHOW)
     print("正在打开会话窗口...\n")
     time.sleep(1)
     for coc_clan_name in coc_clan_dict:
