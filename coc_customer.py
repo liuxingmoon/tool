@@ -63,9 +63,10 @@ def get_coc_info():
     coc_clan_name = coc_clan_name_ny.get()
     srv_month = coc_srv_month_ny.get()
     money_last = coc_money_ny.get()
+    coc_customer = coc_customer_ny.get()
     if (coc_id,coc_clan_name,srv_month) == ("","","") and money_last != "":
         coc_id,coc_clan_name,srv_month = 0,'部落首领转让',0
-    return (int(coc_id),coc_clan_name,int(srv_month),int(money_last))
+    return (int(coc_id),coc_clan_name,int(srv_month),int(money_last),coc_customer)
 
 #根据模拟器id获取信息
 def get_coc_name(coc_id):
@@ -124,10 +125,13 @@ def send_qq(massage):   #发送消息给QQ用户
                 win32gui.SendMessage(hwnd, win32con.WM_KEYUP, win32con.VK_RETURN, 0)  #模拟松开回车键
                 
     
-def open_windows(coc_clan_dict):     #打开QQ会话窗口，发送消息
+def open_windows(coc_clan_dict):     #打开QQ和wechat会话窗口，发送消息
     qq_hwnd = win32gui.FindWindow(None, 'QQ') 
+    wechat_hwnd = win32gui.FindWindow(None, '微信') 
     print("捕捉到QQ主窗体的句柄为:"+str(qq_hwnd))
+    print("捕捉到微信主窗体的句柄为:"+str(wechat_hwnd))
     win32gui.ShowWindow(qq_hwnd,win32con.SW_SHOW)
+    win32gui.ShowWindow(wechat_hwnd,win32con.SW_SHOW)
     print("正在打开会话窗口...\n")
     time.sleep(1)
     for coc_clan_name in coc_clan_dict:
@@ -152,6 +156,7 @@ def renewal(month,values):
     start_time_hr = values[3]
     dead_time_hr = values[4]
     coc_clan_name = values[2]
+    coc_customer = values[9]#用户名
     #转换原截止时间
     #print(dead_time_hr)
     dead_time = datetime.datetime.strptime(str(dead_time_hr),'%Y-%m-%d %H:%M')
@@ -166,13 +171,13 @@ def renewal(month,values):
         #结束时间
         dead_time = dead_time + srv_days
     dead_time_hr = dead_time.strftime('%Y-%m-%d %H:%M')
-    coc_clan_dict = {}#续费部落和信息 {'部落':'信息'}
-    coc_clan_dict[coc_clan_name] = message#添加到续费部落和信息 {'部落':'信息'}
+    coc_clan_dict = {}#续费部落和信息 {'用户名':'信息'}
+    coc_clan_dict[coc_customer] = message#添加到续费部落和信息 {'用户名':'信息'}
     #打印结果
     message = '尊敬的用户，您的部落 %s\n捐兵服务已经续费成功！\n续费服务时间：%d 天\n服务结束时间：%s\n祝您游戏愉快！' %(coc_clan_name,srv_days_hr,dead_time_hr)
     g.msgbox(msg=message, title='用户信息')
+    open_windows(coc_clan_dict)#打开对应部落冲突部落QQ和wechat会话窗口，并发送消息
     print('尊敬的用户，您的服务已经续费成功！\n续费服务时间：%d 天\n服务结束时间：%s\n祝您游戏愉快！' %(srv_days_hr,dead_time_hr))
-    open_windows(coc_clan_dict)#打开对应部落冲突部落QQ会话窗口，并发送消息
     return (start_time_hr,dead_time_hr,srv_days_hr)
 
 
@@ -200,25 +205,30 @@ def clarm(tbname):
             status = info[8]
         except:
             status = 'running'
+        coc_customer = info[9]#用户名
         #转换截止时间
         dead_time = datetime.datetime.strptime(str(dead_time_hr), '%Y-%m-%d %H:%M')
         #3天时提醒
         if status == 'running':#状态为正常运行服务的用户才需要提醒
             if datetime.timedelta(days=2) <= (dead_time - now_time) <= datetime.timedelta(days=3):
                 message = '尊敬的用户，您的部落 %s ，奶号 %s\n捐兵服务在3天内即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,coc_name,dead_time_hr,money_last)
-                coc_clan_dict[coc_clan_name] = message#添加到到期部落和信息 {'部落':'信息'}
+                coc_clan_dict[coc_customer] = message#添加到到期部落和信息 {'用户名':'信息'}
                 g.msgbox(msg=message)
+                open_windows(coc_clan_dict)#打开对应部落冲突部落QQ和wechat会话窗口，并发送消息
             elif datetime.timedelta(days=0) <= (dead_time - now_time) <= datetime.timedelta(days=1):
                 message = '尊敬的用户，您的部落 %s ，奶号 %s\n捐兵服务在 24 小时内 即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,coc_name,dead_time_hr,money_last)
-                coc_clan_dict[coc_clan_name] = message#添加到到期部落和信息 {'部落':'信息'}
+                coc_clan_dict[coc_customer] = message#添加到到期部落和信息 {'用户名':'信息'}
                 g.msgbox(msg=message)
+                open_windows(coc_clan_dict)#打开对应部落冲突部落QQ和wechat会话窗口，并发送消息
             elif (dead_time - now_time) < datetime.timedelta(days=0):#过期如果不点击已停止，会一直提醒
                 flag_deadtime = g.buttonbox(msg='部落 %s ，奶号 %s\n捐兵服务已经到期！\n服务结束时间：%s\n确认是否已停止！'%(coc_clan_name,coc_name,dead_time_hr), title='确认停止服务',
                             choices=('已停止', '暂不停止服务'))
                 if flag_deadtime == '已停止':
                     status = 'stop'
-                    update_tb(tbname, [coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, 0, status])
-    open_windows(coc_clan_dict)#打开对应部落冲突部落QQ会话窗口，并发送消息
+                    update_tb(tbname, [coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, 0, status,coc_customer])
+
+        elif status == 'stop':
+            pass
 
     
 #查询信息
@@ -246,11 +256,14 @@ def submit(tbname):
     # 获取输入信息
     info = get_coc_info()
     coc_id = info[0]
-    coc_name = get_coc_name(coc_id)
+    coc_name = get_coc_name(coc_id)#获取账号的部落冲突名
     coc_clan_name = info[1]
     srv_month = info[2]
     money_last = info[3]
     money_all = info[3]
+    coc_customer = info[4]
+    if coc_customer == "":#不输入用户名默认是部落名
+        coc_customer = coc_clan_name
     #判断是否存在coc_customer.csv
     if tbname in os.listdir():
         # 如果存在表
@@ -279,7 +292,7 @@ def submit(tbname):
             start_time_hr = time_srv[0]
             dead_time_hr = time_srv[1]
             srv_days_hr = time_srv[2]
-            update_tb(tbname,[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, money_all, status])
+            update_tb(tbname,[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, money_all, status,coc_customer])
         elif flag == False: #新用户，插入新数据
                 # 插入新用户信息
                 status = 'running'
@@ -287,7 +300,7 @@ def submit(tbname):
                 start_time_hr = time_srv[0]
                 dead_time_hr = time_srv[1]
                 srv_days_hr = time_srv[2]
-                insert_tb('coc_customer.csv',[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, money_all, status])
+                insert_tb('coc_customer.csv',[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, money_all, status,coc_customer])
     else:
         # 如果不存在表，就直接建表，并插入数据
         # 插入新用户信息
@@ -296,8 +309,8 @@ def submit(tbname):
         start_time_hr = time_srv[0]
         dead_time_hr = time_srv[1]
         srv_days_hr = time_srv[2]
-        create_tb('coc_customer.csv',["模拟器id", "模拟器别名", "用户部落名", "开始服务时间", "结束服务时间", "总服务时间(天)", "单月金额", "总消费金额","运行状态"])
-        insert_tb('coc_customer.csv',[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, money_all, status])
+        create_tb('coc_customer.csv',["模拟器id", "模拟器别名", "用户部落名", "开始服务时间", "结束服务时间", "总服务时间(天)", "上次消费金额", "总消费金额","运行状态"])
+        insert_tb('coc_customer.csv',[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, money_all, status,coc_customer])
         select_tb('coc_customer.csv')
 
 def start():
@@ -307,34 +320,39 @@ def start():
         #模拟器id
         coc_id_lb = tk.Label(root, text='模拟器的ID')
         coc_id_lb.grid(row=0, column=1, sticky='w',padx=10,pady=10)  # 左对齐
-        global coc_id_ny,coc_clan_name_ny,coc_srv_month_ny,coc_money_ny
+        global coc_id_ny,coc_clan_name_ny,coc_srv_month_ny,coc_money_ny,coc_customer_ny
         coc_id_ny = tk.Entry(root)
         coc_id_ny.insert(0,'0')#插入初始化文本
         coc_id_ny.grid(row=0, column=2,padx=10,pady=10)
+        #客户名称
+        coc_customer_lb = tk.Label(root, text='客户名称')
+        coc_customer_lb.grid(row=1, column=1, sticky='w',padx=10,pady=10)  # 左对齐
+        coc_customer_ny = tk.Entry(root)
+        coc_customer_ny.grid(row=1, column=2,padx=10,pady=10)
         #客户部落名称
         coc_clan_name_lb = tk.Label(root, text='客户部落名称')
-        coc_clan_name_lb.grid(row=1, column=1, sticky='w',padx=10,pady=10)  # 左对齐
+        coc_clan_name_lb.grid(row=2, column=1, sticky='w',padx=10,pady=10)  # 左对齐
         coc_clan_name_ny = tk.Entry(root)
         coc_clan_name_ny.insert(0,'天空之城')#插入初始化文本
-        coc_clan_name_ny.grid(row=1, column=2,padx=10,pady=10)
+        coc_clan_name_ny.grid(row=2, column=2,padx=10,pady=10)
         #服务月数
         coc_srv_month_lb = tk.Label(root, text='服务月数')
-        coc_srv_month_lb.grid(row=2, column=1, sticky='w',padx=10,pady=10)  # 左对齐
+        coc_srv_month_lb.grid(row=3, column=1, sticky='w',padx=10,pady=10)  # 左对齐
         coc_srv_month_ny = tk.Entry(root)
         coc_srv_month_ny.insert(0,1)#插入初始化文本
-        coc_srv_month_ny.grid(row=2, column=2,padx=10,pady=10)
+        coc_srv_month_ny.grid(row=3, column=2,padx=10,pady=10)
         #收入金额
         coc_money_lb = tk.Label(root, text='收入金额')
-        coc_money_lb.grid(row=3, column=1, sticky='w',padx=10,pady=10)  # 左对齐
+        coc_money_lb.grid(row=4, column=1, sticky='w',padx=10,pady=10)  # 左对齐
         coc_money_ny = tk.Entry(root)
         coc_money_ny.insert(0,50)#插入初始化文本
-        coc_money_ny.grid(row=3, column=2,padx=10,pady=10)
+        coc_money_ny.grid(row=4, column=2,padx=10,pady=10)
         #查询按钮
         coc_query_bt = tk.Button(root,text='查询',width = 20,command=lambda :query('coc_customer.csv'))
-        coc_query_bt.grid(row=4, column=1,sticky='w'+'e',padx=10,pady=10)
+        coc_query_bt.grid(row=5, column=1,sticky='w'+'e',padx=10,pady=10)
         #提交按钮
         coc_submit_bt = tk.Button(root,text='提交',width = 20,command=lambda :submit('coc_customer.csv'))
-        coc_submit_bt.grid(row=4, column=2,sticky='w'+'e',padx=10,pady=10)
+        coc_submit_bt.grid(row=5, column=2,sticky='w'+'e',padx=10,pady=10)
 
         root.mainloop()
     except:

@@ -31,6 +31,9 @@ from PIL import Image
 from io import BytesIO
 import win32clipboard
 import packpy
+import win32gui
+from win32.lib import win32con
+import win32api
 
 root = tk.Tk()
 root.title('流梦星璃')
@@ -188,8 +191,14 @@ def screenShot():
     time.sleep(0.5)
     # 进行自由截屏
     w = FreeCapture(root, 'temp.png')
-    # 截图结束，恢复主窗口，并删除temp.png文件
-    root.state('normal')
+    # 将主窗口放在最前方，方便截图
+    para_hld = win32gui.FindWindow(None, "流梦星璃")
+    win32api.keybd_event(13, 0, 0, 0) #防止出bug
+    win32gui.SetForegroundWindow(para_hld)
+    #等待几秒钟截图结束，恢复主窗口
+    #time.sleep(3)
+    #root.state('normal')
+    
 
 def on_press(key):
     pass
@@ -234,11 +243,12 @@ flag = 0
 def on_press_s(key):#监听`键作为开始
     # 监听按键`
     global s_flag
-    if str(key)=="'"+'#'+"'" and s_flag == 0:
+    print(str(key))
+    if key == Key.print_screen and s_flag == 0:
         print('开始',s_flag)
         #s_flag信号量加一
         semaphore_flag.release()
-    elif str(key)=="'"+'#'+"'" and s_flag == 1:
+    elif str(key)=="'"+'Print Screen'+"'" and s_flag == 1:
         print("结束",s_flag)
         s_flag = 0
 
@@ -294,7 +304,7 @@ def startscreenShot():
         #stop_thread(t2)
         flag = 0
     
-screenShot_bt = tk.Button(root,text='截屏"#"',command=startscreenShot,width=15)
+screenShot_bt = tk.Button(root,text='截屏"Print Screen"',command=startscreenShot,width=15)
 screenShot_bt.grid(row=2,column=1,
               padx=10,pady=10)
               
