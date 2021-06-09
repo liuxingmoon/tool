@@ -172,9 +172,9 @@ def renewal(month,values):
         dead_time = dead_time + srv_days
     dead_time_hr = dead_time.strftime('%Y-%m-%d %H:%M')
     coc_clan_dict = {}#续费部落和信息 {'用户名':'信息'}
-    coc_clan_dict[coc_customer] = message#添加到续费部落和信息 {'用户名':'信息'}
     #打印结果
     message = '尊敬的用户，您的部落 %s\n捐兵服务已经续费成功！\n续费服务时间：%d 天\n服务结束时间：%s\n祝您游戏愉快！' %(coc_clan_name,srv_days_hr,dead_time_hr)
+    coc_clan_dict[coc_customer] = message#添加到续费部落和信息 {'用户名':'信息'}
     g.msgbox(msg=message, title='用户信息')
     open_windows(coc_clan_dict)#打开对应部落冲突部落QQ和wechat会话窗口，并发送消息
     print('尊敬的用户，您的服务已经续费成功！\n续费服务时间：%d 天\n服务结束时间：%s\n祝您游戏愉快！' %(srv_days_hr,dead_time_hr))
