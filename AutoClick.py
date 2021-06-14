@@ -44,7 +44,7 @@ def press_stop_1():
         try:
             while s_flag_1==1:
                 k.mouse_click()
-                time.sleep(0.05)#每秒点击20次
+                time.sleep(0.02)#每秒点击20次
         except KeyboardInterrupt:
             sys.exit()
         #全局变量s_flag_1赋值为0，监控函数又可以介入了

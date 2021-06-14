@@ -19,8 +19,13 @@ def start():
             info = coc_id.get()
             config = configparser.ConfigParser()
             config.read("Config.ini", encoding="utf-8")
-            if (info == "") or (info in ['w', 'W', 'war', 'War']):
-                # 不写就打开部落战id
+            if (info == ""):
+                # 不写就打开部落战id和升级id
+                startidlist = config.get("coc", "warids").split()
+                levelupids = config.get("coc", "levelupids").split()
+                startidlist.extend(levelupids)#合并列表
+            elif (info in ['w', 'W', 'war', 'War']):
+                #部落战id
                 startidlist = config.get("coc", "warids").split()
             elif info.isdigit():
                 # 如果输入的是数字

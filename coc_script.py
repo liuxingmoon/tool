@@ -93,10 +93,14 @@ def start(action,startport,wait_time):
 def close():
     subprocess.Popen('taskkill /f /t /im DunDiEmu.exe & taskkill /f /t /im DdemuHandle.exe & taskkill /f /t /im adb.exe',shell=True)
     time.sleep(3)
+
+def shutdown():
+    close()
+    subprocess.Popen(r'shutdown /f /s /t 30',shell=True)
     
 def reboot():
     close()
-    subprocess.Popen(r'shutdown /f /r /t 60',shell=True)
+    subprocess.Popen(r'shutdown /f /r /t 30',shell=True)
     
 #打开黑松鼠
 def coc_script(startport,wait_time):
@@ -470,6 +474,17 @@ def restartplay(wait_time):
         print('关闭轮循打资源号失败')
     '''
     for times in range(instance_num):
+        #获取捐兵号的状态（当前是在捐兵还是在打资源）
+        config.read(configpath, encoding="utf-8")
+        donate_status = config.get("coc", "donate_status")
+        #获取当前时间的参数并运行持久化运行号
+        result = instance(donate_switch,donate_status)
+        #现在时间段
+        time_status = result[2]
+        if (time_status == '白天' and donate_status == 'play'):#到了早上还没切换，跳过打资源循环立刻切换
+            break
+        else:
+            pass
         play(wait_time,skipids)
         wait_time += 5
 
@@ -728,7 +743,7 @@ if __name__ == "__main__":
         '''
         #等待时间
         instance_time = result[1]
-        #现在时间
+        #现在时间段
         time_status = result[2]
         #获取捐兵的数量
         if time_status == "凌晨":
@@ -751,7 +766,7 @@ if __name__ == "__main__":
             fc.copy_file("Config.ini",configdir,backupdir)#备份
             flag_reboot = 'False'#设置flag为FALSE
             config.read(configpath, encoding="utf-8")
-            config.set("coc", "flag_reboot", flag_reboot)#只能存储str类型数据，设置flag为True
+            config.set("coc", "flag_reboot", flag_reboot)#只能存储str类型数据，设置flag为FALSE
             config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
             close()#关闭kill_adb()
             restart_server()
@@ -816,12 +831,13 @@ if __name__ == "__main__":
                 flag_reboot = 'True'
                 config.set("coc", "flag_reboot", flag_reboot)#只能存储str类型数据，设置flag为True
                 config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
-                reboot()#重启
+                #reboot()#重启
+                shutdown()#关机，必须配合自动开机功能使用
             elif flag_reboot in ['True','1','T']:
                 close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
                 close_emu_all(donatenames)#关闭所有自用捐兵号
                 print(r'============================= 等待30分钟避免切换时没有授权导致切换失败 ===============================')
-                timewait(30)#等待30分钟避免启动时没有授权登录
+                #timewait(30)#等待30分钟避免启动时没有授权登录
             if donate_for_paid_switch in ['True','1','T']:
                 for convert_id in donateids_for_paid:
                     action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (
@@ -863,7 +879,7 @@ if __name__ == "__main__":
                             time.sleep(30)
                             close_emu_id(convert_id)#关闭模拟器
                         for convert_id in donateids:
-                            coc_template.convert_mode(convert_id,donate_status)
+                            coc_template.convert_mode(convert_id,donate_status)#删除兵+造兵
                         restart_server()
                 except:
                     print('============================= 出故障，不捐兵，继续打资源 =============================')
@@ -903,6 +919,17 @@ if __name__ == "__main__":
         t = int(instance_time)
         for time_minite in range(t,0,-1):
             print('============================= 进入等待,还剩 %d 分钟 =============================' %(time_minite))
+            #获取捐兵号的状态（当前是在捐兵还是在打资源）
+            config.read(configpath, encoding="utf-8")
+            donate_status = config.get("coc", "donate_status")
+            #获取当前时间的参数并运行持久化运行号
+            result = instance(donate_switch,donate_status)
+            #现在时间段
+            time_status = result[2]
+            if (time_status == '白天' and donate_status == 'play'):#到了早上还没切换，跳过等待循环立刻切换
+                break
+            else:
+                pass
             timewait(1)
         restart_server()
 '''
