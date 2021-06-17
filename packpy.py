@@ -12,7 +12,8 @@ def start():
     pack_ico = pack_ico.rpartition("\\")
     pack_ico_dir = pack_ico[0]#图标目录
     pack_ico_file = pack_ico[-1]#图标文件
-    copy_file(pack_ico_file,pack_ico_dir,pack_dir)#拷贝图标到py文件目录
+    if pack_ico_dir != pack_dir:#如果图标和py文件在一个目录就不用拷贝了
+        copy_file(pack_ico_file,pack_ico_dir,pack_dir)#拷贝图标到py文件目录
     os.chdir(pack_dir)#切换到py文件目录
     os.system("pyinstaller -Fwi %s %s" %(pack_ico_file,pack_file))
     

@@ -96,14 +96,14 @@ def deadtime(month):
     print('尊敬的用户，您的服务已经开始为您服务！\n服务开始时间为：%s\n一共服务时间：%d 天\n服务结束时间：%s' %(start_time_hr,srv_days_hr,dead_time_hr))
     return (start_time_hr,dead_time_hr,srv_days_hr)
 
-def setText(massage):   #重设剪贴板文本
+def setText(message):   #重设剪贴板文本
     w.OpenClipboard()
     w.EmptyClipboard()
-    w.SetClipboardData(win32con.CF_UNICODETEXT, massage)
+    w.SetClipboardData(win32con.CF_UNICODETEXT, message)
     w.CloseClipboard()    
     
-def send_qq(massage):   #发送消息给QQ用户
-    setText(massage)
+def send_qq(message):   #发送消息给QQ用户
+    setText(message)
     hwnd_title = dict()    
     def get_all_hwnd(hwnd,mouse):
         if win32gui.IsWindow(hwnd) and win32gui.IsWindowEnabled(hwnd) and win32gui.IsWindowVisible(hwnd):
@@ -176,6 +176,7 @@ def renewal(month,values):
     message = '尊敬的用户，您的部落 %s\n捐兵服务已经续费成功！\n续费服务时间：%d 天\n服务结束时间：%s\n祝您游戏愉快！' %(coc_clan_name,srv_days_hr,dead_time_hr)
     coc_clan_dict[coc_customer] = message#添加到续费部落和信息 {'用户名':'信息'}
     g.msgbox(msg=message, title='用户信息')
+    setText(message)
     open_windows(coc_clan_dict)#打开对应部落冲突部落QQ和wechat会话窗口，并发送消息
     print('尊敬的用户，您的服务已经续费成功！\n续费服务时间：%d 天\n服务结束时间：%s\n祝您游戏愉快！' %(srv_days_hr,dead_time_hr))
     return (start_time_hr,dead_time_hr,srv_days_hr)
@@ -211,17 +212,19 @@ def clarm(tbname):
         #3天时提醒
         if status == 'running':#状态为正常运行服务的用户才需要提醒
             if datetime.timedelta(days=2) <= (dead_time - now_time) <= datetime.timedelta(days=3):
-                message = '尊敬的用户，您的部落 %s ，奶号 %s\n捐兵服务在3天内即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,coc_name,dead_time_hr,money_last)
+                message = '尊敬的用户，您的部落 %s : %s ，奶号 %s\n捐兵服务在3天内即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_id,coc_clan_name,coc_name,dead_time_hr,money_last)
                 coc_clan_dict[coc_customer] = message#添加到到期部落和信息 {'用户名':'信息'}
                 g.msgbox(msg=message)
+                setText(message)
                 open_windows(coc_clan_dict)#打开对应部落冲突部落QQ和wechat会话窗口，并发送消息
             elif datetime.timedelta(days=0) <= (dead_time - now_time) <= datetime.timedelta(days=1):
-                message = '尊敬的用户，您的部落 %s ，奶号 %s\n捐兵服务在 24 小时内 即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_clan_name,coc_name,dead_time_hr,money_last)
+                message = '尊敬的用户，您的部落 %s : %s ，奶号 %s\n捐兵服务在 24 小时内 即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_id,coc_clan_name,coc_name,dead_time_hr,money_last)
                 coc_clan_dict[coc_customer] = message#添加到到期部落和信息 {'用户名':'信息'}
+                setText(message)
                 g.msgbox(msg=message)
                 open_windows(coc_clan_dict)#打开对应部落冲突部落QQ和wechat会话窗口，并发送消息
             elif (dead_time - now_time) < datetime.timedelta(days=0):#过期如果不点击已停止，会一直提醒
-                flag_deadtime = g.buttonbox(msg='部落 %s ，奶号 %s\n捐兵服务已经到期！\n服务结束时间：%s\n确认是否已停止！'%(coc_clan_name,coc_name,dead_time_hr), title='确认停止服务',
+                flag_deadtime = g.buttonbox(msg='部落 %s : %s ，奶号 %s\n捐兵服务已经到期！\n服务结束时间：%s\n确认是否已停止！'%(coc_id,coc_clan_name,coc_name,dead_time_hr), title='确认停止服务',
                             choices=('已停止', '暂不停止服务'))
                 if flag_deadtime == '已停止':
                     status = 'stop'

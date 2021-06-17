@@ -96,10 +96,14 @@ def close():
 
 def shutdown():
     close()
+    with open(Coclog,'a') as Coclogfile:
+        Coclogfile.write('关机时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
     subprocess.Popen(r'shutdown /f /s /t 30',shell=True)
     
 def reboot():
     close()
+    with open(Coclog,'a') as Coclogfile:
+        Coclogfile.write('重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
     subprocess.Popen(r'shutdown /f /r /t 30',shell=True)
     
 #打开黑松鼠
@@ -456,7 +460,7 @@ def restart_emu(restartlist,*args):
             #start_emu_process.start()
             start_emu(int(restart_id),30)
     if len(donateids_for_paid_2nd) > 0:
-        timewait(15)
+        timewait(15)#有第二梯队的号，等待15分钟后启动，和第一梯队号错开，保证第一梯队号下线时，第二梯队也能捐兵
         for restart_id in donateids_for_paid_2nd[0]:
             #start_emu_process = Process(target=start_emu,args=(int(restart_id),30))
             #start_emu_process.start()
@@ -481,7 +485,7 @@ def restartplay(wait_time):
         result = instance(donate_switch,donate_status)
         #现在时间段
         time_status = result[2]
-        if (time_status == '白天' and donate_status == 'play'):#到了早上还没切换，跳过打资源循环立刻切换
+        if (time_status == '白天' and donate_status == 'play') or (time_status == '凌晨' and donate_status == 'donate'):#到了早上还没切换捐兵，或者到了凌晨还没切换打资源，跳过等待循环立刻切换
             break
         else:
             pass
@@ -770,53 +774,24 @@ if __name__ == "__main__":
             config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
             close()#关闭kill_adb()
             restart_server()
+            with open(Coclog,'a') as Coclogfile:
+                Coclogfile.write('凌晨切换捐兵状态为打资源,切换开始时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             if donate_for_paid_switch in ['True','1','T']:
-                '''
-                for convert_id in donateids_for_paid:
-                    process_convert_donateids_for_paid = Process(target=coc_template.convert_mode,args=(convert_id,donate_status))
-                    process_convert_donateids_for_paid.start()
-                process_convert_donateids_for_paid.join()#主线程等待子线程运行完执行下一步
-                '''
                 for convert_id in donateids_for_paid:
                     coc_template.convert_mode(convert_id,donate_status)
                 restart_server()
             if play_resource_switch in ['True','1','T']:
-                '''
-                for convert_id in resourceids:
-                    process_convert_resourceids = Process(target=coc_template.convert_mode,args=(convert_id,donate_status))
-                    process_convert_resourceids.start()
-                process_convert_resourceids.join()#主线程等待子线程运行完执行下一步
-                '''
                 for convert_id in resourceids:
                     coc_template.convert_mode(convert_id,donate_status)
                 restart_emu(resource_names)#启动一下持续打资源号
             if donate_switch in ['True','1','T']:
-                '''
-                for convert_id in donateids:
-                    process_convert_donateids = Process(target=coc_template.convert_mode,args=(convert_id,donate_status))
-                    process_convert_donateids.start()
-                process_convert_donateids.join()#主线程等待子线程运行完执行下一步
-                '''
                 for convert_id in donateids:
                     coc_template.convert_mode(convert_id,donate_status)
-            #点击中间关闭adb.exe弹出的错误按钮
-            '''
-            for n in range(15):
-                k.mouse_click(894, 544)
-            '''
             with open(Coclog,'a') as Coclogfile:
-                Coclogfile.write('凌晨切换捐兵状态为打资源,切换时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+                Coclogfile.write('凌晨切换捐兵状态为打资源,切换完成时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             donate_status = 'play'
             config.read(configpath, encoding="utf-8")
             config.set("coc", "donate_status", donate_status)#只能存储str类型数据
-            '''
-            for convert_id in donateids_for_paid:
-                config.set("coc", "startid%d" %(int(convert_id)), donate_status)#只能存储str类型数据
-            for convert_id in resourceids:
-                config.set("coc", "startid%d" %(int(convert_id)), donate_status)#只能存储str类型数据
-            for convert_id in donateids:
-                config.set("coc", "startid%d" %(int(convert_id)), donate_status)#只能存储str类型数据
-            '''
             config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
             #部落战捐兵
             if war_donate_switch in ['True', '1', 'T']:
@@ -834,9 +809,11 @@ if __name__ == "__main__":
                 #reboot()#重启
                 shutdown()#关机，必须配合自动开机功能使用
             elif flag_reboot in ['True','1','T']:
+                with open(Coclog,'a') as Coclogfile:
+                    Coclogfile.write('早上切换打资源状态为捐兵,切换开始时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
                 close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
                 close_emu_all(donatenames)#关闭所有自用捐兵号
-                print(r'============================= 等待30分钟避免切换时没有授权导致切换失败 ===============================')
+                #print(r'============================= 等待30分钟避免切换时没有授权导致切换失败 ===============================')
                 #timewait(30)#等待30分钟避免启动时没有授权登录
             if donate_for_paid_switch in ['True','1','T']:
                 for convert_id in donateids_for_paid:
@@ -853,13 +830,6 @@ if __name__ == "__main__":
                 for convert_id in donateids_for_paid:
                     coc_template.convert_mode(convert_id,donate_status)#删除兵+造兵
                 restart_server()
-            '''
-            #多进程执行有不可预料失败可能
-            for convert_id in donateids_for_paid:
-                process_convert_donateids_for_paid = Process(target=coc_template.convert_mode,args=(convert_id,donate_status))
-                process_convert_donateids_for_paid.start()
-            process_convert_donateids_for_paid.join()#主线程等待子线程运行完执行下一步
-            '''
             if donate_for_paid_switch in ['True','1','T']:#保险机制，如果上一次切换失败但是startid还没有改，有机会重新执行一次切换成功
                 for convert_id in donateids_for_paid:
                     coc_template.convert_mode(convert_id,donate_status)
@@ -889,7 +859,7 @@ if __name__ == "__main__":
             #for n in range(15):
                 #k.mouse_click(894, 544)
             with open(Coclog,'a') as Coclogfile:
-                Coclogfile.write('============================= 早上切换打资源状态为捐兵,切换时间：%s =============================\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+                Coclogfile.write('============================= 早上切换打资源状态为捐兵,切换完成时间：%s =============================\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             donate_status = 'donate'
             config.read(configpath, encoding="utf-8")
             config.set("coc", "donate_status", donate_status)#只能存储str类型数据
@@ -926,23 +896,10 @@ if __name__ == "__main__":
             result = instance(donate_switch,donate_status)
             #现在时间段
             time_status = result[2]
-            if (time_status == '白天' and donate_status == 'play'):#到了早上还没切换，跳过等待循环立刻切换
+            if (time_status == '白天' and donate_status == 'play') or (time_status == '凌晨' and donate_status == 'donate'):#到了早上还没切换捐兵，或者到了凌晨还没切换打资源，跳过等待循环立刻切换
                 break
             else:
                 pass
             timewait(1)
         restart_server()
-'''
-    except Err as reason:
-        with open(Coclog,'a') as Coclogfile:
-            Coclogfile.write('出现bug重启主机,重启时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
-        reboot()
 
-        #使用线程实现重启捐兵和启动打资源分开
-        thread_restartplay = threading.Thread(target=restartplay(), name='restartdonate')
-        thread_restartdonate = threading.Thread(target=restartdonate(donateids), name='restartdonate')
-        thread_restartplay.start()
-        thread_restartdonate.start()
-        thread_restartplay.join()
-        thread_restartdonate.join()
-'''
