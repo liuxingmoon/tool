@@ -69,7 +69,11 @@ def connect(startport):
 
 def close_windows(close_name):
     close_window = win32gui.FindWindow(None, close_name)
-    win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
+    try:
+        win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
+    except:
+        print ("配额不足，无法处理，跳过！")
+        pass
     
 def close_VirtualBox():
     #关闭模拟器报错
@@ -399,9 +403,8 @@ def handle_window_play(hwnd,extra):
 def close_emu_all(closelist,*args):
     for close_id in closelist:
         close_name = closelist[close_id]
-        close_window = win32gui.FindWindow(None, close_name)
         # 关闭一个捐兵号
-        win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
+        close_windows(close_name)
         print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
         if len(args) >0:#暂停args[0]分钟关闭
             timewait(args[0])
@@ -418,8 +421,7 @@ def close_emu_id(close_id):
     except:
         print("============================= 没有该模拟器:%d ===============================" %(int(close_id)))
     coc_start.close_emu_err()#关闭模拟器已停止工作报错
-    close_window = win32gui.FindWindow(None, close_name)
-    win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
+    close_windows(close_name)
     print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
         
 #启动模拟器（列表中所有）       
@@ -451,7 +453,11 @@ def restart_emu(restartlist,*args):
         restart_name = restartlist[restart_id]#关闭的模拟器名字
         close_window = win32gui.FindWindow(None, restart_name)
         # 关闭一个捐兵号
-        win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
+        try:
+            win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
+        except:
+            print ("配额不足，无法处理，跳过！")
+            pass
         if (len(donateids_for_paid_2nd) > 0) and (str(restart_id) in donateids_for_paid_2nd[0]):
             print('============================= 重启的模拟器：%s 是第二梯队的,第一梯队重启结束等待15分钟再重启 ===============================' %(restart_name))
         else:

@@ -3,7 +3,9 @@ import sys
 import json
 import base64
 import easygui as g
-
+import win32clipboard
+import win32gui
+from win32.lib import win32con
 
 # 保证兼容python2以及python3
 IS_PY3 = sys.version_info.major == 3
@@ -34,6 +36,23 @@ OCR_URL = "https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic"
 TOKEN_URL = 'https://aip.baidubce.com/oauth/2.0/token'
 
 
+def send_msg_to_clip(type_data, msg):
+    """
+    操作剪贴板分四步：
+    1. 打开剪贴板：OpenClipboard()
+    2. 清空剪贴板，新的数据才好写进去：EmptyClipboard()
+    3. 往剪贴板写入数据：SetClipboardData()
+    4. 关闭剪贴板：CloseClipboard()
+
+    :param type_data: 数据的格式，
+    unicode字符通常是传 win32con.CF_UNICODETEXT
+    :param msg: 要写入剪贴板的数据
+    """
+    win32clipboard.OpenClipboard()
+    win32clipboard.EmptyClipboard()
+    win32clipboard.SetClipboardData(type_data, msg)
+    win32clipboard.CloseClipboard()
+    
 """
     获取token
 """
@@ -116,6 +135,7 @@ def start(image):
     if text != '':#如果识别到文字，弹出文字识别窗口
         # 打印文字
         g.msgbox(msg=text,title='文字识别')
+        send_msg_to_clip(win32con.CF_UNICODETEXT, text)
     else:
         print('没有识别到文字')
 

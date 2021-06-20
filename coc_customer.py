@@ -92,7 +92,9 @@ def deadtime(month):
     dead_time = start_time + srv_days
     dead_time_hr = dead_time.strftime('%Y-%m-%d %H:%M')
     #打印结果
-    g.msgbox(msg='尊敬的用户，您的服务已经开始为您服务！\n服务开始时间为：%s\n一共服务时间：%d 天\n服务结束时间：%s\n用户须知：\n1、每天凌晨0:00 - 6:30是打资源时间段；\n2、默认兵种：胖子、法师、气球、皮卡、飞龙、飞龙宝宝、雷龙、雪怪、野猪骑士、女武神；攻城武器：车、气球；可以指定兵种，也可以识别文字，如果文字识别失败默认捐气球；\n默认药水：雷电、狂暴、冰冻、毒药、地震、急速；\n3、如果游戏版本更新，我们会尽快在当天实现版本更新为您提供服务；\n4、为了不影响其他用户，原则上捐兵兵种仅在晚上做变更，兵种种类(包含攻城武器)<=14,总兵力<=500，药水种类<=7,总药水<=20；\n5、在线4小时会自动下线，会有15分钟强制下线时间，请等待20分钟，如果还是未上线，详情请联系我。\n有疑问请随时联系我,祝您游戏愉快！' %(start_time_hr,srv_days_hr,dead_time_hr),title='用户信息')
+    message = '尊敬的用户，您的服务已经开始为您服务！\n服务开始时间为：%s\n一共服务时间：%d 天\n服务结束时间：%s\n用户须知：\n1、每天凌晨0:00 - 6:30是打资源时间段；\n2、默认兵种：胖子、法师、气球、皮卡、飞龙、飞龙宝宝、雷龙、雪怪、野猪骑士、女武神；攻城武器：车、气球；可以指定兵种，也可以识别文字，如果文字识别失败默认捐气球；\n默认药水：雷电、狂暴、冰冻、毒药、地震、急速；\n3、如果游戏版本更新，我们会尽快在当天实现版本更新为您提供服务；\n4、为了不影响其他用户，原则上捐兵兵种仅在晚上做变更，兵种种类(包含攻城武器)<=14,总兵力<=500，药水种类<=7,总药水<=20；\n5、在线4小时会自动下线，会有15分钟强制下线时间，请等待20分钟，如果还是未上线，详情请联系我。\n有疑问请随时联系我,祝您游戏愉快！' %(start_time_hr,srv_days_hr,dead_time_hr)
+    g.msgbox(msg=message,title='用户信息')
+    setText(message)
     print('尊敬的用户，您的服务已经开始为您服务！\n服务开始时间为：%s\n一共服务时间：%d 天\n服务结束时间：%s' %(start_time_hr,srv_days_hr,dead_time_hr))
     return (start_time_hr,dead_time_hr,srv_days_hr)
 
@@ -126,30 +128,32 @@ def send_qq(message):   #发送消息给QQ用户
                 
     
 def open_windows(coc_clan_dict):     #打开QQ和wechat会话窗口，发送消息
-    qq_hwnd = win32gui.FindWindow(None, 'QQ') 
-    wechat_hwnd = win32gui.FindWindow(None, '微信') 
-    print("捕捉到QQ主窗体的句柄为:"+str(qq_hwnd))
-    print("捕捉到微信主窗体的句柄为:"+str(wechat_hwnd))
-    win32gui.ShowWindow(qq_hwnd,win32con.SW_SHOW)
-    #win32gui.ShowWindow(wechat_hwnd,win32con.SW_SHOW)
-    print("正在打开会话窗口...\n")
-    time.sleep(1)
-    for coc_clan_name in coc_clan_dict:
-        #打开会话窗口
-        setText(coc_clan_name)
-        win32api.keybd_event(13, 0, 0, 0)
-        win32gui.SetForegroundWindow(qq_hwnd)
-        win32gui.SetActiveWindow(qq_hwnd)
+    try:
+        qq_hwnd = win32gui.FindWindow(None, 'QQ') 
+        wechat_hwnd = win32gui.FindWindow(None, '微信') 
+        print("捕捉到QQ主窗体的句柄为:"+str(qq_hwnd))
+        print("捕捉到微信主窗体的句柄为:"+str(wechat_hwnd))
+        win32gui.ShowWindow(qq_hwnd,win32con.SW_SHOW)
+        #win32gui.ShowWindow(wechat_hwnd,win32con.SW_SHOW)
+        print("正在打开会话窗口...\n")
         time.sleep(1)
-        win32gui.SendMessage(qq_hwnd,770, 0, 0)
-        time.sleep(1)
-        win32gui.SetForegroundWindow(qq_hwnd)
-        win32gui.SetActiveWindow(qq_hwnd)
-        win32api.keybd_event(0x0D, win32api.MapVirtualKey(0x0D, 0), 0, 0)   
-        win32api.keybd_event(0x0D, win32api.MapVirtualKey(0x0D, 0), win32con.KEYEVENTF_KEYUP, 0)
-        #发送信息
-        send_qq(coc_clan_dict[coc_clan_name])
-        
+        for coc_clan_name in coc_clan_dict:
+            #打开会话窗口
+            setText(coc_clan_name)
+            win32api.keybd_event(13, 0, 0, 0)
+            win32gui.SetForegroundWindow(qq_hwnd)
+            win32gui.SetActiveWindow(qq_hwnd)
+            time.sleep(1)
+            win32gui.SendMessage(qq_hwnd,770, 0, 0)
+            time.sleep(1)
+            win32gui.SetForegroundWindow(qq_hwnd)
+            win32gui.SetActiveWindow(qq_hwnd)
+            win32api.keybd_event(0x0D, win32api.MapVirtualKey(0x0D, 0), 0, 0)   
+            win32api.keybd_event(0x0D, win32api.MapVirtualKey(0x0D, 0), win32con.KEYEVENTF_KEYUP, 0)
+            #发送信息
+            send_qq(coc_clan_dict[coc_clan_name])
+    except:
+        print("没有找到QQ或微信程序")
 #续费
 def renewal(month,values):
     #获取原始信息
@@ -176,13 +180,12 @@ def renewal(month,values):
     message = '尊敬的用户，您的部落 %s\n捐兵服务已经续费成功！\n续费服务时间：%d 天\n服务结束时间：%s\n祝您游戏愉快！' %(coc_clan_name,srv_days_hr,dead_time_hr)
     coc_clan_dict[coc_customer] = message#添加到续费部落和信息 {'用户名':'信息'}
     g.msgbox(msg=message, title='用户信息')
-    setText(message)
     open_windows(coc_clan_dict)#打开对应部落冲突部落QQ和wechat会话窗口，并发送消息
+    setText(message)
     print('尊敬的用户，您的服务已经续费成功！\n续费服务时间：%d 天\n服务结束时间：%s\n祝您游戏愉快！' %(srv_days_hr,dead_time_hr))
     return (start_time_hr,dead_time_hr,srv_days_hr)
 
 
-        
 #提醒续费
 def clarm(tbname):
     # 当前时间
@@ -215,14 +218,14 @@ def clarm(tbname):
                 message = '尊敬的用户，您的部落 %s : %s ，奶号 %s\n捐兵服务在3天内即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_id,coc_clan_name,coc_name,dead_time_hr,money_last)
                 coc_clan_dict[coc_customer] = message#添加到到期部落和信息 {'用户名':'信息'}
                 g.msgbox(msg=message)
-                setText(message)
                 open_windows(coc_clan_dict)#打开对应部落冲突部落QQ和wechat会话窗口，并发送消息
+                setText(message)
             elif datetime.timedelta(days=0) <= (dead_time - now_time) <= datetime.timedelta(days=1):
                 message = '尊敬的用户，您的部落 %s : %s ，奶号 %s\n捐兵服务在 24 小时内 即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_id,coc_clan_name,coc_name,dead_time_hr,money_last)
                 coc_clan_dict[coc_customer] = message#添加到到期部落和信息 {'用户名':'信息'}
-                setText(message)
                 g.msgbox(msg=message)
                 open_windows(coc_clan_dict)#打开对应部落冲突部落QQ和wechat会话窗口，并发送消息
+                setText(message)
             elif (dead_time - now_time) < datetime.timedelta(days=0):#过期如果不点击已停止，会一直提醒
                 flag_deadtime = g.buttonbox(msg='部落 %s : %s ，奶号 %s\n捐兵服务已经到期！\n服务结束时间：%s\n确认是否已停止！'%(coc_id,coc_clan_name,coc_name,dead_time_hr), title='确认停止服务',
                             choices=('已停止', '暂不停止服务'))
