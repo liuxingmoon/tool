@@ -186,7 +186,11 @@ def start():
                     coc_template.levelup_3_all(startid,endid,levelupids)
             else:
                 coc_template.levelup_3_all(startidlist)
-
+        #更新游戏
+        def update_app():
+            startidlist = getinfo()
+            coc_template.update_app(startidlist)
+            
         root = tk.Tk()
         root.title('部落冲突')
         title = tk.Label(root, text='部落冲突脚本功能')
@@ -239,8 +243,8 @@ def start():
         custmoer_bt.grid(row=5, column=2,
                           padx=10, pady=10)
         #更新代码
-        coc_update_bt = tk.Button(root,text='更新备份',command=coc_update.start,width=15)
-        coc_update_bt.grid(row=5,column=3,
+        coc_update_code_bt = tk.Button(root,text='更新代码',command=coc_update.start,width=15)
+        coc_update_code_bt.grid(row=5,column=3,
               padx=10,pady=10)
         #恢复备份
         coc_resume_bt = tk.Button(root,text='恢复代码',command=coc_resume.start,width=15)
@@ -249,6 +253,10 @@ def start():
         #脚本配置
         coc_config_bt = tk.Button(root,text='脚本配置',command=coc_config.start,width=15)
         coc_config_bt.grid(row=6,column=2,
+              padx=10,pady=10)
+        #更新游戏
+        coc_update_app_bt = tk.Button(root,text='更新游戏',command=update_app,width=15)
+        coc_update_app_bt.grid(row=6,column=3,
               padx=10,pady=10)
         root.mainloop()
     except:

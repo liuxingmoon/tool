@@ -6,6 +6,7 @@ import easygui as g
 import win32clipboard
 import win32gui
 from win32.lib import win32con
+import configparser
 
 # 保证兼容python2以及python3
 IS_PY3 = sys.version_info.major == 3
@@ -27,13 +28,24 @@ else:
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
+#配置文件路径
+configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
+config = configparser.ConfigParser()
+config.read(configpath, encoding="utf-8")
+#启动id范围
+APP_ID = config.get("ocr", "APP_ID")
+API_KEY = config.get("ocr", "API_KEY")
+SECRET_KEY = config.get("ocr", "SECRET_KEY")
+OCR_URL = 'https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic'
+"""  TOKEN start """
+TOKEN_URL = 'https://aip.baidubce.com/oauth/2.0/token'
+'''
+OCR_URL = config.get("ocr", "SECRET_KEY")
+TOKEN_URL = config.get("ocr", "SECRET_KEY")
 APP_ID = '24192605'
 API_KEY = '006FMhOUkFsgMVcDnzYFc0nH'
 SECRET_KEY = '0dU16pxoGsogXXAdV0GfoAVspotht1U2'
-OCR_URL = "https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic"
-
-"""  TOKEN start """
-TOKEN_URL = 'https://aip.baidubce.com/oauth/2.0/token'
+'''
 
 
 def send_msg_to_clip(type_data, msg):

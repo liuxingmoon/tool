@@ -30,7 +30,7 @@ src_makise = {
 'dir_src':r"E:\Program Files\Python\Python38\works\\tool\\",
 'backup_config_worker02':r"E:\Program Files\Python\Python38\works\\tool\\backup_worker02\\",
 'backup_config_worker03':r"E:\Program Files\Python\Python38\works\\tool\\backup_worker03\\",
-'Coclog_src':r'E:\Program Files\Python\Python38\works\tool\coclog.txt',
+'Coclog_src':r'E:\Program Files\Python\Python38\works\\tool\\coclog.txt',
 'configpath_src':r"E:\Program Files\Python\Python38\works\tool\Config.ini",
 'ddpath_src':r'D:\Program Files\DundiEmu\DunDiEmu.exe',
 'resourceids':r"resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]"
@@ -67,13 +67,15 @@ def update(src,dest):
     for filename in filelist:
         if ("py" in filename) and ("pyc" not in filename):#以py结尾的文件
             file_ctrl.copy_file(filename,src['dir_src'],dest['dir_dest'])
+    os.chdir(dest['dir_dest'])#切换到目标目录
     #替换
     file_ctrl.replace(src['Coclog_src'],dest['Coclog_dest'],'coc_script.py')
     file_ctrl.replace(src['configpath_src'],dest['configpath_dest'],'coc_script.py')
     file_ctrl.replace(src['ddpath_src'],dest['ddpath_dest'],'coc_script.py')
-    file_ctrl.replace(src['configpath_src'],dest['configpath_dest'],'coc_template.py')
     file_ctrl.replace(src['resourceids'],dest['resourceids'],'coc_script.py')
     file_ctrl.replace(src['resourceids'],dest['resourceids'],'coc.py')
+    file_ctrl.replace(src['configpath_src'],dest['configpath_dest'],'coc_template.py')
+    file_ctrl.replace(src['configpath_src'],dest['configpath_dest'],'ocr.py')
     #更新coc_customer.csv stock_info.csv到各个机器
     file_ctrl.copy_file('coc_customer.csv',src['dir_src'],dest['dir_dest'])
     file_ctrl.copy_file('stock_info.csv',src['dir_src'],dest['dir_dest'])

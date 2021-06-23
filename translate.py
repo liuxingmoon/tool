@@ -4,6 +4,7 @@ import json#用于解析json
 import time
 import easygui as g
 import tkinter as tk
+from clip_ctrl import clip
 #import zlib
 '''
 data = {
@@ -70,16 +71,19 @@ def start():
                 response = urllib.request.urlopen(req)
                 html = response.read().decode('utf-8')
                 result = json.loads(html)
-                #g.msgbox(msg=result['translateResult'][0][0]['tgt'])
+                trans_Msg = result['translateResult'][0][0]['tgt']
+                g.msgbox(msg=trans_Msg)
+                '''
                 result = result['translateResult']
                 trans_result = [x[0]['tgt'] for x in result]
                 result_message = tk.Tk()
                 result_message.title('翻译结果')
                 trans_Msg = tk.Text(result_message,relief='flat',bg='gray94',wrap='word',font=('consolas','9'))
-                #trans_Msg = tk.Message(result_message, text=trans_result, width=1000)
                 trans_Msg.insert(1.0,trans_result)
                 trans_Msg.configure(state='disabled')
                 trans_Msg.pack(padx=10,pady=10)
+                '''
+                clip(trans_Msg)
             except urllib.error.HTTPError as HTTPerror:
                 print(HTTPerror.read())
                 time.sleep(1)

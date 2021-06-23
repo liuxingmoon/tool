@@ -29,8 +29,8 @@ pos = {
   }
 
 #日志路径
-Coclog = r'D:\Program Files\Python38\works\tool\\coclog.txt'
-configpath = r"D:\Program Files\Python38\works\tool\\Config.ini"
+Coclog = r'E:\Program Files\Python\Python38\works\\tool\\coclog.txt'
+configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
 ddpath = r'D:\Program Files\DundiEmu\\DunDiEmu.exe'
 configdir = os.path.dirname(os.path.abspath(configpath))#配置文件目录
 backupdir = configdir + os.sep + "backup"

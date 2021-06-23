@@ -253,7 +253,7 @@ IDcard = {
 }
 
 #配置文件路径
-configpath = r"D:\Program Files\Python38\works\tool\\Config.ini"
+configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
  
 
 #获取位置信息
@@ -955,11 +955,30 @@ def start_coc(startidlist):
         startcoc(startport,35)
         cancel(startport)
     g.msgbox(msg='启动各个部落完成')
+
+#启动coc
+def update_app(startidlist):
+    config = configparser.ConfigParser()
+    config.read(configpath, encoding="utf-8")
+    for nowid in startidlist:
+        action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(nowid))
+        start_emu_id(action, int(nowid),0)
+        startport = getport(int(nowid))
+        connect(startport)
+        time.sleep(10)
+        if ( 1 < int(nowid) <= 6 ):#2-6是腾讯版本的
+            app_path = config.get("coc", "app_path_tencent")
+        else:
+            app_path = config.get("coc", "app_path_kunlun")
+        print(app_path)
+        subprocess.Popen('adb install -r %s' % (app_path), shell=True)
+        time.sleep(60)
+        kill_adb()
+        close_emu_id(int(nowid))
+    g.msgbox(msg='升级部落冲突完成')
     
 #3本新建
-    
 def levelup_3(nowid):
-
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' % (nowid)
     start_emu_id(action, nowid,1)#最小化
     startport = getport(nowid)
