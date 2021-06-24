@@ -69,13 +69,13 @@ def update(src,dest):
             file_ctrl.copy_file(filename,src['dir_src'],dest['dir_dest'])
     os.chdir(dest['dir_dest'])#切换到目标目录
     #替换
-    file_ctrl.replace(src['Coclog_src'],dest['Coclog_dest'],'coc_script.py')
-    file_ctrl.replace(src['configpath_src'],dest['configpath_dest'],'coc_script.py')
-    file_ctrl.replace(src['ddpath_src'],dest['ddpath_dest'],'coc_script.py')
+    #file_ctrl.replace(src['Coclog_src'],dest['Coclog_dest'],'coc_script.py')
+    #file_ctrl.replace(src['configpath_src'],dest['configpath_dest'],'coc_script.py')
+    #file_ctrl.replace(src['ddpath_src'],dest['ddpath_dest'],'coc_script.py')
     file_ctrl.replace(src['resourceids'],dest['resourceids'],'coc_script.py')
     file_ctrl.replace(src['resourceids'],dest['resourceids'],'coc.py')
-    file_ctrl.replace(src['configpath_src'],dest['configpath_dest'],'coc_template.py')
-    file_ctrl.replace(src['configpath_src'],dest['configpath_dest'],'ocr.py')
+    #file_ctrl.replace(src['configpath_src'],dest['configpath_dest'],'coc_template.py')
+    #file_ctrl.replace(src['configpath_src'],dest['configpath_dest'],'ocr.py')
     #更新coc_customer.csv stock_info.csv到各个机器
     file_ctrl.copy_file('coc_customer.csv',src['dir_src'],dest['dir_dest'])
     file_ctrl.copy_file('stock_info.csv',src['dir_src'],dest['dir_dest'])

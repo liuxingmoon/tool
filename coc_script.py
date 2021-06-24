@@ -15,6 +15,7 @@ import keyboard as k
 import coc_start
 from multiprocessing import Process
 import file_ctrl as fc
+from config_ctrl import *
 #元素坐标
 pos = {
   'coc_script':[500,680],
@@ -29,9 +30,9 @@ pos = {
   }
 
 #日志路径
-Coclog = r'E:\Program Files\Python\Python38\works\\tool\\coclog.txt'
-configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
-ddpath = r'D:\Program Files\DundiEmu\\DunDiEmu.exe'
+Coclog = r'coclog.txt'
+configpath = r"Config.ini"
+ddpath = config_read(configpath,"coc","ddpath")
 configdir = os.path.dirname(os.path.abspath(configpath))#配置文件目录
 backupdir = configdir + os.sep + "backup"
     

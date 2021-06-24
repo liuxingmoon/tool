@@ -29,7 +29,7 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
 #配置文件路径
-configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
+configpath = r"Config.ini"
 config = configparser.ConfigParser()
 config.read(configpath, encoding="utf-8")
 #启动id范围

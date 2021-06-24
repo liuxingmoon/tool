@@ -253,7 +253,7 @@ IDcard = {
 }
 
 #配置文件路径
-configpath = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
+configpath = r"Config.ini"
  
 
 #获取位置信息
