@@ -1,5 +1,5 @@
 # coding=utf-8
-import sys
+import sys,os
 import json
 import base64
 import easygui as g
@@ -36,10 +36,15 @@ config.read(configpath, encoding="utf-8")
 APP_ID = config.get("ocr", "APP_ID")
 API_KEY = config.get("ocr", "API_KEY")
 SECRET_KEY = config.get("ocr", "SECRET_KEY")
+
+OCR_URL = config.get("ocr", "OCR_URL")
+#OCR_URL = os.path.abspath(OCR_URL)
+TOKEN_URL = config.get("ocr", "TOKEN_URL")
+#TOKEN_URL = os.path.abspath(TOKEN_URL)
+'''
 OCR_URL = 'https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic'
 """  TOKEN start """
 TOKEN_URL = 'https://aip.baidubce.com/oauth/2.0/token'
-'''
 OCR_URL = config.get("ocr", "SECRET_KEY")
 TOKEN_URL = config.get("ocr", "SECRET_KEY")
 APP_ID = '24192605'

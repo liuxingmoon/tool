@@ -34,7 +34,7 @@ import packpy
 import win32gui
 from win32.lib import win32con
 import win32api
-import ocr
+import ocr,statistics_disk
 import base64_ctrl
 
 root = tk.Tk()
@@ -803,6 +803,11 @@ thundertask_bt.grid(row=5,column=1,
 coc_bt = tk.Button(root,text='部落冲突',command=coc.start,width=15)
 coc_bt.grid(row=6,column=1,
               padx=10,pady=10)
+#统计磁盘
+statistics_disk_bt = tk.Button(root,text='统计磁盘',command=statistics_disk.start,width=15)
+statistics_disk_bt.grid(row=7,column=1,
+              padx=10,pady=10)
+              
               
 #视频下载
 '''
