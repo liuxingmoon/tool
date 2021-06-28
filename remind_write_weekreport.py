@@ -19,10 +19,12 @@ import re
 import string
 import os, sys
 import datetime
+from clip_ctrl import clip
+
 
 check_weekday = 3#检查日期为周四（从0开始）
 x86_members = [
-    '任德强', '曾松', '刁强', '代云平', '张兴建', '王毅', '徐松', '周通', '刘兴'
+    '任德强', '刁强', '代云平', '张兴建', '王毅', '徐松', '周通', '刘兴','余超'
     ]
     
 def get_weekreports():
@@ -32,8 +34,8 @@ def get_weekreports():
     check_date = (today_date - dif_days).strftime("%Y-%m-%d")#检查日（确认检查日的目录名）
     
     svn_urls = [   
-        "http://10.0.8.42:8001/svn/scrcu/Public/01.AB组周报/云平台组周报",
-        "http://10.0.8.42:8001/svn/scrcu/Public/01.AB组周报/传统架构组/2021年",
+        "http://10.16.8.57:8001/svn/scrcu/Public/01.AB组周报/云平台组周报",
+        "http://10.16.8.57:8001/svn/scrcu/Public/01.AB组周报/传统架构组/2021年",
     ]
     weekreports = []
     for svn_url in svn_urls:
@@ -61,6 +63,7 @@ def start():
         result = "%s 周报检查："%(date_hour) + "、".join(uncommit_users) + "未交周报，请尽快提交至SVN %s目录"%(commit_dir)
     else:
         result = "周报已全部提交，可以汇总了"
+    clip(result)
     #sms_text = f"[周报检查]{result}"
     #os.system(sendsms_cmd.format(sms_text))
     print(result)

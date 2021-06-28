@@ -14,12 +14,13 @@ import easygui as g
 import svnconfig,svn_ctrl
 from remind_write_weekreport import x86_members
 import time
+from clip_ctrl import clip
 
 weekReportDir = r"D:\Users\user\Desktop\weekReport"
-weekReportDir_tradition = r"D:\SVNdata\Public\01.AB组周报\传统架构组\2021年"
-weekReportDir_cloud = r"D:\SVNdata\Public\01.AB组周报\云平台组周报"
+weekReportDir_tradition = r"D:\Users\user\Desktop\Public\01.AB组周报\传统架构组\2021年"
+weekReportDir_cloud = r"D:\Users\user\Desktop\Public\01.AB组周报\云平台组周报"
 totalFile = r"D:\Users\user\Desktop\x86_weekreport.txt"
-
+weekReport_myself = r"D:\Users\user\Desktop\周报\\"
 
 
 dist_tradition = svnconfig.setting['dist_tradition']
@@ -171,7 +172,7 @@ if __name__ == "__main__":
     #提交我的周报
     last_dir = getfilelist(dist_cloud)[0]
     dist_dir = dist_cloud + os.sep + last_dir#目标目录
-    locallist = os.listdir(r"D:\Users\user\Desktop\工作\周报\\")
+    locallist = os.listdir(weekReport_myself)
     #检查自己是否已提交周报
     check_day_file = last_dir.replace("-","")#提取周报日
     my_report = [x for x in locallist if '工作周报-刘兴%s' %(check_day_file) in x]
@@ -182,21 +183,20 @@ if __name__ == "__main__":
         g.msgbox(title='刘兴周报检查',msg='刘兴的周报（工作周报-刘兴%s）还没写！写完后确认' %(check_day_file))
         my_report = '工作周报-刘兴%s' %(check_day_file)
     commited_files = os.listdir(dist_dir)#已提交周报的list
-    if commited_files != []:#已提交周报不为空
-        if [x for x in commited_files if '工作周报-刘兴%s' %(check_day_file) in x] != []:
-            print('刘兴已提交，跳过自己上传周报')
-        else:
-            print('刘兴未提交，自己上传周报')
-            copy_file(my_report,r"D:\Users\user\Desktop\工作\周报\\",dist_dir)
-            commit_file = dist_dir + os.sep + my_report
-            svn_ctrl.add(commit_file)
-            svn_ctrl.commit(commit_file)
+    if [x for x in commited_files if '工作周报-刘兴%s' %(check_day_file) in x] != []:
+        print('刘兴已提交，跳过自己上传周报')
     else:
-        print("无人已提交周报！")
+        print('刘兴未提交，自己上传周报')
+        copy_file(my_report,weekReport_myself,dist_dir)
+        commit_file = dist_dir + os.sep + my_report
+        svn_ctrl.add(commit_file)
+        svn_ctrl.commit(commit_file)
+
     #检查下周报结果，如果都交了就统计,没交完就不汇总统计
     result = remind.start()
     if result != "周报已全部提交，可以汇总了":
         g.msgbox(title='周报检查',msg=result)
+        clip(result)
     else:#汇总
         work = {"生产运行保障":[], 
             "高可用性管理":[], 
