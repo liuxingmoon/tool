@@ -803,8 +803,8 @@ thundertask_bt.grid(row=5,column=1,
 coc_bt = tk.Button(root,text='部落冲突',command=coc.start,width=15)
 coc_bt.grid(row=6,column=1,
               padx=10,pady=10)
-#统计磁盘
-statistics_disk_bt = tk.Button(root,text='统计磁盘',command=statistics_disk.start,width=15)
+#故障设备
+statistics_disk_bt = tk.Button(root,text='故障设备',command=statistics_disk.start,width=15)
 statistics_disk_bt.grid(row=7,column=1,
               padx=10,pady=10)
               

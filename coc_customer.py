@@ -9,6 +9,7 @@ import win32clipboard as w
 import win32api
 import time
 from pandas import read_excel 
+from rreplace import rreplace
 
 def update_tb(tbname,values):
     table = select_tb(tbname)
@@ -42,8 +43,8 @@ def update_tb(tbname,values):
     table[index] = table[index].replace(info[3],start_time,1)
     table[index] = table[index].replace(info[4],dead_time,1)
     table[index] = table[index].replace(info[5],str(srv_time),1)
-    table[index] = table[index].replace(info[6],str(money_last),1)#加上替换次数，不然会因为一个月收入与总收入一致导致把总收入也替换了
-    table[index] = table[index].replace(info[7],str(money_all),1)
+    table[index] = table[index].replace(info[6],str(money_last),1)#加上替换次数，不然会因为第一个月收入与总收入一致导致把总收入也替换了
+    table[index] = rreplace(table[index],info[7],str(money_all),1)#从右往左替换，不然第一个月总收入和收入一致导致只替换第一个月收入
     table[index] = table[index].replace(info[8],str(status),1)
     #将更新后的table直接覆盖写入到表中
     # 创建文件对象
@@ -215,13 +216,13 @@ def clarm(tbname):
         #3天时提醒
         if status == 'running':#状态为正常运行服务的用户才需要提醒
             if datetime.timedelta(days=2) <= (dead_time - now_time) <= datetime.timedelta(days=3):
-                message = '尊敬的用户，您的部落 %s : %s ，奶号 %s\n捐兵服务在3天内即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_id,coc_clan_name,coc_name,dead_time_hr,money_last)
+                message = '尊敬的用户：%s，您的部落 %s : %s ，奶号 %s\n捐兵服务在3天内即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_customer,coc_id,coc_clan_name,coc_name,dead_time_hr,money_last)
                 coc_clan_dict[coc_customer] = message#添加到到期部落和信息 {'用户名':'信息'}
                 g.msgbox(msg=message)
                 open_windows(coc_clan_dict)#打开对应部落冲突部落QQ和wechat会话窗口，并发送消息
                 setText(message)
             elif datetime.timedelta(days=0) <= (dead_time - now_time) <= datetime.timedelta(days=1):
-                message = '尊敬的用户，您的部落 %s : %s ，奶号 %s\n捐兵服务在 24 小时内 即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_id,coc_clan_name,coc_name,dead_time_hr,money_last)
+                message = '尊敬的用户：%s，您的部落 %s : %s ，奶号 %s\n捐兵服务在 24 小时内 即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_customer,coc_id,coc_clan_name,coc_name,dead_time_hr,money_last)
                 coc_clan_dict[coc_customer] = message#添加到到期部落和信息 {'用户名':'信息'}
                 g.msgbox(msg=message)
                 open_windows(coc_clan_dict)#打开对应部落冲突部落QQ和wechat会话窗口，并发送消息

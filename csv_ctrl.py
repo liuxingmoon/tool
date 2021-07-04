@@ -84,10 +84,12 @@ def update_tb(tbname,values):
 
     info = table[index].split(',')
     srv_time = int(info[5]) + int(values[5])
-    money = int(info[6]) + int(values[6])
+    money_last = int(values[6])
+    money_all = int(info[7]) + int(values[7])
     table[index] = table[index].replace(info[4],values[4])
     table[index] = table[index].replace(info[5],str(srv_time))
-    table[index] = table[index].replace(info[6],str(money))
+    table[index] = table[index].replace(info[6],str(money_last))
+    table[index] = table[index].replace(info[7],str(money_all))
     #将更新后的table直接覆盖写入到表中
     # 创建文件对象
     with open(tbname,'w',encoding='gb2312',newline="") as f:
