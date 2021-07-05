@@ -87,9 +87,9 @@ def start():
         error_dev_info = disk_info
     except IndexError as reason:
         print ("无磁盘信息，损坏的设备不是磁盘")
-        hostname = re.findall(".*服务器hostname.*\n.*",a)[0].split("\"")[1]
-        nc_sn = re.findall(".*服务器SN.*\n.*",a)[0].split("\"")[1]
-        cluster = re.findall(".*服务器集群.*\n.*",a)[0].split("\"")[1]
+        hostname = re.findall(".*服务器hostname.*\n.*",device_error_info)[0].split("\"")[1]
+        nc_sn = re.findall(".*服务器SN.*\n.*",device_error_info)[0].split("\"")[1]
+        cluster = re.findall(".*服务器集群.*\n.*",device_error_info)[0].split("\"")[1]
         error_dev = None
         error_exp = None
         remarks = None
