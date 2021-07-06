@@ -30,6 +30,7 @@ def start():
         root.title('编码解码base64')
         w1 = tk.Message(root, text='请在下方输入需要转码的内容', width=500)
         w1.pack(side='top',pady=10)
+        global text1
         text1 = tk.Text(root, width=150, height=20)  # 宽100字符，高20行
         text1.pack(side='top')
         encode_bt = tk.Button(root,text='编码base64',width=20,command=encode_base64)
