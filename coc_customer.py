@@ -122,7 +122,7 @@ def send_qq(message):   #发送消息给QQ用户
                 time.sleep(1)
                 win32gui.SetForegroundWindow(hwnd)
                 win32gui.SetActiveWindow(hwnd)
-                time.sleep(1)
+                time.sleep(3)
                 win32gui.SendMessage(hwnd,770, 0, 0)    # 将剪贴板文本发送到QQ窗体
                 win32gui.SendMessage(hwnd, win32con.WM_KEYDOWN, win32con.VK_RETURN, 0)  #模拟按下回车键
                 win32gui.SendMessage(hwnd, win32con.WM_KEYUP, win32con.VK_RETURN, 0)  #模拟松开回车键

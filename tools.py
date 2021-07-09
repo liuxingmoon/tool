@@ -34,7 +34,7 @@ import packpy
 import win32gui
 from win32.lib import win32con
 import win32api
-import ocr,statistics_disk
+import ocr,statistics_dev
 import base64_ctrl
 
 root = tk.Tk()
@@ -804,8 +804,8 @@ coc_bt = tk.Button(root,text='部落冲突',command=coc.start,width=15)
 coc_bt.grid(row=6,column=1,
               padx=10,pady=10)
 #故障设备
-statistics_disk_bt = tk.Button(root,text='故障设备',command=statistics_disk.start,width=15)
-statistics_disk_bt.grid(row=7,column=1,
+statistics_dev_bt = tk.Button(root,text='故障设备',command=statistics_dev.start,width=15)
+statistics_dev_bt.grid(row=7,column=1,
               padx=10,pady=10)
               
               

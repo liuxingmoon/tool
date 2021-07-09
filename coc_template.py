@@ -956,8 +956,8 @@ def start_coc(startidlist):
         cancel(startport)
     g.msgbox(msg='启动各个部落完成')
 
-#启动coc
-def update_app(startidlist):
+#更新coc
+def update_coc(startidlist):
     config = configparser.ConfigParser()
     config.read(configpath, encoding="utf-8")
     for nowid in startidlist:
@@ -967,15 +967,33 @@ def update_app(startidlist):
         connect(startport)
         time.sleep(10)
         if ( 1 < int(nowid) <= 6 ):#2-6是腾讯版本的
-            app_path = config.get("coc", "app_path_tencent")
+            coc_path = config.get("coc", "app_path_tencent")
         else:
-            app_path = config.get("coc", "app_path_kunlun")
-        print(app_path)
-        subprocess.Popen('adb install -r %s' % (app_path), shell=True)
+            coc_path = config.get("coc", "app_path_kunlun")
+        coc_path = r"%s" %(coc_path)
+        subprocess.Popen('adb install -r %s' % (coc_path), shell=True)
         time.sleep(60)
         kill_adb()
         close_emu_id(int(nowid))
     g.msgbox(msg='升级部落冲突完成')
+    
+def update_hss(startidlist):
+    config = configparser.ConfigParser()
+    config.read(configpath, encoding="utf-8")
+    for nowid in startidlist:
+        action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(nowid))
+        start_emu_id(action, int(nowid),0)
+        startport = getport(int(nowid))
+        connect(startport)
+        time.sleep(10)
+        heisongshu_path = config.get("coc", "app_path_heisongshu") 
+        heisongshu_path = r"%s" %(heisongshu_path)
+        print(heisongshu_path)
+        subprocess.Popen('adb install -r %s' % (heisongshu_path), shell=True)
+        time.sleep(60)
+        kill_adb()
+        close_emu_id(int(nowid))
+    g.msgbox(msg='升级黑松鼠完成')
     
 #3本新建
 def levelup_3(nowid):

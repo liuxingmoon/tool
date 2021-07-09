@@ -187,9 +187,14 @@ def start():
             else:
                 coc_template.levelup_3_all(startidlist)
         #更新游戏
-        def update_app():
+        def update_coc():
             startidlist = getinfo()
-            coc_template.update_app(startidlist)
+            coc_template.update_coc(startidlist)
+            
+        #更新黑松鼠
+        def update_hss():
+            startidlist = getinfo()
+            coc_template.update_hss(startidlist)
             
         root = tk.Tk()
         root.title('部落冲突')
@@ -255,8 +260,12 @@ def start():
         coc_config_bt.grid(row=6,column=2,
               padx=10,pady=10)
         #更新游戏
-        coc_update_app_bt = tk.Button(root,text='更新游戏',command=update_app,width=15)
-        coc_update_app_bt.grid(row=6,column=3,
+        coc_update_coc_bt = tk.Button(root,text='更新游戏',command=update_coc,width=15)
+        coc_update_coc_bt.grid(row=6,column=3,
+              padx=10,pady=10)
+        #更新黑松鼠
+        coc_update_hss_bt = tk.Button(root,text='更新黑松鼠',command=update_hss,width=15)
+        coc_update_hss_bt.grid(row=7,column=1,
               padx=10,pady=10)
         root.mainloop()
     except:

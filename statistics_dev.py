@@ -11,7 +11,8 @@ configpath = "Config.ini"
 excelFile = config_read(configpath,'work','硬件故障记录')
 commit_person = config_read(configpath,'work','commit_person')
 cmdb_url = r"http://10.128.128.238/report/cmdb/v_server"
-wps_url = r"http://10.0.28.95/view/p/25882"
+wps_url_dev_report = r"http://10.0.28.95/view/p/25882"
+wps_url_report = r"http://10.0.28.95/view/p/35113"
 search_xpath = r"/html/body/div[2]/div[2]/div/div[2]/label/input"
 factory_name_xpath = r"/html/body/div[2]/div[2]/div/div[3]/div[2]/table/tbody/tr/td[1]"
 devicename_xpath = r"/html/body/div[2]/div[2]/div/div[3]/div[2]/table/tbody/tr/td[2]"
@@ -30,8 +31,8 @@ excelFile = r"%s" %(excelFile)
 def openfile(excelFile):
     subprocess.Popen(excelFile,shell=True)
     
-def open_wps_cloud(wps_url):
-    driver.get(wps_url)
+def open_wps_cloud(url):
+    driver.get(url)
 
 def get_info_cmdb(nc_sn):
     global driver
@@ -107,7 +108,10 @@ def start():
     print(data)
     writeXlsx(excelFile,data)
     openfile(excelFile)
-    open_wps_cloud(wps_url)
+    open_wps_cloud(wps_url_dev_report)
+    driver.execute_script('window.open("","_blank");') # 新开标签页
+    open_wps_cloud(wps_url_report)
+    driver.switch_to.window(driver.window_handles[0]) # 转到第一个
     #subprocess.Popen('taskkill /f /t /im chromedriver.exe',shell=True)#关闭chromedriver的控制台
     #driver.quit()
     
