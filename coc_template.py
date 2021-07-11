@@ -990,7 +990,7 @@ def update_hss(startidlist):
         heisongshu_path = r"%s" %(heisongshu_path)
         print(heisongshu_path)
         subprocess.Popen('adb install -r %s' % (heisongshu_path), shell=True)
-        time.sleep(60)
+        time.sleep(50)
         kill_adb()
         close_emu_id(int(nowid))
     g.msgbox(msg='升级黑松鼠完成')
