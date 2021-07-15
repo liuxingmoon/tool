@@ -21,8 +21,9 @@ config.read("Config.ini", encoding="utf-8")
 downloadpath = config.get("download", "videopath")
 if downloadpath == '':
     downloadpath = r'D:\\'
+logpath = config.get("download", "logpath")
+logpath = r"%s" %(logpath)
 hdownloadpath = config.get("download", "hvideopath")
-
 download_headers = user.user['header']
 
 #下载单个视频
@@ -92,11 +93,11 @@ def download_videos(url, start, stop):
         '''
         # print(url + os.sep + str(video) + '.html')
         download_video_you_get(url + str(video))
-        time.sleep(1)#下载间隔1秒
+        time.sleep(30)#下载间隔半分
 
 def start():
     global downloadpath
-    result = g.buttonbox(msg='群号：643442437', title='逍遥红尘', choices=['单个视频下载', '合集视频下载','自定义下载合集地址', '存储目录','终止下载进程','重新下载'])
+    result = g.buttonbox(msg='选择视频下载方式', title='视频下载', choices=['单个视频下载', '合集视频下载','自定义下载合集地址', '存储目录','终止下载进程','重新下载'])
     if result == '单个视频下载':
         # 单个视频下载
         msg = '请在下方输入需要下载视频的网页网址\n现在存储路径: %s \n默认存储路径: D:\\' % (downloadpath)
@@ -131,7 +132,7 @@ def start():
         ids = g.multenterbox(msg='输入下载链接，起始和结束的页面数字', title='自定义下载', fields=['下载链接','起始页面', '结束页面'], values=['链接包含最后的英文','起始数字','结束数字'])
         download_videos(ids[0], int(ids[1]), int(ids[2]))
     elif result == '存储目录':
-        downloadpath = g.diropenbox(msg='选择存储目录', title='逍遥红尘')
+        downloadpath = g.diropenbox(msg='选择存储目录', title='存储目录')
         if downloadpath != None:#有输入才更新
             config.set("download", "videopath", downloadpath)
             config.write(open("Config.ini", "w"))  # 保存到Config.ini
@@ -144,7 +145,7 @@ def start():
         close = ('taskkill /f /t /im ffmpeg.exe & taskkill /f /t /im you-get.exe')
         os.system(close)
         time.sleep(3)
-        with open(r'E:\log\download.txt', 'r') as file:
+        with open(logpath, 'r') as file:
             #最后一行
             line = file.readlines()[-1]
             #下载路径

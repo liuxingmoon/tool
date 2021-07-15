@@ -16,6 +16,8 @@ wps_url_report = r"http://10.0.28.95/view/p/35113"
 search_xpath = r"/html/body/div[2]/div[2]/div/div[2]/label/input"
 factory_name_xpath = r"/html/body/div[2]/div[2]/div/div[3]/div[2]/table/tbody/tr/td[1]"
 devicename_xpath = r"/html/body/div[2]/div[2]/div/div[3]/div[2]/table/tbody/tr/td[2]"
+room_xpath = r"/html/body/div[2]/div[2]/div/div[3]/div[2]/table/tbody/tr/td[6]"
+rack_xpath = r"/html/body/div[2]/div[2]/div/div[3]/div[2]/table/tbody/tr/td[7]"
 environment_xpath = r"/html/body/div[2]/div[2]/div/div[3]/div[2]/table/tbody/tr/td[11]"
 fix_start_time_xpath = r"/html/body/div[2]/div[2]/div/div[3]/div[2]/table/tbody/tr/td[30]"
 fix_end_time_xpath = r"/html/body/div[2]/div[2]/div/div[3]/div[2]/table/tbody/tr/td[31]"
@@ -49,6 +51,8 @@ def get_info_cmdb(nc_sn):
     time.sleep(3)
     factory_name = driver.find_element_by_xpath(factory_name_xpath).text
     devicename = driver.find_element_by_xpath(devicename_xpath).text
+    room = driver.find_element_by_xpath(room_xpath).text
+    rack_cmdb = driver.find_element_by_xpath(rack_xpath).text.split('-')[-1]
     environment = driver.find_element_by_xpath(environment_xpath).text
     '''
     fix_start_time = driver.find_element_by_xpath(fix_start_time_xpath).text
@@ -63,17 +67,19 @@ def get_info_cmdb(nc_sn):
         fix_status = "不在保"
     else:
         fix_status = "在保"
-    return ([factory_name,devicename,environment,fix_status])
+    return ([factory_name,devicename,environment,fix_status,room,rack_cmdb])
     
 def start():
     subprocess.Popen('taskkill /f /t /im chrome.exe',shell=True)#关闭chrome的浏览器，不然会报错
     device_error_info = g.textbox(msg='输入故障设备信息',title='硬件故障统计')
-    #devicename = None
     
+    #devicename = None
     #factory_name = None
     rack_info = re.findall(".*\"- \".*",device_error_info)[0].split("\"")
-    room = rack_info[1] + "-" + rack_info[3]
-    rack_unit = rack_info[5] + "-" + rack_info[7]
+    rack_ali = rack_info[5]
+    rack_unit_ali = rack_info[5] + "-" + rack_info[7]
+    #room = rack_info[1] + "-" + rack_info[3]
+
     try:#getinfo 对接3个参数的磁盘信息
         cluster = re.findall("Local_cluster:.*",device_error_info)[0].split(": ")[1]
         hostname = re.findall("Local_hostname:.*",device_error_info)[0].split(": ")[1]
@@ -102,7 +108,11 @@ def start():
     #fix_status = "在保"
     #environment = "生产"
     info = get_info_cmdb(nc_sn)
-    factory_name,devicename,environment,fix_status = info
+    factory_name,devicename,environment,fix_status,room,rack_cmdb = info
+    if (rack_cmdb == rack_ali):
+        rack_unit = rack_unit_ali
+    else:
+        rack_unit = rack_cmdb
     data = [hostname,devicename,nc_sn,factory_name,room,rack_unit,error_dev,worker,
     time_found,time_report,time_fix,fix_status,environment,cluster,error_exp,remarks,error_dev_info]
     print(data)
@@ -110,8 +120,9 @@ def start():
     openfile(excelFile)
     open_wps_cloud(wps_url_dev_report)
     driver.execute_script('window.open("","_blank");') # 新开标签页
+    driver.switch_to.window(driver.window_handles[1]) # 转到第2个标签
     open_wps_cloud(wps_url_report)
-    driver.switch_to.window(driver.window_handles[0]) # 转到第一个
+    driver.switch_to.window(driver.window_handles[0]) # 转到第1个标签
     #subprocess.Popen('taskkill /f /t /im chromedriver.exe',shell=True)#关闭chromedriver的控制台
     #driver.quit()
     

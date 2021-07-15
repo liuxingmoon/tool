@@ -208,6 +208,7 @@ if __name__ == "__main__":
         
         clean_weekdir()#清空周报文件
         copy_file_to_weekdir(weekReportDir_tradition)#复制周报文件
+        time.sleep(1)#多线程复制文件，可能会导致目录切换报错，等待一秒
         copy_file_to_weekdir(weekReportDir_cloud)#复制周报文件
         time.sleep(1)
         os.chdir(weekReportDir)
