@@ -197,7 +197,7 @@ def screenShot():#截屏后剪切
     w = FreeCapture(root, 'temp.png')
     # 将主窗口放在最前方，方便截图
     para_hld = win32gui.FindWindow(None, "截屏识图")
-    win32api.keybd_event(13, 0, 0, 0) #防止出bug
+    win32api.keybd_event(13, 0, 0, 0) #回车防止出bug
     win32gui.SetForegroundWindow(para_hld)
 
 def screen():#只截屏不剪切

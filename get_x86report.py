@@ -1,7 +1,7 @@
 #!python3
 # --*-- coding: utf-8 --*--
 
-import os
+import os,re
 import glob
 from openpyxl import load_workbook
 import xlrd
@@ -13,19 +13,27 @@ import remind_write_weekreport as remind
 import easygui as g
 import svnconfig,svn_ctrl
 from remind_write_weekreport import x86_members
-import time
+import time,configparser
 from clip_ctrl import clip
+from file_ctrl import replace
 
-weekReportDir = r"D:\Users\user\Desktop\weekReport"
-weekReportDir_tradition = r"D:\Users\user\Desktop\Public\01.AB组周报\传统架构组\2021年"
-weekReportDir_cloud = r"D:\Users\user\Desktop\Public\01.AB组周报\云平台组周报"
-totalFile = r"D:\Users\user\Desktop\x86_weekreport.txt"
-weekReport_myself = r"D:\Users\user\Desktop\周报\\"
-
-
+configpath = r"Config.ini"
+config = configparser.ConfigParser()
+config.read(configpath, encoding="utf-8")
+weekReportDir = r"%s" %(config.get("work", "weekReportDir"))
+weekReportDir_tradition = r"%s" %(config.get("work", "weekReportDir_tradition"))
+weekReportDir_cloud = r"%s" %(config.get("work", "weekReportDir_cloud"))
+totalFile = r"%s" %(config.get("work", "totalFile"))
+weekReport_myself = r"%s" %(config.get("work", "weekReport_myself"))
+today_date = datetime.datetime.today().strftime("%Y-%m-%d")#今天日期
+reportFile = r"x86组周报_%s.txt"%(today_date)
 dist_tradition = svnconfig.setting['dist_tradition']
 dist_cloud = svnconfig.setting['dist_cloud']
 
+work_items = {
+    "生产值守":"","应急处置":"","故障处理":"","工单处理":"","变更实施":"","容灾准备":"","高可用建设":"","灾备演练":"","咨询答疑":"","巡检平台":"","监控告警":"","配置库":"","蓝鲸平台":"","璇玑系统":"","系统改造":"","DNS改造":"","NAS迁移":"","能力建设":"","流程规范":"","文档编写":"","其他":""
+}
+    
 def turnStr(L):
     """ 把列表里所有元素转换为字符串型 """
     tmpL = list(map(lambda x: str(x), L))
@@ -162,6 +170,26 @@ def copy_file_to_weekdir(filedir):
     for filename in file_list:
         thread_copyfile =threading.Thread(target=copy_file,args=(filename,filedir + os.sep + last_dir,weekReportDir))#从当前目录拷贝文件到汇总目录
         thread_copyfile.start()
+
+def get_item(list,member):
+    #获取子项的标签，通过递归获取前一行的信息标签来获取
+    try:
+        #item = re.findall(r"\[.*\]",list[list.index(member) - 1])[0]
+        item = re.split("[\[\]]",re.findall(r"\[.*\]",list[list.index(member) - 1])[0])[1]
+        #item = item.strip('[]')
+        if item in work_items:
+            flag_get_item = True
+        else:
+            flag_get_item = False
+            print("%s 不在选项标签中，请检查"%s(item))
+    except IndexError as reason:
+        flag_get_item = False
+        pass
+    if flag_get_item:
+        print(item,member)
+        return (item)
+    else:
+        get_item(list,list[list.index(member) - 1])
     
 if __name__ == "__main__":
     # TODO: 检查周报是否交齐,
@@ -249,6 +277,80 @@ if __name__ == "__main__":
                             fw.write("{}\n".format(line.strip()))
                 fw.write("\n")
         print("汇总结束，总共周报文件数量：%s ;\n已汇总周报文件数量： %s" %(files_count,files_deal))
-        os.system("start %s" %(totalFile))
+        
+        with open(totalFile, "r") as f:#按照标签重新排序
+            son_items = []#存储子项
+            file = f.readlines()
+            for work_item in work_items:
+                work_item_flag = False
+                task_num = 1
+                for line in file:
+                    if work_item in line:
+                        if work_item_flag == False:#每个item首行打印
+                            if work_items[work_item] == "":
+                                work_items[work_item] += "[%s]"%work_item+"\n"
+                            work_item_flag = True
+                        line_re = re.sub(r"\d+、",str(task_num)+"、",line,1)#从左往右替换一次数字
+                        line_re = re.sub(r"\[.*\]","",line_re,1)#从左往右替换一次item
+                        if line_re == '\n':
+                            line_re = line_re.strip()#去除空行
+                            continue#跳过本行操作
+                        if re.findall(r"\d+、",line) == []:#原本就没写数字信息，直接加
+                            line_re = str(task_num)+"、" + line_re
+                        task_num += 1
+                        work_items[work_item] += line_re
+                        #work_items[work_item] += (line + "\n")
+                    elif work_item not in line:
+                        try:
+                            index_flag = line.index('  ')
+                        except ValueError as reason:
+                            #print(line)
+                            #file.remove(line)#删除该行
+                            continue#如果不是空格两格，直接跳过
+                        if index_flag == 0 and line != '\n':#无标签且前2格为空格，认为是子行，直接加
+                            try:
+                                son_items.append(line)
+                            except AttributeError as reason:
+                                print(reason)
+                                continue
+                            '''#尝试取前一个item，然后添加到对应item下，这样不行，因为读取顺序不对
+                            work_item_temp = get_item(file,line)
+                            try:
+                                if work_items[work_item_temp] == "":
+                                    work_items[work_item_temp] += "[%s]"%work_item_temp+"\n"
+                                work_items[work_item_temp] += line
+                            except KeyError:
+                                continue
+                            '''
+                            file.remove(line)#删除该行
+                        else:
+                            pass
+        with open(reportFile, "w") as fw:#重新写入文档
+            fw.write("农信x86组周报\n")
+            for work_type, work_contents in work_items.items():
+                if work_contents:
+                    try:
+                        re.findall(r"\[.*\]",work_contents)[0]
+                    except IndexError as reason:
+                        pass#子项
+                    #work_contents = re.sub(r"\[.*\]","",work_contents)
+                    fw.write(work_contents)
+                fw.write("\n")
+        #替换子项
+        for son_item in son_items:
+            with open(totalFile, "r") as f:#按照标签重新排序
+                file = f.readlines()
+                #son_item += '\n'
+                try:
+                    son_item_index = file.index(son_item)#获取子项的index
+                except ValueError as reason:
+                    print(reason)
+                    pass
+            item_last_line = file[son_item_index - 1] #获取上一行的内容
+            item_last_line = re.sub(r"\[.*\]","",re.sub(r"\d+、","",item_last_line,1),1)#将上一行的内容处理为只要后面的内容,从左往右替换一次数字,从左往右替换一次item
+            target_line = item_last_line + son_item#将2行合并作为一行，准备替换
+            print(r"替换内容%s"%(target_line))
+            replace(item_last_line,target_line,reportFile)
+        os.system("start %s" %(reportFile))
         os.chdir(weekReportDir)
         

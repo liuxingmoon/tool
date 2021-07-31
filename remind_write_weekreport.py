@@ -1,17 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#**************************************************************************#
-# File Name   : remind_write_weekreport.py
-# Author      : rendq
-# Funtion     :
-# Usage       : python remind_write_weekreport.py arg1
-# Description :
-#
-# History     :
-#   rendq   2021/04/09  0.0.1  create new file
-#
-#**************************************************************************#
-
 from urllib.parse import quote
 import requests
 from requests.auth import HTTPDigestAuth
@@ -20,13 +6,25 @@ import string
 import os, sys
 import datetime
 from clip_ctrl import clip
+import configparser
 
 
 check_weekday = 3#检查日期为周四（从0开始）
+configpath = r"Config.ini"
+config = configparser.ConfigParser()
+config.read(configpath, encoding="utf-8")
+x86_members = config.get("work", "x86_members").split()
+x86_rest = config.get("work", "x86_rest").split()
+svn_user = config.get("work", "svn_user")
+svn_pwd = config.get("work", "svn_pwd")
+x86_members = [x for x in x86_members if x not in x86_rest]#排除掉休息的人
+print(x86_members)
+'''
 x86_members = [
     '任德强', '刁强', '代云平', '张兴建', '王毅', '徐松', '周通', '刘兴','余超'
     ]
-    
+'''
+
 def get_weekreports():
     today_date = datetime.date.today()
     today_weekday = datetime.datetime.now().weekday()#查看今天星期几
@@ -39,7 +37,7 @@ def get_weekreports():
     ]
     weekreports = []
     for svn_url in svn_urls:
-        f = requests.get(quote(svn_url + f"/{check_date}",safe=string.printable), auth=("17416", "123456"))
+        f = requests.get(quote(svn_url + f"/{check_date}",safe=string.printable), auth=(svn_user, svn_pwd))
         svn_lines = f.text.split("\n")
 
         for line in svn_lines:

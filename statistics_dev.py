@@ -6,6 +6,8 @@ import time,re,os,datetime
 import subprocess
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+import win32gui
+from win32.lib import win32con
 
 configpath = "Config.ini"
 excelFile = config_read(configpath,'work','硬件故障记录')
@@ -33,6 +35,14 @@ excelFile = r"%s" %(excelFile)
 def openfile(excelFile):
     subprocess.Popen(excelFile,shell=True)
     
+def close_windows(close_name):
+    close_window = win32gui.FindWindow(None, close_name)
+    try:
+        win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
+    except:
+        print ("配额不足，无法处理，跳过！")
+        pass
+    
 def open_wps_cloud(url):
     driver.get(url)
 
@@ -52,7 +62,10 @@ def get_info_cmdb(nc_sn):
     factory_name = driver.find_element_by_xpath(factory_name_xpath).text
     devicename = driver.find_element_by_xpath(devicename_xpath).text
     room = driver.find_element_by_xpath(room_xpath).text
+    
     rack_cmdb = driver.find_element_by_xpath(rack_xpath).text.split('-')[-1]
+    if rack_cmdb.isdigit():#只由数字，加上倒数第二个字符
+        rack_cmdb = driver.find_element_by_xpath(rack_xpath).text.split('-')[-2] + rack_cmdb
     environment = driver.find_element_by_xpath(environment_xpath).text
     '''
     fix_start_time = driver.find_element_by_xpath(fix_start_time_xpath).text
@@ -60,13 +73,16 @@ def get_info_cmdb(nc_sn):
     fix_year = int(driver.find_element_by_xpath(fix_year_path).text)
     srv_days = datetime.timedelta(days=fix_year*365)#维保服务时间天数
     '''
-    fix_end_time = driver.find_element_by_xpath(fix_end_time_xpath).text
-    fix_end_time = datetime.datetime.strptime(str(fix_end_time),'%Y-%m-%d') #转换时间为datetime
     now_time = datetime.datetime.now()#当前时间
-    if now_time > fix_end_time:#当前时间已经超过了截止时间，不在保
-        fix_status = "不在保"
+    fix_end_time = driver.find_element_by_xpath(fix_end_time_xpath).text
+    if fix_end_time == "":
+        fix_status = "无截止时间"
     else:
-        fix_status = "在保"
+        fix_end_time = datetime.datetime.strptime(str(fix_end_time),'%Y-%m-%d') #转换时间为datetime
+        if now_time > fix_end_time:#当前时间已经超过了截止时间，不在保
+            fix_status = "不在保"
+        else:
+            fix_status = "在保"
     return ([factory_name,devicename,environment,fix_status,room,rack_cmdb])
     
 def start():
@@ -84,10 +100,10 @@ def start():
         cluster = re.findall("Local_cluster:.*",device_error_info)[0].split(": ")[1]
         hostname = re.findall("Local_hostname:.*",device_error_info)[0].split(": ")[1]
         nc_sn = re.findall("Serial Number:.*",device_error_info)[0].split(": ")[1]
-        disk_dev = re.findall("\.*disk.?/sd.*",device_error_info)[0].strip("\/")
-        error_dev = "硬盘：" + re.findall("\.*disk.?/sd.*",device_error_info)[0].strip("\/")
+        disk_dev = re.findall(".*disk.*/sd.*",device_error_info)[0].strip("\/")
+        error_dev = "硬盘：" + re.findall(".*disk.*/sd.*",device_error_info)[0].strip("\/")
         error_exp = "硬盘故障"
-        remarks = "TAC巡检-硬盘故障,更换硬盘"
+        remarks = "TAC/铜雀巡检-硬盘故障,更换硬盘"
         disk_model = re.findall("Device Model:.*",device_error_info)[0].split(":     ")[1]
         disk_sn = re.findall("Serial Number:.*",device_error_info)[1].split(":    ")[1]
         disk_info = disk_model + "\n" + disk_sn
@@ -109,6 +125,7 @@ def start():
     #environment = "生产"
     info = get_info_cmdb(nc_sn)
     factory_name,devicename,environment,fix_status,room,rack_cmdb = info
+    print(rack_cmdb,rack_ali)
     if (rack_cmdb == rack_ali):
         rack_unit = rack_unit_ali
     else:
@@ -116,7 +133,12 @@ def start():
     data = [hostname,devicename,nc_sn,factory_name,room,rack_unit,error_dev,worker,
     time_found,time_report,time_fix,fix_status,environment,cluster,error_exp,remarks,error_dev_info]
     print(data)
-    writeXlsx(excelFile,data)
+    try:
+        writeXlsx(excelFile,data)
+    except PermissionError as reason:
+        close_windows(r"硬件故障记录.xlsx - WPS 表格")
+        time.sleep(2)
+        writeXlsx(excelFile,data)
     openfile(excelFile)
     open_wps_cloud(wps_url_dev_report)
     driver.execute_script('window.open("","_blank");') # 新开标签页

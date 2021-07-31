@@ -34,6 +34,7 @@ def start():
                 # 有All代表启动所有的
                 os.chdir(r'D:\Program Files\DundiEmu\DundiData\avd')
                 emulist = os.listdir()
+                emulist = [x for x in emulist if '.rar' not in x]
                 emulist.remove('vboxData')
                 # 选出模拟器的启动id
                 emunum = []
@@ -56,6 +57,7 @@ def start():
                 for emu in emulist:
                     emunum.append(int(emu.replace('dundi', '')))
                 skipids = config.get("coc", "skipids").split()
+                levelupids = config.get("coc", "levelupids").split()
                 resourceids_work01 = config.get("coc", "resourceids_work01").split()  # 获取持续打资源id的list
                 resourceids_work02 = config.get("coc", "resourceids_work02").split()  # 获取持续打资源id的list
                 resourceids_work03 = config.get("coc", "resourceids_work03").split()  # 获取持续打资源id的list
@@ -63,6 +65,7 @@ def start():
                 donateids_for_paid = config.get("coc", "donateids_for_paid").split()
                 resourceids = [x for x in resourceids_work02 if x not in donateids_for_paid]  # 在持续打资源的list去除付费捐兵的list
                 donateids = config.get("coc", "donateids").split()
+                skipids.extend(levelupids)  # 添加升级的id到跳过id列表中
                 skipids.extend(warids)  # 添加部落战控制的id到跳过id列表中
                 skipids.extend(donateids_for_paid)  # 添加部落战控制的id到跳过id列表中
                 skipids.extend(donateids)  # 添加捐兵控制的id到跳过id列表中

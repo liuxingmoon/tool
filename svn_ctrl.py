@@ -9,7 +9,7 @@ import time
 import os
 import svnconfig
 import easygui as g
-
+import win32api
 
 
 closeOption = svnconfig.setting['closeOption']
@@ -19,6 +19,8 @@ def update(dist):
     result = os.system(cmd)
     if result == 0:
         print('svn update success')
+        time.sleep(1)
+        win32api.keybd_event(13, 0, 0, 0) #回车
     else:
         g.msgbox(title='SVN更新',msg="svn update fail")
         
@@ -27,6 +29,8 @@ def add(dist):
     result = os.system(cmd)
     if result == 0:
         print('svn add success')
+        time.sleep(1)
+        win32api.keybd_event(13, 0, 0, 0) #回车
     else:
         g.msgbox(title='SVN提交',msg="svn add fail")
 
@@ -35,5 +39,7 @@ def commit(dist):
     result = os.system(cmd)
     if result == 0:
         print('svn commit success')
+        time.sleep(1)
+        win32api.keybd_event(13, 0, 0, 0) #回车
     else:
         g.msgbox(title='SVN提交',msg="svn commit fail")

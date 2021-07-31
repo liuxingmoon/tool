@@ -207,7 +207,7 @@ def play(wait_time,skipids):
     time.sleep(3)
     coc_script(startport,10)
     click(pos['sure'][0], pos['sure'][1],startport)
-    time.sleep(5)
+    time.sleep(20)
     click(pos['start_script'][0],pos['start_script'][1],startport)
     print('============================= 启动打资源脚本完成 =============================')
     time.sleep(20)
@@ -250,7 +250,7 @@ def play_donate_for_paid(donateids):
     coc_script(startport,10)
     time.sleep(5)
     click(pos['sure'][0], pos['sure'][1],startport)
-    time.sleep(5)
+    time.sleep(20)
     click(pos['start_script'][0],pos['start_script'][1],startport)
     time.sleep(20)
     #login_click(donateid_now)
@@ -292,9 +292,9 @@ def play_donate(donateids):
     coc_script(startport,10)
     time.sleep(5)
     click(pos['sure'][0], pos['sure'][1],startport)
-    time.sleep(5)
-    click(pos['start_script'][0],pos['start_script'][1],startport)
     time.sleep(20)
+    click(pos['start_script'][0],pos['start_script'][1],startport)
+    #time.sleep(20)
     #login_click(donateid_now)
     print(r'============================= 启动自用捐兵脚本完成 ===============================')
     #打印分割线
@@ -341,9 +341,9 @@ def play_resource(resourceids):
         coc_script(startport,10)
         time.sleep(10)
         click(pos['sure'][0], pos['sure'][1],startport)
-        time.sleep(15)
-        click(pos['start_script'][0],pos['start_script'][1],startport,5)
         time.sleep(20)
+        click(pos['start_script'][0],pos['start_script'][1],startport,5)
+        #time.sleep(20)
         #login_click(resourceid_now)
         print(r'============================= 启动持续打资源脚本完成 ===============================')
     else:
@@ -430,17 +430,17 @@ def start_emu(start_id,wait_time):
     startport = getport(start_id)
     action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(start_id))
     start(action,startport,wait_time)
-    print(r'============================= 启动付费捐兵号模拟器完成 ===============================')
+    print(r'============================= 启动实例（%d）模拟器完成 ==============================='%(int(start_id)))
     timewait(1)
     print(startport)
     coc_script(startport,5)
     time.sleep(10)
     click(pos['sure'][0], pos['sure'][1],startport)
-    time.sleep(10)
-    click(pos['start_script'][0],pos['start_script'][1],startport,5)
     time.sleep(20)
+    click(pos['start_script'][0],pos['start_script'][1],startport,5)
+    #time.sleep(20)
     #login_click(start_id)
-    print(r'============================= 启动付费捐兵号脚本完成 ===============================')
+    print(r'============================= 启动实例（%d）脚本完成 ==============================='%(int(start_id)))
    
         
 #依次重启模拟器（列表中所有）
@@ -877,15 +877,25 @@ if __name__ == "__main__":
         #close_emu_all(resource_names)
         #启动持续打资源号
         if play_resource_switch in ['True','1','T']:
-            for n in range(resourceids_num):
-                play_resource(resourceids)
+            if resourceids_num != 0:
+                for n in range(resourceids_num):
+                    try:
+                        play_resource(resourceids)
+                    except IndexError as reason:
+                        print(reason)
+                        continue
             restart_server()
         #启动捐兵号
         if donate_switch in ['True','1','T']:
             #关闭自用捐兵号
             #close_emu_all(donatenames)
-            for n in range(donate_num):
-                play_donate(donateids)
+            if donate_num != 0:
+                for n in range(donate_num):
+                    try:
+                        play_donate(donateids)
+                    except IndexError as reason:
+                        print(reason)
+                        continue
             restart_server()
         if play_switch in ['True','1','T']:
             #启动打资源号

@@ -1,4 +1,3 @@
-# -*-coding:utf-8-*-
 import ssl
 import urllib.request
 import easygui as g
@@ -49,12 +48,7 @@ def query(tbname):
         table_new.append(column_new)
     table_new.append('总本金：%.2f' %(money))
     '''
-    index_last = -1
-    values = table[index_last].split(',')
-    print (values)
-    #stock_info如果最后一行是空行，直接往上读取一行
-    while values == ['\r\n']:
-        values = table[index_last - 1].split(',')
+    values = table[-1].split(',')
     principal = float(values[2])#本金
     market_value = float(values[3])
     profit_amount = float(values[4])
@@ -80,17 +74,13 @@ def update(tbname):
         info = get_info()
         money = info[0]
         market_value = info[1]
-        index_last = -1
-        values = table[index_last].split(',')
-        print (values)
-        #stock_info如果最后一行是空行，直接往上读取一行
-        while values == ['\r\n']:
-            values = table[index_last - 1].split(',')
         #如果输入没有输入市值，只输入了汇款金额，市值复制上一条数据
         if (money != '') and (market_value == ''):
+            values = table[-1].split(',')
             market_value = float(values[3])
         #如果输入没有输入汇款金额，只输入了市值，当前市值更新覆盖上一条市值
         elif (money == '') and (market_value != ''):
+            values = table[-1].split(',')
             now_time = get_time()
             money = 0.0#此次汇入金额为0
             #删掉最后一条数据
@@ -98,14 +88,11 @@ def update(tbname):
         #插入新数据
         principal = 0.0
         for column in table:
-            if column != '\r\n':#如果是空行，直接跳过
-                column_info = column.split(',')
-                try:
-                    principal += float(column_info[1])
-                except ValueError as reason:
-                    print('该字段数据：%s 不是正确格式' % (reason))
-            else:
-                pass
+            column_info = column.split(',')
+            try:
+                principal += float(column_info[1])
+            except ValueError as reason:
+                print('该字段数据：%s 不是正确格式' % (reason))
         principal += float(money) #加上本次汇入资金
         profit_amount = float(market_value) - principal
         #除数不能为0
@@ -143,3 +130,9 @@ def start():
         root.destroy()
 
 
+
+def x(m,t):
+    y = 0
+    for n in range(0,t+1):
+        y =1.15*y + m
+        print("第%d年,成本%.2f万，收益%.2f万，有%.2f万"%(n,m*(n+1),y-m*(n+1),y))
