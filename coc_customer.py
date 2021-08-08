@@ -6,11 +6,18 @@ import easygui as g
 import win32gui
 import win32con
 import win32clipboard as w
-import win32api
+import win32api,subprocess
 import time
 from pandas import read_excel 
 from rreplace import rreplace
+from xlsx_ctrl import *
 
+reportFile = r"部落冲突客户信息.xlsx"
+cocSheet = r"部落冲突"
+
+def openfile(excelFile):
+    subprocess.Popen(excelFile,shell=True)
+    
 def update_tb(tbname,values):
     table = select_tb(tbname)
     # 核对用户部落名
@@ -244,6 +251,7 @@ def query(tbname):
     table = select_tb(tbname)
     # 去除表头
     # table.pop(0)
+    deleteWS(reportFile,cocSheet)
     money_income_all = 0#统计总金额
     table_new = []
     for column in table:
@@ -254,8 +262,10 @@ def query(tbname):
             print('没有该数据：%s' %(reason))
         column_new = column.replace('\r\n', '\n')
         table_new.append(column_new)
-    table_new.append('总收入金额：%d' %(money_income_all))
-    g.msgbox(table_new)
+        writeXlsx(reportFile,column_new.split(","))
+    #table_new.append('总收入金额：%d' %(money_income_all))
+    openfile(reportFile)
+    g.msgbox('总收入金额：%d' %(money_income_all))
 
 #提交信息，保存到csv表中
 def submit(tbname):

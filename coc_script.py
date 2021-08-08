@@ -201,6 +201,7 @@ def play(wait_time,skipids):
     #关闭前一个模拟器
     close_emu_id(close_id)
     action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(startid)
+    #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(startid)
     #启动新id
     start(action,startport,wait_time)
     print('============================= 启动模拟器完成 =============================')
@@ -244,6 +245,7 @@ def play_donate_for_paid(donateids):
     config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
     startport = getport(int(donateid_now))
     action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(donateid_now))
+    #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(int(donateid_now))
     start(action,startport,40)
     print(r'============================= 启动付费捐兵模拟器完成 ===============================')
     time.sleep(3)
@@ -286,6 +288,7 @@ def play_donate(donateids):
     config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
     startport = getport(int(donateid_now))
     action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(donateid_now))
+    #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(int(donateid_now))
     start(action,startport,40)
     print(r'============================= 启动捐兵模拟器完成 ===============================')
     time.sleep(3)
@@ -335,6 +338,7 @@ def play_resource(resourceids):
             startport = 52550 + int(resourceid_now)
         startport = getport(int(resourceid_now))
         action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(resourceid_now))
+        #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(int(resourceid_now))
         start(action,startport,40)
         print(r'============================= 启动持续打资源模拟器完成 ===============================')
         time.sleep(3)
@@ -429,6 +433,7 @@ def close_emu_id(close_id):
 def start_emu(start_id,wait_time):
     startport = getport(start_id)
     action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(start_id))
+    #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(int(start_id))
     start(action,startport,wait_time)
     print(r'============================= 启动实例（%d）模拟器完成 ==============================='%(int(start_id)))
     timewait(1)
@@ -436,7 +441,10 @@ def start_emu(start_id,wait_time):
     coc_script(startport,5)
     time.sleep(10)
     click(pos['sure'][0], pos['sure'][1],startport)
-    time.sleep(20)
+    if int(start_id == 6):#星核多等45秒，总是卡住
+        time.sleep(60)
+    else:
+        time.sleep(15)
     click(pos['start_script'][0],pos['start_script'][1],startport,5)
     #time.sleep(20)
     #login_click(start_id)
@@ -665,8 +673,8 @@ if __name__ == "__main__":
                             playnames[playid] = playname
         play_ids = list(playnames.keys())
         print('============================= 当前的打资源号和名字如下: ===============================\n%s' %(playnames))
-    except:
-        print('============================= 当前的打资源号不全 ===============================')
+    except FileNotFoundError as reason:
+        print('============================= 当前的打资源号不全:%s ===============================' %(reason))
     #白天和夜晚运行的实例数量和时间
     instance_num_day = int(config.get("coc", "instance_num_day"))
     instance_time_day = float(config.get("coc", "instance_time_day"))
@@ -824,8 +832,8 @@ if __name__ == "__main__":
                 #timewait(30)#等待30分钟避免启动时没有授权登录
             if donate_for_paid_switch in ['True','1','T']:
                 for convert_id in donateids_for_paid:
-                    action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (
-                        int(convert_id))
+                    action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(convert_id))
+                    #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (int(convert_id))
                     coc_template.start_convert(action, convert_id, 80)#启动
                     startport = getport(convert_id)
                     coc_template.start_script(startport,'donate')#切换
@@ -846,8 +854,8 @@ if __name__ == "__main__":
                 try:
                     if datetime.datetime.now().weekday() in [0,1,2,3,4,5,6]:#所有时间捐兵，如果要打资源取消时间即可，0是周一，6是周日
                         for convert_id in donateids:
-                            action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (
-                                int(convert_id))
+                            action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(convert_id))
+                            #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (int(convert_id))
                             coc_template.start_convert(action, convert_id, 80)#启动
                             startport = getport(convert_id)
                             coc_template.start_script(startport,'donate')#切换
@@ -899,7 +907,7 @@ if __name__ == "__main__":
             restart_server()
         if play_switch in ['True','1','T']:
             #启动打资源号
-            restartplay(60)
+            restartplay(90)
         #确认星陨，点击登录，星陨总是掉线
         #login_click(1)
         #运行该coc实例时间

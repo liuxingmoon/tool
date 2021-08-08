@@ -69,13 +69,13 @@ def update(src,dest):
             file_ctrl.copy_file(filename,src['dir_src'],dest['dir_dest'])
     os.chdir(dest['dir_dest'])#切换到目标目录
     #替换
-    #file_ctrl.replace(src['Coclog_src'],dest['Coclog_dest'],'coc_script.py')
-    #file_ctrl.replace(src['configpath_src'],dest['configpath_dest'],'coc_script.py')
-    #file_ctrl.replace(src['ddpath_src'],dest['ddpath_dest'],'coc_script.py')
-    file_ctrl.replace(src['resourceids'],dest['resourceids'],'coc_script.py')
-    file_ctrl.replace(src['resourceids'],dest['resourceids'],'coc.py')
-    #file_ctrl.replace(src['configpath_src'],dest['configpath_dest'],'coc_template.py')
-    #file_ctrl.replace(src['configpath_src'],dest['configpath_dest'],'ocr.py')
+    #file_ctrl.replace_utf8(src['Coclog_src'],dest['Coclog_dest'],'coc_script.py')
+    #file_ctrl.replace_utf8(src['configpath_src'],dest['configpath_dest'],'coc_script.py')
+    #file_ctrl.replace_utf8(src['ddpath_src'],dest['ddpath_dest'],'coc_script.py')
+    file_ctrl.replace_utf8(src['resourceids'],dest['resourceids'],'coc_script.py')
+    file_ctrl.replace_utf8(src['resourceids'],dest['resourceids'],'coc.py')
+    #file_ctrl.replace_utf8(src['configpath_src'],dest['configpath_dest'],'coc_template.py')
+    #file_ctrl.replace_utf8(src['configpath_src'],dest['configpath_dest'],'ocr.py')
     #更新coc_customer.csv stock_info.csv到各个机器
     file_ctrl.copy_file('coc_customer.csv',src['dir_src'],dest['dir_dest'])
     file_ctrl.copy_file('stock_info.csv',src['dir_src'],dest['dir_dest'])
@@ -102,15 +102,15 @@ def start():
             file_ctrl.copy_file(filename,dir_src,dir_dest)
             #file_ctrl.copy_file(filename,dir_src,dest_old_dir)
     #替换
-    file_ctrl.replace(src['Coclog_src'],Coclog_dest,'coc_script.py')
-    file_ctrl.replace(src['configpath_src'],configpath_dest,'coc_script.py')
-    file_ctrl.replace(src['ddpath_src'],ddpath_dest,'coc_script.py')
-    file_ctrl.replace(src['configpath_src'],configpath_dest,'coc_template.py')
+    file_ctrl.replace_utf8(src['Coclog_src'],Coclog_dest,'coc_script.py')
+    file_ctrl.replace_utf8(src['configpath_src'],configpath_dest,'coc_script.py')
+    file_ctrl.replace_utf8(src['ddpath_src'],ddpath_dest,'coc_script.py')
+    file_ctrl.replace_utf8(src['configpath_src'],configpath_dest,'coc_template.py')
     os.chdir(dir_src)#返回原始目录
 
-    file_ctrl.replace(Coclog_src,Coclog_old_dest,'coc_script.py')
-    file_ctrl.replace(configpath_src,configpath_old_dest,'coc_script.py')
-    file_ctrl.replace(ddpath_src,ddpath_old_dest,'coc_script.py')
-    file_ctrl.replace(configpath_src,configpath_old_dest,'coc_template.py')
+    file_ctrl.replace_utf8(Coclog_src,Coclog_old_dest,'coc_script.py')
+    file_ctrl.replace_utf8(configpath_src,configpath_old_dest,'coc_script.py')
+    file_ctrl.replace_utf8(ddpath_src,ddpath_old_dest,'coc_script.py')
+    file_ctrl.replace_utf8(configpath_src,configpath_old_dest,'coc_template.py')
     os.chdir(dir_src)#返回原始目录
     '''

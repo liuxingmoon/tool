@@ -88,7 +88,7 @@ def get_info_cmdb(nc_sn):
 def start():
     subprocess.Popen('taskkill /f /t /im chrome.exe',shell=True)#关闭chrome的浏览器，不然会报错
     device_error_info = g.textbox(msg='输入故障设备信息',title='硬件故障统计')
-    
+    #print(device_error_info)
     #devicename = None
     #factory_name = None
     rack_info = re.findall(".*\"- \".*",device_error_info)[0].split("\"")
@@ -110,13 +110,19 @@ def start():
         error_dev_info = disk_info
     except IndexError as reason:
         print ("无磁盘信息，损坏的设备不是磁盘")
+        if "Memory" in device_error_info:#内存故障
+            error_dev = "内存"
+            error_exp = "内存故障"
+            remarks = "封神榜巡检-内存故障,更换内存"
+        else:
+            error_dev = None
+            error_exp = None
+            remarks = None
+        error_dev_info = None
         hostname = re.findall(".*服务器hostname.*\n.*",device_error_info)[0].split("\"")[1]
         nc_sn = re.findall(".*服务器SN.*\n.*",device_error_info)[0].split("\"")[1]
         cluster = re.findall(".*服务器集群.*\n.*",device_error_info)[0].split("\"")[1]
-        error_dev = None
-        error_exp = None
-        remarks = None
-        error_dev_info = None
+
     worker = commit_person
     time_found = time.strftime("%Y/%m/%d", time.localtime())
     time_report = time.strftime("%Y/%m/%d", time.localtime())

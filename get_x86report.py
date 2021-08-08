@@ -324,7 +324,8 @@ if __name__ == "__main__":
                             '''
                             file.remove(line)#删除该行
                         else:
-                            pass
+                            print(line)
+                            work_items['其他'] += line
         with open(reportFile, "w") as fw:#重新写入文档
             fw.write("农信x86组周报\n")
             for work_type, work_contents in work_items.items():
@@ -349,8 +350,11 @@ if __name__ == "__main__":
             item_last_line = file[son_item_index - 1] #获取上一行的内容
             item_last_line = re.sub(r"\[.*\]","",re.sub(r"\d+、","",item_last_line,1),1)#将上一行的内容处理为只要后面的内容,从左往右替换一次数字,从左往右替换一次item
             target_line = item_last_line + son_item#将2行合并作为一行，准备替换
-            print(r"替换内容%s"%(target_line))
-            replace(item_last_line,target_line,reportFile)
-        os.system("start %s" %(reportFile))
+            if item_last_line != None and item_last_line != '\n':
+                print(r"原始内容%s\n替换内容%s"%(item_last_line,target_line))
+                replace(item_last_line,target_line,reportFile)
+            else:
+                pass
+        os.system("explorer.exe %s" %(reportFile))
         os.chdir(weekReportDir)
         

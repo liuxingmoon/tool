@@ -856,6 +856,7 @@ def register(name,startid):
 #升级资源
 def resource_up(resourceid):
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' % (resourceid)
+    #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (resourceid)
     start_emu_id(action, resourceid,1)#最小化
     startport = getport(resourceid)
     connect(startport)
@@ -896,6 +897,7 @@ def wardonate(startlist):
     for nowid in startlist:
         nowid = int(nowid)
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (nowid)
+        #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (nowid)
         start_emu_id(action, nowid,1)#最小化
         startport = getport(nowid)
         connect(startport)
@@ -946,6 +948,7 @@ def wardonate(startlist):
 def start_coc(startidlist):
     for nowid in startidlist:
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(nowid))
+        #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (int(nowid))
         start_emu_id(action, int(nowid),0)
         startport = getport(int(nowid))
         connect(startport)
@@ -962,6 +965,7 @@ def update_coc(startidlist):
     config.read(configpath, encoding="utf-8")
     for nowid in startidlist:
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(nowid))
+        #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (int(nowid))
         start_emu_id(action, int(nowid),0)
         startport = getport(int(nowid))
         connect(startport)
@@ -982,6 +986,7 @@ def update_hss(startidlist):
     config.read(configpath, encoding="utf-8")
     for nowid in startidlist:
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(nowid))
+        #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (int(nowid))
         start_emu_id(action, int(nowid),0)
         startport = getport(int(nowid))
         connect(startport)
@@ -998,6 +1003,7 @@ def update_hss(startidlist):
 #3本新建
 def levelup_3(nowid):
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' % (nowid)
+    #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (nowid)
     start_emu_id(action, nowid,1)#最小化
     startport = getport(nowid)
     connect(startport)
@@ -1258,6 +1264,7 @@ def convert_mode(convert_id,*args):
             status = "play"
             #启动模拟器
             action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (convert_id)
+            #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (convert_id)
             start_convert(action, convert_id, 40)
             # 重新登录qq
             click(pos['relogin'][0], pos['relogin'][1], startport,3)
@@ -1268,6 +1275,7 @@ def convert_mode(convert_id,*args):
             status = "donate"
             #启动模拟器
             action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (convert_id)
+            #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (convert_id)
             start_convert(action, convert_id, 60)
             # 重新登录qq
             #click(pos['relogin'][0], pos['relogin'][1], startport,3)

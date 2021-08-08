@@ -236,6 +236,7 @@ def connect(startport):
             close_emu_id(close_id)#关闭
             restart_server()
             action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' %(close_id)
+            #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(close_id)
             start_emu_id(action,close_id)#启动     
             connect(startport)#递归获取一下启动port
             
@@ -333,7 +334,11 @@ def close_emu_id(close_id):
         close_emu_err()
         close_window = win32gui.FindWindow(None, close_name)
         win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)# 关闭一个捐兵号
-        print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
+    '''
+    action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --stop' %(close_id)
+    subprocess.Popen(action,shell=True)
+    '''
+    print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
         
 
     
@@ -438,6 +443,7 @@ def start(startid):
     #startid = g.buttonbox(msg='选择启动的模拟器',title='coc',choices=['QQ1','QQ2','QQ3','QQ4','QQ5','星陨6','码奴7','码奴8','码奴9'])
     print(startid)
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' %(startid)
+    #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(startid)
     start_emu_id(action,startid)#开模拟器
     print('启动模拟器完成')
     startport = getport(startid)
