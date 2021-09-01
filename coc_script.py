@@ -16,6 +16,7 @@ import coc_start
 from multiprocessing import Process
 import file_ctrl as fc
 from config_ctrl import *
+from readfile import *
 #元素坐标
 pos = {
   'coc_script':[500,680],
@@ -665,12 +666,16 @@ if __name__ == "__main__":
         for playid in range(maxid + 1):
             if str(playid) not in notplaylist:
                 playconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' %(playid)
+                '''
                 with open(playconfig,'r') as playfile:
+                    print(playid)
                     configlines = playfile.readlines()
-                    for configline in configlines:
-                        if 'EmulatorTitleName' in configline:
-                            playname = configline.split('=')[-1].rstrip('\n')
-                            playnames[playid] = playname
+                '''
+                configlines = readFile(playconfig)
+                for configline in configlines:
+                    if 'EmulatorTitleName' in configline:
+                        playname = configline.split('=')[-1].rstrip('\n')
+                        playnames[playid] = playname
         play_ids = list(playnames.keys())
         print('============================= 当前的打资源号和名字如下: ===============================\n%s' %(playnames))
     except FileNotFoundError as reason:

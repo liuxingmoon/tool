@@ -29,11 +29,11 @@ ddpath_old_dest = r'C:\Program Files\DundiEmu\\DunDiEmu.exe'
 src_makise = {
 'dir_src':r"E:\Program Files\Python\Python38\works\\tool\\",
 'backup_config_worker02':r"E:\Program Files\Python\Python38\works\\tool\\backup_worker02\\",
-'backup_config_worker03':r"E:\Program Files\Python\Python38\works\\tool\\backup_worker03\\",
+'backup_config_worker01':r"E:\Program Files\Python\Python38\works\\tool\\backup_worker01\\",
 'Coclog_src':r'E:\Program Files\Python\Python38\works\\tool\\coclog.txt',
 'configpath_src':r"E:\Program Files\Python\Python38\works\tool\Config.ini",
 'ddpath_src':r'D:\Program Files\DundiEmu\DunDiEmu.exe',
-'resourceids':r"resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]"
+'resourceids':r"x for x in resourceids_work01"
 }
 
 dest_worker02 = {
@@ -41,15 +41,15 @@ dest_worker02 = {
 'Coclog_dest':r'D:\Program Files\Python38\works\tool\\coclog.txt',
 'configpath_dest':r"D:\Program Files\Python38\works\tool\\Config.ini",
 'ddpath_dest':r'D:\Program Files\DundiEmu\\DunDiEmu.exe',
-'resourceids':r"resourceids = [x for x in resourceids_work02 if x not in donateids_for_paid]"
+'resourceids':r"x for x in resourceids_work02"
 }
 
-dest_worker03 = {
-'dir_dest':r"\\worker03\\tool\\",
+dest_worker01 = {
+'dir_dest':r"\\worker01\\tool\\",
 'Coclog_dest':r'D:\Program Files\Python38\works\tool\\coclog.txt',
 'configpath_dest':r"D:\Program Files\Python38\works\tool\\Config.ini",
 'ddpath_dest':r'D:\Program Files\DundiEmu\\DunDiEmu.exe',
-'resourceids':r"resourceids = [x for x in resourceids_work03 if x not in donateids_for_paid]"
+'resourceids':r"x for x in resourceids_work01"
 }
 
 
@@ -88,9 +88,9 @@ def backup_config(src,dest_dir):
     
 def start():
     update(src_makise,dest_worker02)
-    update(src_makise,dest_worker03)
+    update(src_makise,dest_worker01)
     backup_config(dest_worker02,src_makise['backup_config_worker02'])
-    backup_config(dest_worker03,src_makise['backup_config_worker03'])
+    backup_config(dest_worker01,src_makise['backup_config_worker01'])
 
     '''
     filelist = get_files(dir_src)

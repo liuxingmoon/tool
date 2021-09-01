@@ -93,9 +93,15 @@ def start():
                 resourceids_work02 = config.get("coc", "resourceids_work02").split()  # 获取持续打资源id的list
                 resourceids_work03 = config.get("coc", "resourceids_work03").split()  # 获取持续打资源id的list
                 # 在持续打资源的list去除付费捐兵的list
-                resourceids = [x for x in resourceids_work02 if x not in donateids_for_paid]
+                resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]
                 # 在捐兵列表中去除付费捐兵的list和持续打资源的list
                 startidlist = [x for x in donateids if (x not in donateids_for_paid) and (x not in resourceids)]
+            elif info in ['r', 'R', 'resourceids']:
+                resourceids_work01 = config.get("coc", "resourceids_work01").split()  # 获取持续打资源id的list
+                resourceids_work02 = config.get("coc", "resourceids_work02").split()  # 获取持续打资源id的list
+                resourceids_work03 = config.get("coc", "resourceids_work03").split()  # 获取持续打资源id的list
+                # 在持续打资源的list去除付费捐兵的list
+                startidlist = [x for x in resourceids_work01]
             elif info in ['u', 'U', 'up', 'UP']:  # 升级的模拟器id
                 config = configparser.ConfigParser()
                 config.read("Config.ini", encoding="utf-8")

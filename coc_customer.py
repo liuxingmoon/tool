@@ -74,7 +74,7 @@ def get_coc_info():
     coc_customer = coc_customer_ny.get()
     if (coc_id,coc_clan_name,srv_month) == ("","","") and money_last != "":
         coc_id,coc_clan_name,srv_month = 0,'部落首领转让',0
-    return (int(coc_id),coc_clan_name,int(srv_month),int(money_last),coc_customer)
+    return (int(coc_id),coc_clan_name,float(srv_month),int(money_last),coc_customer)
 
 #根据模拟器id获取信息
 def get_coc_name(coc_id):
@@ -94,7 +94,7 @@ def deadtime(month):
     start_time = datetime.datetime.now()
     start_time_hr = start_time.strftime('%Y-%m-%d %H:%M')
     #捐兵服务时间31天算一个月
-    srv_days_hr = 31 * month
+    srv_days_hr = int(31 * month)
     srv_days = datetime.timedelta(days=srv_days_hr)
     #结束时间
     dead_time = start_time + srv_days
@@ -131,8 +131,8 @@ def send_qq(message):   #发送消息给QQ用户
                 win32gui.SetActiveWindow(hwnd)
                 time.sleep(3)
                 win32gui.SendMessage(hwnd,770, 0, 0)    # 将剪贴板文本发送到QQ窗体
-                win32gui.SendMessage(hwnd, win32con.WM_KEYDOWN, win32con.VK_RETURN, 0)  #模拟按下回车键
-                win32gui.SendMessage(hwnd, win32con.WM_KEYUP, win32con.VK_RETURN, 0)  #模拟松开回车键
+                # win32gui.SendMessage(hwnd, win32con.WM_KEYDOWN, win32con.VK_RETURN, 0)  #模拟按下回车键
+                # win32gui.SendMessage(hwnd, win32con.WM_KEYUP, win32con.VK_RETURN, 0)  #模拟松开回车键
                 
     
 def open_windows(coc_clan_dict):     #打开QQ和wechat会话窗口，发送消息
