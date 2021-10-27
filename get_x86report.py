@@ -17,21 +17,23 @@ import time,configparser
 from clip_ctrl import clip
 from file_ctrl import replace
 
+notepad_path = r"D:\Program Files\Notepad++\notepad++.exe"
 configpath = r"Config.ini"
 config = configparser.ConfigParser()
 config.read(configpath, encoding="utf-8")
-weekReportDir = r"%s" %(config.get("work", "weekReportDir"))
+weekReportDir = "%s" %(config.get("work", "weekReportDir"))
 weekReportDir_tradition = r"%s" %(config.get("work", "weekReportDir_tradition"))
 weekReportDir_cloud = r"%s" %(config.get("work", "weekReportDir_cloud"))
 totalFile = r"%s" %(config.get("work", "totalFile"))
 weekReport_myself = r"%s" %(config.get("work", "weekReport_myself"))
 today_date = datetime.datetime.today().strftime("%Y-%m-%d")#今天日期
-reportFile = r"x86组周报_%s.txt"%(today_date)
+reportFile = "x86组周报_%s.txt"%(today_date)
+reportFile_path = repr(weekReportDir + os.sep + reportFile)
 dist_tradition = svnconfig.setting['dist_tradition']
 dist_cloud = svnconfig.setting['dist_cloud']
 
 work_items = {
-    "生产值守":"","应急处置":"","故障处理":"","工单处理":"","变更实施":"","容灾准备":"","高可用建设":"","灾备演练":"","咨询答疑":"","巡检平台":"","监控告警":"","配置库":"","蓝鲸平台":"","璇玑系统":"","系统改造":"","DNS改造":"","NAS迁移":"","能力建设":"","流程规范":"","文档编写":"","其他":""
+    "生产值守":"","专项工作":"","应急处置":"","故障处理":"","工单处理":"","变更实施":"","容灾准备":"","高可用建设":"","灾备演练":"","咨询答疑":"","巡检平台":"","监控告警":"","配置库":"","蓝鲸平台":"","璇玑系统":"","系统改造":"","DNS改造":"","NAS迁移":"","能力建设":"","流程规范":"","文档编写":"","报表统计":"","ELK":"","虚拟化管理":"","其他":""
 }
     
 def turnStr(L):
@@ -143,10 +145,14 @@ def clean_weekdir():
         
 def getfilelist(filedir):
     os.chdir(filedir)
-    last_dir = max([ datetime.datetime.strptime( dir_name, '%Y-%m-%d') for dir_name in os.listdir() ])#最新的时间的目录
     today_date = datetime.datetime.today()#今天日期
-    if ((today_date - last_dir).days >= 7):#如果当前时间比上周的提交目录已经过了一周，自动创建周报目录并提交
-        last_dir = today_date.strftime("%Y-%m-%d")
+    last_dir = min([ datetime.datetime.strptime( dir_name, '%Y-%m-%d')  for dir_name in os.listdir() if ((datetime.datetime.strptime( dir_name, '%Y-%m-%d') - today_date).days >= -1) ])#最新的时间的目录
+    if ((today_date - last_dir).days >= 7) or ((today_date - last_dir).days <= -7):#如果当前时间比上周的提交目录已经过了一周或者已经创建目录超过当前时间一周，自动创建周报目录并提交
+        diff_days_int = 3 - today_date.weekday()#周4减去当天的星期，算出差值
+        diff_days = datetime.timedelta(days=diff_days_int)
+        last_dir_time = today_date + diff_days
+        last_dir = last_dir_time.strftime('%Y-%m-%d')
+        #last_dir = last_dir_time.strftime("%Y-%m-%d")
         os.system("mkdir %s" %(last_dir))
         #提交周报目录
         commit_dir = filedir + os.sep + last_dir
@@ -279,7 +285,6 @@ if __name__ == "__main__":
         print("汇总结束，总共周报文件数量：%s ;\n已汇总周报文件数量： %s" %(files_count,files_deal))
         
         with open(totalFile, "r") as f:#按照标签重新排序
-            son_items = []#存储子项
             file = f.readlines()
             for work_item in work_items:
                 work_item_flag = False
@@ -297,6 +302,8 @@ if __name__ == "__main__":
                             continue#跳过本行操作
                         if re.findall(r"\d+、",line) == []:#原本就没写数字信息，直接加
                             line_re = str(task_num)+"、" + line_re
+                        if (re.findall(r"\d+、无",line_re) or re.findall(r"\d+、\n",line_re))!= []:
+                            continue#写了标题但是不加内容的鬼才直接跳过该行
                         task_num += 1
                         work_items[work_item] += line_re
                         #work_items[work_item] += (line + "\n")
@@ -304,27 +311,10 @@ if __name__ == "__main__":
                         try:
                             index_flag = line.index('  ')
                         except ValueError as reason:
-                            #print(line)
-                            #file.remove(line)#删除该行
                             continue#如果不是空格两格，直接跳过
                         if index_flag == 0 and line != '\n':#无标签且前2格为空格，认为是子行，直接加
-                            try:
-                                son_items.append(line)
-                            except AttributeError as reason:
-                                print(reason)
-                                continue
-                            '''#尝试取前一个item，然后添加到对应item下，这样不行，因为读取顺序不对
-                            work_item_temp = get_item(file,line)
-                            try:
-                                if work_items[work_item_temp] == "":
-                                    work_items[work_item_temp] += "[%s]"%work_item_temp+"\n"
-                                work_items[work_item_temp] += line
-                            except KeyError:
-                                continue
-                            '''
-                            file.remove(line)#删除该行
-                        else:
                             print(line)
+                        else:
                             work_items['其他'] += line
         with open(reportFile, "w") as fw:#重新写入文档
             fw.write("农信x86组周报\n")
@@ -337,17 +327,33 @@ if __name__ == "__main__":
                     #work_contents = re.sub(r"\[.*\]","",work_contents)
                     fw.write(work_contents)
                 fw.write("\n")
+        #添加子项
+        with open(totalFile, "r") as f:
+            son_items = []#存储子项
+            file_son = f.readlines()
+            for line in file_son:
+                try:
+                    index_flag = line.index('  ')
+                except ValueError as reason:
+                    continue#如果不是空格两格，直接跳过
+                if index_flag == 0 and line != '\n':#无标签且前2格为空格，认为是子行，直接加
+                    try:
+                        son_items.append(line)
+                    except AttributeError as reason:
+                        print(reason)
+                        continue
+                    file.remove(line)#删除该行
         #替换子项
         for son_item in son_items:
             with open(totalFile, "r") as f:#按照标签重新排序
-                file = f.readlines()
+                file_tmp = f.readlines()
                 #son_item += '\n'
                 try:
-                    son_item_index = file.index(son_item)#获取子项的index
+                    son_item_index = file_tmp.index(son_item)#获取子项的index
                 except ValueError as reason:
                     print(reason)
                     pass
-            item_last_line = file[son_item_index - 1] #获取上一行的内容
+            item_last_line = file_tmp[son_item_index - 1] #获取上一行的内容
             item_last_line = re.sub(r"\[.*\]","",re.sub(r"\d+、","",item_last_line,1),1)#将上一行的内容处理为只要后面的内容,从左往右替换一次数字,从左往右替换一次item
             target_line = item_last_line + son_item#将2行合并作为一行，准备替换
             if item_last_line != None and item_last_line != '\n':
@@ -355,6 +361,10 @@ if __name__ == "__main__":
                 replace(item_last_line,target_line,reportFile)
             else:
                 pass
-        os.system("explorer.exe %s" %(reportFile))
+        time.sleep(1)
         os.chdir(weekReportDir)
+        #WinExec("Notepad.exe %s" %(reportFile),SW_SHOW)
+        #os.system(reportFile)
+        os.system(r"notepad++.exe %s" %(reportFile))
+        #os.chdir(weekReportDir)
         

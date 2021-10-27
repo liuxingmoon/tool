@@ -13,8 +13,8 @@ configpath = "Config.ini"
 excelFile = config_read(configpath,'work','硬件故障记录')
 commit_person = config_read(configpath,'work','commit_person')
 cmdb_url = r"http://10.128.128.238/report/cmdb/v_server"
-wps_url_dev_report = r"http://10.0.28.95/view/p/25882"
-wps_url_report = r"http://10.0.28.95/view/p/35113"
+wps_url_dev_report = r"http://10.0.28.95/view/p/57001"
+wps_url_report = r"http://10.0.28.95/view/p/57002"
 search_xpath = r"/html/body/div[2]/div[2]/div/div[2]/label/input"
 factory_name_xpath = r"/html/body/div[2]/div[2]/div/div[3]/div[2]/table/tbody/tr/td[1]"
 devicename_xpath = r"/html/body/div[2]/div[2]/div/div[3]/div[2]/table/tbody/tr/td[2]"
@@ -101,19 +101,23 @@ def start():
         hostname = re.findall("Local_hostname:.*",device_error_info)[0].split(": ")[1]
         nc_sn = re.findall("Serial Number:.*",device_error_info)[0].split(": ")[1]
         disk_dev = re.findall(".*disk.*/sd.*",device_error_info)[0].strip("\/")
-        error_dev = "硬盘：" + re.findall(".*disk.*/sd.*",device_error_info)[0].strip("\/")
+        error_dev = "硬盘"
         error_exp = "硬盘故障"
-        remarks = "TAC/铜雀巡检-硬盘故障,更换硬盘"
+        remarks = "TAC/铜雀巡检发现硬盘故障"
         disk_model = re.findall("Device Model:.*",device_error_info)[0].split(":     ")[1]
         disk_sn = re.findall("Serial Number:.*",device_error_info)[1].split(":    ")[1]
         disk_info = disk_model + "\n" + disk_sn
-        error_dev_info = disk_info
+        error_dev_info = disk_dev + "\n" + disk_info
     except IndexError as reason:
         print ("无磁盘信息，损坏的设备不是磁盘")
         if "Memory" in device_error_info:#内存故障
-            error_dev = "内存"
+            try:
+                error_dev = "内存: " + re.findall("DIMM location:.*",device_error_info)[0].split(": ")[-1]
+            except:
+                error_dev = "内存"
+                print("没有找到内存故障位置!")
             error_exp = "内存故障"
-            remarks = "封神榜巡检-内存故障,更换内存"
+            remarks = "TAC/封神榜巡检发现内存故障"
         else:
             error_dev = None
             error_exp = None
@@ -153,4 +157,9 @@ def start():
     driver.switch_to.window(driver.window_handles[0]) # 转到第1个标签
     #subprocess.Popen('taskkill /f /t /im chromedriver.exe',shell=True)#关闭chromedriver的控制台
     #driver.quit()
-    
+    #保存报告信息
+    report_itsm_info = r'%s更换云平台%s集群%s %s的机器%s的%s %s' %(environment,cluster,room,rack_unit,devicename,error_dev,error_dev_info)
+    report_daily_info = r'%s服务器%s,于%s经%s，涉及%s云%s集群，于 %s 更换故障硬盘后恢复正常，未影响系统可用性。' %(factory_name,devicename,time_report,remarks,environment,cluster,time_fix)
+    with open('report_dev.txt','w') as rp:
+        rp.write(report_itsm_info + '\n' + report_daily_info)
+    os.system('report_dev.txt')

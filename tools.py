@@ -34,7 +34,7 @@ import packpy
 import win32gui
 from win32.lib import win32con
 import win32api
-import ocr,statistics_dev
+import ocr,statistics_dev,statistics_resource
 import base64_ctrl
 
 root = tk.Tk()
@@ -912,6 +912,10 @@ packpy_bt = tk.Button(root,text='打包程序',command=packpy.start,width=15)
 packpy_bt.grid(row=6,column=3,
               padx=10,pady=10)
               
+#统计资源
+statistics_resource_bt = tk.Button(root,text='统计资源',command=statistics_resource.start,width=15)
+statistics_resource_bt.grid(row=7,column=3,
+              padx=10,pady=10)
 '''
 #周报汇总
 report_bt = tk.Button(root,text='周报汇总',command=report.start,width=15)

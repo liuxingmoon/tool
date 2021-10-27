@@ -213,7 +213,7 @@ def play(wait_time,skipids):
     click(pos['start_script'][0],pos['start_script'][1],startport)
     print('============================= 启动打资源脚本完成 =============================')
     time.sleep(20)
-    #login_click(startid)
+    login_click(startid)
     #打印分割线
     read_id = playnames[startid]
     print(r'============================= %s 实例启动完成 ===============================' %(read_id))
@@ -256,7 +256,7 @@ def play_donate_for_paid(donateids):
     time.sleep(20)
     click(pos['start_script'][0],pos['start_script'][1],startport)
     time.sleep(20)
-    #login_click(donateid_now)
+    login_click(donateid_now)
     print(r'============================= 启动付费捐兵脚本完成 ===============================')
 
     
@@ -299,7 +299,7 @@ def play_donate(donateids):
     time.sleep(20)
     click(pos['start_script'][0],pos['start_script'][1],startport)
     #time.sleep(20)
-    #login_click(donateid_now)
+    login_click(donateid_now)
     print(r'============================= 启动自用捐兵脚本完成 ===============================')
     #打印分割线
     read_id = donatenames[donateid_now]
@@ -349,7 +349,7 @@ def play_resource(resourceids):
         time.sleep(20)
         click(pos['start_script'][0],pos['start_script'][1],startport,5)
         #time.sleep(20)
-        #login_click(resourceid_now)
+        login_click(resourceid_now)
         print(r'============================= 启动持续打资源脚本完成 ===============================')
     else:
         print(r'============================= 跳过持续打资源号切换 ===============================')
@@ -448,7 +448,7 @@ def start_emu(start_id,wait_time):
         time.sleep(15)
     click(pos['start_script'][0],pos['start_script'][1],startport,5)
     #time.sleep(20)
-    #login_click(start_id)
+    login_click(start_id)
     print(r'============================= 启动实例（%d）脚本完成 ==============================='%(int(start_id)))
    
         
@@ -501,10 +501,11 @@ def restartplay(wait_time):
         result = instance(donate_switch,donate_status)
         #现在时间段
         time_status = result[2]
-        if (time_status == '白天' and donate_status == 'play') or (time_status == '凌晨' and donate_status == 'donate'):#到了早上还没切换捐兵，或者到了凌晨还没切换打资源，跳过等待循环立刻切换
-            break
-        else:
-            pass
+        if donate_for_paid_switch in ['True','1','T'] or donate_switch in ['True','1','T']:
+            if (time_status == '白天' and donate_status == 'play') or (time_status == '凌晨' and donate_status == 'donate'):#到了早上还没切换捐兵，或者到了凌晨还没切换打资源，跳过等待循环立刻切换
+                break
+            else:
+                pass
         play(wait_time,skipids)
         wait_time += 5
 
@@ -926,10 +927,11 @@ if __name__ == "__main__":
             result = instance(donate_switch,donate_status)
             #现在时间段
             time_status = result[2]
-            if (time_status == '白天' and donate_status == 'play') or (time_status == '凌晨' and donate_status == 'donate'):#到了早上还没切换捐兵，或者到了凌晨还没切换打资源，跳过等待循环立刻切换
-                break
-            else:
-                pass
-            timewait(1)
+            if donate_for_paid_switch in ['True','1','T'] or donate_switch in ['True','1','T']:
+                if (time_status == '白天' and donate_status == 'play') or (time_status == '凌晨' and donate_status == 'donate'):#到了早上还没切换捐兵，或者到了凌晨还没切换打资源，跳过等待循环立刻切换
+                    break
+                else:
+                    pass
+                timewait(1)
         restart_server()
 
