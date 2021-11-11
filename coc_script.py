@@ -309,6 +309,7 @@ def play_resource(resourceids):
     #获取上一次运行的打资源id
     #global resourceid_now
     resourceid_now = config.get("coc", "resourceid_now")#str
+    flag_play_resource = config.get("coc", "flag_play_resource")
     #获取即将运行的捐兵index
     if resourceid_now in resourceids:
         try:
@@ -326,10 +327,7 @@ def play_resource(resourceids):
     if close_index < 0:
         close_index = len(resourceids) + close_index
     close_id = resourceids[close_index]
-    
-    if (len(resourceids) > resourceids_num):#如果持续打资源号数量要大于设定数量才关闭切换，不然就直接一直运行不切换了
-        #关闭前一个模拟器
-        close_emu_id(close_id)
+    def start_resource():
         #写入config
         config.set("coc", "resourceid_now", resourceid_now)#只能存储str类型数据
         config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
@@ -351,6 +349,13 @@ def play_resource(resourceids):
         #time.sleep(20)
         login_click(resourceid_now)
         print(r'============================= 启动持续打资源脚本完成 ===============================')
+    if (len(resourceids) > resourceids_num):#如果持续打资源号数量要大于设定数量才关闭切换，不然就直接一直运行不切换了
+        #关闭前一个模拟器
+        close_emu_id(close_id)
+        start_resource()
+    elif (len(resourceids) == resourceids_num) and (flag_play_resource == "False"):
+        config.set("coc", "flag_play_resource", "True")
+        start_resource()
     else:
         print(r'============================= 跳过持续打资源号切换 ===============================')
        
@@ -725,7 +730,14 @@ if __name__ == "__main__":
             restart_emu(donatenames_for_paid,donateids_for_paid_2nd)#启动了第二梯队
         #启动持续打资源号
         if play_resource_switch in ['True','1','T']:
-            restart_emu(resource_names)
+            config.set("coc", "flag_play_resource", "False")
+            if resourceids_num != 0:
+                for n in range(resourceids_num):
+                    try:
+                        play_resource(resourceids)
+                    except IndexError as reason:
+                        print(reason)
+                        continue
             
     while True:
         kill_adb()
@@ -804,7 +816,7 @@ if __name__ == "__main__":
             if play_resource_switch in ['True','1','T']:
                 for convert_id in resourceids:
                     coc_template.convert_mode(convert_id,donate_status)
-                restart_emu(resource_names)#启动一下持续打资源号
+                #restart_emu(resource_names)#启动一下持续打资源号
             if donate_switch in ['True','1','T']:
                 for convert_id in donateids:
                     coc_template.convert_mode(convert_id,donate_status)
@@ -874,8 +886,6 @@ if __name__ == "__main__":
                         restart_server()
                 except:
                     print('============================= 出故障，不捐兵，继续打资源 =============================')
-            if play_resource_switch in ['True','1','T']:
-                restart_emu(resource_names)#启动一下持续打资源号
             #点击中间关闭adb.exe弹出的错误按钮
             #for n in range(15):
                 #k.mouse_click(894, 544)
@@ -892,6 +902,7 @@ if __name__ == "__main__":
         #启动持续打资源号
         if play_resource_switch in ['True','1','T']:
             if resourceids_num != 0:
+                config.set("coc", "flag_play_resource", "False")
                 for n in range(resourceids_num):
                     try:
                         play_resource(resourceids)

@@ -39,8 +39,9 @@ pos = {
     'relogin': [500, 825],
     'login_wandoujia': [640, 500],
     'login_kunlun': [640, 250],
-    'login_kunlun1': [640, 560],
-    'login_kunlun2': [640, 620],
+    'login_kunlun1': [1000, 300],
+    'login_kunlun2': [650, 200],
+    'login_kunlun3': [1000, 300],
     'store_build': [300, 100],
     'storeitem1': [330, 260],
     'storeitem2': [540, 260],
@@ -1228,9 +1229,10 @@ def start_script(startport,*args):
             click(pos['script_night_auto_research'][0], pos['script_night_auto_research'][1], startport)
     click(pos['script_start'][0], pos['script_start'][1], startport)
     time.sleep(20)
-    #click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
-    #click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
-    click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+    click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+    click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
+    click(pos['login_kunlun3'][0], pos['login_kunlun3'][1], startport,3)
+    #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
 
         
 #切换打鱼和捐兵
