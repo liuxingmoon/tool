@@ -100,16 +100,23 @@ def start():
         cluster = re.findall("Local_cluster:.*",device_error_info)[0].split(": ")[1]
         hostname = re.findall("Local_hostname:.*",device_error_info)[0].split(": ")[1]
         nc_sn = re.findall("Serial Number:.*",device_error_info)[0].split(": ")[1]
-        disk_dev = re.findall(".*disk.*/sd.*",device_error_info)[0].strip("\/")
+        try:
+            disk_dev = re.findall(".*disk.*/sd.*",device_error_info)[0].strip("\/")
+        except IndexError as reason:
+            disk_dev = re.findall(".*dev sd.*",device_error_info)[1].split(', ')[1]
         error_dev = "硬盘"
         error_exp = "硬盘故障"
         remarks = "TAC/铜雀巡检发现硬盘故障"
-        disk_model = re.findall("Device Model:.*",device_error_info)[0].split(":     ")[1]
-        disk_sn = re.findall("Serial Number:.*",device_error_info)[1].split(":    ")[1]
+        try:
+            disk_model = re.findall("Device Model:.*",device_error_info)[0].split(":     ")[1]
+            disk_sn = re.findall("Serial Number:.*",device_error_info)[1].split(":    ")[1]
+        except IndexError as reason:
+            disk_model = "无法查询"
+            disk_sn = "无法查询"
         disk_info = disk_model + "\n" + disk_sn
         error_dev_info = disk_dev + "\n" + disk_info
     except IndexError as reason:
-        print ("无磁盘信息，损坏的设备不是磁盘")
+        print ("无磁盘信息，损坏的设备不是磁盘：%s" %(reason))
         if "Memory" in device_error_info:#内存故障
             try:
                 error_dev = "内存: " + re.findall("DIMM location:.*",device_error_info)[0].split(": ")[-1]
@@ -158,7 +165,7 @@ def start():
     #subprocess.Popen('taskkill /f /t /im chromedriver.exe',shell=True)#关闭chromedriver的控制台
     #driver.quit()
     #保存报告信息
-    report_itsm_info = r'%s更换云平台%s集群%s %s的机器%s的%s %s' %(environment,cluster,room,rack_unit,devicename,error_dev,error_dev_info)
+    report_itsm_info = r'%s环境更换云平台%s集群%s %s的机器%s的%s %s' %(environment,cluster,room,rack_unit,devicename,error_dev,error_dev_info)
     report_daily_info = r'%s服务器%s,于%s经%s，涉及%s云%s集群，于 %s 更换故障硬盘后恢复正常，未影响系统可用性。' %(factory_name,devicename,time_report,remarks,environment,cluster,time_fix)
     with open('report_dev.txt','w') as rp:
         rp.write(report_itsm_info + '\n' + report_daily_info)

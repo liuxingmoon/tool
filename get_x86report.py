@@ -146,9 +146,10 @@ def clean_weekdir():
 def getfilelist(filedir):
     os.chdir(filedir)
     today_date = datetime.datetime.today()#今天日期
-    last_dir = min([ datetime.datetime.strptime( dir_name, '%Y-%m-%d')  for dir_name in os.listdir() if ((datetime.datetime.strptime( dir_name, '%Y-%m-%d') - today_date).days >= -1) ])#最新的时间的目录
+    last_dir = min([ datetime.datetime.strptime( dir_name, '%Y-%m-%d')  for dir_name in os.listdir() if ((datetime.datetime.strptime( dir_name, '%Y-%m-%d') - today_date).days >= -2) ])#最新的时间的目录
+    print("最新的时间的目录：%s"%(last_dir))
     if ((today_date - last_dir).days >= 7) or ((today_date - last_dir).days <= -7):#如果当前时间比上周的提交目录已经过了一周或者已经创建目录超过当前时间一周，自动创建周报目录并提交
-        diff_days_int = 3 - today_date.weekday()#周4减去当天的星期，算出差值
+        diff_days_int = 2 - today_date.weekday()#周3减去当天的星期，算出差值
         diff_days = datetime.timedelta(days=diff_days_int)
         last_dir_time = today_date + diff_days
         last_dir = last_dir_time.strftime('%Y-%m-%d')
@@ -206,9 +207,11 @@ if __name__ == "__main__":
     #提交我的周报
     last_dir = getfilelist(dist_cloud)[0]
     dist_dir = dist_cloud + os.sep + last_dir#目标目录
+    print("最新的目标的目录：%s"%(dist_dir))
     locallist = os.listdir(weekReport_myself)
     #检查自己是否已提交周报
     check_day_file = last_dir.replace("-","")#提取周报日
+    print("最新的周报日：%s"%(check_day_file))
     my_report = [x for x in locallist if '工作周报-刘兴%s' %(check_day_file) in x]
     if my_report != []:
         my_report = my_report[0]

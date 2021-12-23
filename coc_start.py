@@ -3,15 +3,17 @@ import subprocess
 import time
 import win32gui
 from win32.lib import win32con
+from config_ctrl import *
 
+configpath = r"Config.ini"
+QQlists = config_read(configpath,"coc", "QQlists").split()
+baidulists = config_read(configpath,"coc", "baidulists").split()
 
 
 #元素坐标
 pos = {
     'coc_script':[500,680],
     'start_script':[200,1070],
-    'login_wandoujia1': [640, 300],
-    'login_wandoujia2': [640, 500],
     'sure':[360,935],
     'pointleft': [149, 456],
     'pointtop': [622, 100],
@@ -32,9 +34,14 @@ pos = {
     'store': [1200, 635],
     'relogin': [500, 825],
     'login_wandoujia': [640, 500],
+    'login_wandoujia1': [640, 300],
+    'login_wandoujia2': [640, 500],
     'login_kunlun': [640, 250],
-    'login_kunlun1': [640, 560],
-    'login_kunlun2': [640, 620],
+    'login_kunlun1': [1000, 300],
+    'login_kunlun2': [650, 200],
+    'login_kunlun3': [1000, 300],
+    'login_baidu1': [440, 545],
+    'login_baidu2': [500, 460],
     'store_build': [300, 100],
     'storeitem1': [330, 260],
     'storeitem2': [540, 260],
@@ -204,6 +211,7 @@ QQ5 = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi 4 -disable_audio  -fps 4
 
 #获取启动port
 def getport(startid):
+    startid = int(startid)
     #获取启动端口
     if startid == 0:
         startport = 5555
@@ -214,6 +222,7 @@ def getport(startid):
 
 #获取启动id
 def getid(startport):
+    startport = int(startport)
     #获取启动端口
     if startport == 5555:
         startid = 0
@@ -230,15 +239,19 @@ def connect(startport):
     else:
         result = subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True,stdout=subprocess.PIPE)
         text = result.stdout.readlines()
-        if ('unable to connect to' in str(text[0])) or ('offline' in str(text[0])):
-            print('连接失败，重启虚拟机后重连')
-            close_id = getid(startport)
-            close_emu_id(close_id)#关闭
-            restart_server()
-            action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' %(close_id)
-            #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(close_id)
-            start_emu_id(action,close_id)#启动     
-            connect(startport)#递归获取一下启动port
+        try:
+            if ('unable to connect to' in str(text[0])) or ('offline' in str(text[0])):
+                print('连接失败，重启虚拟机后重连')
+                close_id = getid(startport)
+                close_emu_id(close_id)#关闭
+                restart_server()
+                action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' %(close_id)
+                #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(close_id)
+                start_emu_id(action,close_id)#启动     
+                connect(startport)#递归获取一下启动port
+        except:
+            pass
+            
             
 #根据字典值获取索引
 def get_keys(dict, value):
@@ -382,26 +395,41 @@ def timewait(min,startport):
 #启动coc
 def startcoc(startport,wait_time):
     #connect(startport)
-    start_id = int(startport) - 52550
-    if start_id in [2,3,4,5,6]:#腾讯
+    start_id = str(int(startport) - 52550)
+    if start_id in QQlists:#腾讯
         subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.tencent.tmgp.supercell.clashofclans/com.supercell.titan.tencent.GameAppTencent' % (startport), shell=True)
+    elif start_id in baidulists:#百度
+        subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.baidu/com.supercell.titan.kunlun.GameAppKunlun' % (startport), shell=True)
     else:#九游
         subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
     #豌豆荚
     #subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
     time.sleep(wait_time)
-    '''
-    if startport == 52551:#如果是星陨，尝试点击登录 
-        click(pos['login_wandoujia'][0], pos['login_wandoujia'][1], startport,3)
-    else:
-        #click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
-        #click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
-        click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
-    '''
+    login_click(start_id)
     #点击取消位置取消广告
     click(pos['exitstore'][0], pos['exitstore'][1], startport)
     click(pos['cancel'][0], pos['cancel'][1], startport)
-    
+
+#登录点击确认
+def login_click(startid):
+    startport = getport(startid)
+    restart_server()
+    connect(startport)#连接    
+    time.sleep(10)
+    if int(startid) == 1:#如果是星陨，尝试点击登录
+        click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
+        click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
+    #elif str(startid) not in notplaylist:#双重否定表肯定，在轮循打资源列表中的id
+    elif str(startid) in QQlists:#QQ
+        click(pos['start_script'][0],pos['start_script'][1],startport,5)
+    elif str(startid) in baidulists:#baidu
+        click(pos['login_baidu1'][0],pos['login_baidu1'][1],startport,5)
+        click(pos['login_baidu2'][0],pos['login_baidu2'][1],startport,3)
+    else:
+        #昆仑
+        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
+        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
+        click(pos['login_kunlun3'][0], pos['login_kunlun3'][1], startport,3)
     
 #重启coc
 def restartcoc(startport):
@@ -451,26 +479,12 @@ def start(startid):
     print('连接模拟器完成')
     coc_script_black(startport,20)
     print('启动黑松鼠脚本完成')
-    time.sleep(1)
+    time.sleep(10)
     click(pos['sure'][0],pos['sure'][1],startport)
-    time.sleep(3)
+    time.sleep(10)
     click(pos['start_script'][0],pos['start_script'][1],startport)
-    time.sleep(5)
-    if int(startid) == 1:#如果是星陨，尝试点击登录
-        click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport)
-        time.sleep(3)
-        click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport)
-    #elif str(startid) not in notplaylist:#双重否定表肯定，在轮循打资源列表中的id
-        '''
-    elif int(startid) in [10,13,15,20,21,25,27,29,30,31,32,33,34,36]:
-        #昆仑
-        #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
-        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport)
-        time.sleep(3)
-        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport)
-        '''
-    else:
-        click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport)
+    time.sleep(15)
+    login_click(startid)
     
 
 #转换模式启动

@@ -13,9 +13,12 @@ import configparser
 import random
 from multiprocessing import Process
 import easygui as g
+from config_ctrl import *
 
-# coc模板
-#方法：
+configpath = r"Config.ini"
+QQlists = config_read(configpath,"coc", "QQlists").split()
+baidulists = config_read(configpath,"coc", "baidulists").split()
+logincheck_lists = config_read(configpath,"coc", "logincheck_lists").split()
 
 # 元素坐标,建立新号都是用240的
 pos = {
@@ -42,6 +45,8 @@ pos = {
     'login_kunlun1': [1000, 300],
     'login_kunlun2': [650, 200],
     'login_kunlun3': [1000, 300],
+    'login_baidu1': [440, 545],
+    'login_baidu2': [500, 460],
     'store_build': [300, 100],
     'storeitem1': [330, 260],
     'storeitem2': [540, 260],
@@ -971,8 +976,10 @@ def update_coc(startidlist):
         startport = getport(int(nowid))
         connect(startport)
         time.sleep(10)
-        if ( 1 < int(nowid) <= 6 ):#2-6是腾讯版本的
+        if nowid in QQlists:#QQ
             coc_path = config.get("coc", "app_path_tencent")
+        elif nowid in baidulists:#baidu
+            coc_path = config.get("coc", "app_path_baidu")
         else:
             coc_path = config.get("coc", "app_path_kunlun")
         coc_path = r"%s" %(coc_path)
@@ -1232,7 +1239,9 @@ def start_script(startport,*args):
     click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
     click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
     click(pos['login_kunlun3'][0], pos['login_kunlun3'][1], startport,3)
-    #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+    if int(startport) == 52612:#百度
+        click(pos['login_baidu1'][0], pos['login_baidu1'][1], startport,5)
+        click(pos['login_baidu2'][0], pos['login_baidu2'][1], startport,3)
 
         
 #切换打鱼和捐兵

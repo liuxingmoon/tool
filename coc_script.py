@@ -12,7 +12,7 @@ import coc_template
 import os
 import AutoClick as ak
 import keyboard as k
-import coc_start
+from coc_start import connect,login_click,close_emu_err
 from multiprocessing import Process
 import file_ctrl as fc
 from config_ctrl import *
@@ -24,8 +24,11 @@ pos = {
   'login_wandoujia1': [640, 300],
   'login_wandoujia2': [640, 500],
   'login_kunlun': [640, 250],
-  'login_kunlun1': [640, 560],
-  'login_kunlun2': [640, 620],
+  'login_kunlun1': [1000, 300],
+  'login_kunlun2': [650, 200],
+  'login_kunlun3': [1000, 300],
+  'login_baidu1': [440, 545],
+  'login_baidu2': [500, 460],
   'cancel': [1200, 50],
   'sure':[360,935]
   }
@@ -36,6 +39,7 @@ configpath = r"Config.ini"
 ddpath = config_read(configpath,"coc","ddpath")
 configdir = os.path.dirname(os.path.abspath(configpath))#配置文件目录
 backupdir = configdir + os.sep + "backup"
+logincheck_lists = config_read(configpath,"coc", "logincheck_lists").split()
     
 def kill_adb():
     subprocess.Popen('taskkill /f /t /im adb.exe',shell=True)
@@ -55,19 +59,6 @@ def restart_server():
     kill_adb()
     kill_server()
     #start_server()
-
-def connect(startport):
-    if startport == 5555:
-        subprocess.Popen(r'adb connect emulator-5554',shell = True)
-        subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
-    else:
-        result = subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True,stdout=subprocess.PIPE)
-        text = result.stdout.readlines()
-        if ('not found' in text) or ('offline' in text):
-            restart_server()
-            timewait(1)
-            connect(startport)#递归重新执行一次
-    time.sleep(3)
 
 def close_windows(close_name):
     close_window = win32gui.FindWindow(None, close_name)
@@ -150,7 +141,7 @@ def timewait(min):
 def getport(startid,*skipids):
     if len(skipids) > 0:
         #获取启动端口
-        if startid == 0:
+        if int(startid) == 0:
             #如果恰好既是第一个id，又是要跳过的id，或者是捐兵id，需要往下id+1
             if str(startid) in skipids[0]:
                 print(r'该模拟器id %d 在禁止启动名单之中，跳过!' %(startid))
@@ -431,13 +422,13 @@ def close_emu_id(close_id):
                     close_name = configline.split('=')[-1].rstrip('\n')
     except:
         print("============================= 没有该模拟器:%d ===============================" %(int(close_id)))
-    coc_start.close_emu_err()#关闭模拟器已停止工作报错
+    close_emu_err()#关闭模拟器已停止工作报错
     close_windows(close_name)
     print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
         
 #启动模拟器（列表中所有）       
 def start_emu(start_id,wait_time):
-    startport = getport(start_id)
+    startport = getport(int(start_id))
     action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(start_id))
     #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(int(start_id))
     start(action,startport,wait_time)
@@ -455,7 +446,9 @@ def start_emu(start_id,wait_time):
     #time.sleep(20)
     login_click(start_id)
     print(r'============================= 启动实例（%d）脚本完成 ==============================='%(int(start_id)))
-   
+    if (str(start_id) in (donateids_for_paid + resourceids)) and (int(start_id) > 6):
+        login_click(start_id)
+    print(r'============================= 确认登录实例（%d）完成 ==============================='%(int(start_id)))
         
 #依次重启模拟器（列表中所有）
 def restart_emu(restartlist,*args):
@@ -535,26 +528,7 @@ def restartdonate(donateids):
             play_donate(donateids)
     restart_server()
     
-def login_click(startid):
-    startport = getport(startid)
-    restart_server()
-    connect(startport)#连接    
-    time.sleep(10)
-    if int(startid) == 1:#如果是星陨，尝试点击登录
-        click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
-        click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
-    #elif str(startid) not in notplaylist:#双重否定表肯定，在轮循打资源列表中的id
-        '''
-    elif int(startid) in [10,13,15,20,21,25,27,29,30,31,32,33,34,36]:
-        #昆仑
-        #click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
-        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
-        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
-        '''
-    elif int(startid) in [2,3,4,5,6]:#QQ
-        click(pos['start_script'][0],pos['start_script'][1],startport,5)
-    else:
-        click(pos['login_kunlun'][0], pos['login_kunlun'][1], startport,3)
+
     
 #开始操作
 #coc
@@ -750,12 +724,15 @@ if __name__ == "__main__":
             if donate_for_paid_switch in ['True','1','T']:
                 print(r'============================= 当前脚本每运行 %d 小时，全部模拟器重启一次! =============================' %(restart_time))
                 restart_status = 'T'#切换重启状态为'T'，表示已经重启过了，在这个小时内不要再重启了
-                #close_emu_all(donatenames_for_paid,2)#关闭所有付费捐兵号,每个模拟器中间间隔2分钟
-                close_emu_all(donatenames_for_paid)
+                #close_emu_all(donatenames_for_paid)
                 #relax_time = 30 - (len(donatenames_for_paid) * 2)
-                relax_time = 30#休息半小时
-                timewait(relax_time)
-                restart_emu(donatenames_for_paid)#只重启付费捐兵号
+                #relax_time = 30#休息半小时
+                #timewait(relax_time)
+                #restart_emu(donatenames_for_paid)#只重启付费捐兵号
+                for start_id in donateids_for_paid:
+                    if (str(start_id) in (donateids_for_paid + resourceids)) and (int(start_id) > 6):
+                        login_click(start_id)
+                    print(r'============================= 确认登录实例（%d）完成 ==============================='%(int(start_id)))
         elif (runtime_hours != 0) and ((runtime_hours % restart_time) != 0) and (restart_status == 'T'):
             restart_status = 'F'#切换重启状态为'F'，表示已经过了那个重启的时间，把状态归零
         print(r'============================= 当前脚本已运行 %d 天 %d 个小时! =============================' %(runtime_days , (runtime_hours - runtime_days*24)))
@@ -831,8 +808,8 @@ if __name__ == "__main__":
                 coc_template.wardonate(warids)
             if donate_for_paid_switch in ['True','1','T']:
                 restart_emu(donatenames_for_paid)#只重启付费捐兵号
-        #早上切换打资源状态为捐兵()至少有1个需要切换才执行
-        elif (time_status != '凌晨') and (donate_status == 'play') and ( (donate_for_paid_switch in ['True','1','T']) or (donate_switch in ['True','1','T']) ):
+        #早晨关机休息
+        elif (time_status != '凌晨') and (donate_status == 'play'):
             config.read(configpath, encoding="utf-8")
             flag_reboot = config.get("coc", "flag_reboot")#获取重启flag
             if flag_reboot not in ['True','1','T']:
@@ -843,11 +820,12 @@ if __name__ == "__main__":
                 shutdown()#关机，必须配合自动开机功能使用
             elif flag_reboot in ['True','1','T']:
                 with open(Coclog,'a') as Coclogfile:
-                    Coclogfile.write('早上切换打资源状态为捐兵,切换开始时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+                    Coclogfile.write('开机时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
                 close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
                 close_emu_all(donatenames)#关闭所有自用捐兵号
                 #print(r'============================= 等待30分钟避免切换时没有授权导致切换失败 ===============================')
                 #timewait(30)#等待30分钟避免启动时没有授权登录
+            #早上切换打资源状态为捐兵
             if donate_for_paid_switch in ['True','1','T']:
                 for convert_id in donateids_for_paid:
                     action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(convert_id))
@@ -863,11 +841,7 @@ if __name__ == "__main__":
                 for convert_id in donateids_for_paid:
                     coc_template.convert_mode(convert_id,donate_status)#删除兵+造兵
                 restart_server()
-            if donate_for_paid_switch in ['True','1','T']:#保险机制，如果上一次切换失败但是startid还没有改，有机会重新执行一次切换成功
-                for convert_id in donateids_for_paid:
-                    coc_template.convert_mode(convert_id,donate_status)
-                restart_server()
-            #所有时间捐兵
+            #早上切换打资源状态为捐兵
             if donate_switch in ['True','1','T']:
                 try:
                     if datetime.datetime.now().weekday() in [0,1,2,3,4,5,6]:#所有时间捐兵，如果要打资源取消时间即可，0是周一，6是周日
@@ -885,7 +859,7 @@ if __name__ == "__main__":
                             coc_template.convert_mode(convert_id,donate_status)#删除兵+造兵
                         restart_server()
                 except:
-                    print('============================= 出故障，不捐兵，继续打资源 =============================')
+                        print('============================= 出故障，不捐兵，继续打资源 =============================')
             #点击中间关闭adb.exe弹出的错误按钮
             #for n in range(15):
                 #k.mouse_click(894, 544)
@@ -925,8 +899,12 @@ if __name__ == "__main__":
         if play_switch in ['True','1','T']:
             #启动打资源号
             restartplay(90)
-        #确认星陨，点击登录，星陨总是掉线
-        #login_click(1)
+
+        #确认登录捐兵号，点击登录按钮
+        logincheck_lists = [ x for x in logincheck_lists if x in donateids_for_paid ]
+        for logincheckid in logincheck_lists:
+            login_click(logincheckid)
+            
         #运行该coc实例时间
         t = int(instance_time)
         for time_minite in range(t,0,-1):

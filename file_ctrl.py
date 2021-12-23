@@ -1,6 +1,15 @@
 #用于处理文件
 import os
 
+#重命名文件
+def rename(filename_last,filename_new):
+    try:
+        os.rename(filename_last,filename_new)
+    except FileExistsError as reason:
+        #如果已有备份，就删掉以前备份，重新备份
+        print("已存在文件:%s"%(filename_new))
+    
+#拷贝文件
 def copy_file(filename,src_dir,dest_dir):
     curdir = os.getcwd()#当前目录
     try:

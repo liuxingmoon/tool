@@ -6,8 +6,15 @@ import os
 import coc_customer
 import AutoClick as ak
 import coc_update,coc_resume,coc_config
+from config_ctrl import *
+from file_ctrl import rename,replace
 
-basedir = os.getcwd()
+basedir = os.getcwd()#tool目录
+configpath='Config.ini'
+#ddavd_path = r"%s" %(config_read(configpath,"coc","ddavd_path"))
+ddavd_path = r"D:\Program Files\DundiEmu\DundiData\avd"
+print(type(ddavd_path),ddavd_path)
+
 def start():
     #启动部落冲突自动启动鼠标连点
     try:
@@ -32,7 +39,7 @@ def start():
                 startidlist = [info]
             elif info in ['a', 'A', 'all', 'ALL']:
                 # 有All代表启动所有的
-                os.chdir(r'D:\Program Files\DundiEmu\DundiData\avd')
+                os.chdir(ddavd_path)
                 emulist = os.listdir()
                 emulist = [x for x in emulist if '.rar' not in x]
                 emulist.remove('vboxData')
@@ -48,7 +55,7 @@ def start():
                 startidlist = config.get("coc", "donateids_for_paid").split()
             elif info in ['p', 'play', 'PLAY']:
                 # p代表启动除了捐兵号，跳过号以及部落战号剩下的play号
-                os.chdir(r'D:\Program Files\DundiEmu\DundiData\avd')
+                os.chdir(ddavd_path)
                 emulist = os.listdir()
                 emulist.remove('vboxData')
                 emulist = [x for x in emulist if "rar" not in x]
@@ -106,7 +113,7 @@ def start():
                 config = configparser.ConfigParser()
                 config.read("Config.ini", encoding="utf-8")
                 startid = int(config.get("coc", "maxid")) + 1
-                endid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\') if x != 'vboxData'])
+                endid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(ddavd_path) if x != 'vboxData'])
                 startidlist = [x for x in range(startid, (endid + 1))]
             else:
                 # 剩下的就是首尾格式的列表
@@ -142,7 +149,7 @@ def start():
             startid = coc_id.get()  # 获取输入框信息
             #输入框为空自动定义为最大id
             if startid == "":
-                startid = len(os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\')) - 2
+                startid = len(os.listdir(ddavd_path)) - 2
             else:
                 startid = int(startid)
             name = coc_newid.get()
@@ -150,6 +157,41 @@ def start():
             if name == "":
                 name = '0' + str(int(startid) - 6)
             coc_template.register(name,startid)
+        
+        #改目录id
+        def change_id(oldid,newid):
+            olddir = "dundi%d"%(oldid)
+            newdir = "dundi%d"%(newid)
+            rename(olddir,newdir)
+            oldname = "EmulatorTitleName%d"%(oldid)
+            newname = "EmulatorTitleName%d"%(newid)
+            os.chdir(newdir)
+            replace(oldname,newname,"config.ini")
+            os.chdir(ddavd_path)
+        
+        #迁移模拟器实例位置
+        def coc_moveid():
+            startid = int(coc_moveid_start.get())  # 获取起始id
+            endid = int(coc_moveid_end.get())  # 获取结束id
+            tmpdir = "dundi" + str(startid) + "_bak"
+            startdir = "dundi%d"%(startid)
+            enddir = "dundi%d"%(endid)
+            startname = "EmulatorTitleName%d"%(startid)
+            endname = "EmulatorTitleName%d"%(endid)
+            os.chdir(ddavd_path)#切换到avd目录
+            #先将初始目录改名临时目录
+            rename(startdir,tmpdir)
+            if startid > endid:
+                for changeid in range(startid-1,endid-1,-1):#不包含startid自己
+                    change_id(changeid,changeid+1)
+            else:
+                for changeid in range(startid+1,endid+1):
+                    change_id(changeid,changeid-1)
+            rename(tmpdir,enddir)
+            os.chdir(enddir)
+            replace(startname,endname,"config.ini")          
+            os.chdir(basedir)#返回原始目录
+            
         #升级资源
         def cocRC():
             startidlist = getinfo()
@@ -161,7 +203,7 @@ def start():
             #输入框为空自动定义为最大id
             if startid == "":
                 startid = int(config.get("coc", "maxid")) + 1
-                endid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\') if x != 'vboxData'])
+                endid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(ddavd_path) if x != 'vboxData'])
                 if startid > endid:#maxid后没有新建模拟器，只升级levelupids
                     for levelupid in levelupids:
                         coc_template.resource_up(levelupid)
@@ -187,7 +229,7 @@ def start():
                 config = configparser.ConfigParser()
                 config.read("Config.ini", encoding="utf-8")
                 startid = int(config.get("coc", "maxid")) + 1
-                endid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\') if x != 'vboxData'])
+                endid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(ddavd_path) if x != 'vboxData'])
                 if startid > endid:#maxid后没有新建模拟器，只升级levelupids
                     for levelupid in levelupids:
                         coc_template.levelup_3(levelupid)
@@ -207,22 +249,34 @@ def start():
             
         root = tk.Tk()
         root.title('部落冲突')
-        title = tk.Label(root, text='部落冲突脚本功能')
-        title.grid(row=0, column=2)
+        #title = tk.Label(root, text='部落冲突脚本功能')
+        #title.grid(row=0, column=2)
         coc_label = tk.Label(root, text='模拟器id')
-        coc_label.grid(row=1, column=1, sticky='w' + 'e')  # 居中
-        coc_id = tk.Entry(root)
-        coc_id.grid(row=1, column=2)
+        coc_label.grid(row=0, column=1, sticky='w' + 'e')  # 居中
+        coc_id = tk.Entry(root, width=15)
+        coc_id.grid(row=0, column=2,
+                          padx=10, pady=10)
         #部落战捐兵
         wardonate_bt = tk.Button(root, text='部落战捐兵', width=15, command=wardonate)
-        wardonate_bt.grid(row=1, column=3)
+        wardonate_bt.grid(row=0, column=3)
         # 部落冲突新账号建立
         coc_newlabel = tk.Label(root, text='新号id')
-        coc_newlabel.grid(row=2, column=1, sticky='w' + 'e')  # 居中
-        coc_newid = tk.Entry(root)
-        coc_newid.grid(row=2, column=2)
+        coc_newlabel.grid(row=1, column=1, sticky='w' + 'e')  # 居中
+        coc_newid = tk.Entry(root, width=15)
+        coc_newid.grid(row=1, column=2,
+                          padx=10, pady=10)
         cocremove_bt = tk.Button(root, text='新号脚本', command=cocNS, width=15)
-        cocremove_bt.grid(row=2, column=3,
+        cocremove_bt.grid(row=1, column=3,
+                          padx=10, pady=10)
+        #迁移模拟器实例位置
+        coc_moveid_start = tk.Entry(root, width=15)
+        coc_moveid_start.grid(row=2, column=1,
+                          padx=10, pady=10)
+        coc_moveid_end = tk.Entry(root, width=15)
+        coc_moveid_end.grid(row=2, column=2,
+                          padx=10, pady=10)
+        coc_moveid_bt = tk.Button(root, text='迁移模拟器', command=coc_moveid, width=15)
+        coc_moveid_bt.grid(row=2, column=3,
                           padx=10, pady=10)
         # 部落冲突打资源
         coc_bt = tk.Button(root, text='打资源', command=cocStart, width=15)

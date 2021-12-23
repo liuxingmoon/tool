@@ -8,9 +8,8 @@ import datetime
 from clip_ctrl import clip
 import configparser
 
-
-check_weekday = 3#检查日期为周四（从0开始）
-configpath = r"Config.ini"
+check_weekday = 2#检查日期为周3（从0开始）
+configpath = r"D:\Program Files\Python38\works\tool\Config.ini"
 config = configparser.ConfigParser()
 config.read(configpath, encoding="utf-8")
 x86_members = config.get("work", "x86_members").split()
