@@ -14,8 +14,14 @@ def get_info():
     return (row,column)
 
 def input_info(tb_all):
+    try:
+        os.stat(tb_all)
+    except FileNotFoundError as reason:
+        print()
+        with open(tb_all, 'w', encoding='gb2312', newline="") as f:
+            print("error:%s  新建tb" %(reason))
     subprocess.Popen(r"start %s"%(tb_all),shell=True)
-
+    
 def select_info(tb_all,tb_select):
     '''row和column都是一个列表，[行1，行2……]，[列1，列2……]'''
     row = get_info()[0]

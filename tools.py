@@ -1,41 +1,28 @@
 import tkinter as tk
-import time
-import os,sys
 import tkinter.messagebox as messagebox
 import tkinter.filedialog
 import tkinter.colorchooser as colorchooser
 import AutoClick as ak
 import video_download as vd
 import music_download as music
-import subprocess
 import download_hvideo as avyrdl
 import thunder_daily_task_v2 as tdtask
 import lotteryDraw as lottery
 import coc,coc_customer
-import poweroff
-import translate
-import translate_url
+import poweroff,odps_grant
+import translate,translate_url,thunder_sign_in
 from PIL import ImageGrab
 from pynput.keyboard import Key, Listener
-import thunder_sign_in
-import netmask,stock
-import novel
+import netmask,stock,subprocess,time,os,sys
 import wuxia_getpos as pos
-import wifi
-import threading
-import inspect
-import ctypes
+import inspect,ctypes,wifi,threading,novel,win32clipboard
 import work_table as work_tb
 #import get_x86report as report
 from PIL import Image
 from io import BytesIO
-import win32clipboard
-import packpy
-import win32gui
+import win32gui,win32api,packpy
 from win32.lib import win32con
-import win32api
-import ocr,statistics_dev,statistics_resource
-import base64_ctrl
+import ocr,statistics_dev,statistics_resource,ecs_init,base64_ctrl
 
 root = tk.Tk()
 appname = "流梦星璃"
@@ -437,9 +424,11 @@ pos_bt.grid(row=4,column=1,
               padx=10,pady=10)
 
 #迅雷、芯次元签到
+'''
 thunderSign_bt = tk.Button(root,text='每日签到',command=thunder_sign_in.start,width=15)
 thunderSign_bt.grid(row=5,column=1,
               padx=10,pady=10)
+'''
 #迅雷任务
 '''
 thundertask_text = tk.Label(root,#放在框架1里面
@@ -456,8 +445,14 @@ thundertask_bt.grid(row=5,column=1,
 '''
 #部落冲突脚本
 coc_bt = tk.Button(root,text='部落冲突',command=coc.start,width=15)
+coc_bt.grid(row=5,column=1,
+              padx=10,pady=10)
+              
+#ODPS授权
+coc_bt = tk.Button(root,text='ODPS授权',command=odps_grant.start,width=15)
 coc_bt.grid(row=6,column=1,
               padx=10,pady=10)
+              
 #故障设备
 statistics_dev_bt = tk.Button(root,text='故障设备',command=statistics_dev.start,width=15)
 statistics_dev_bt.grid(row=7,column=1,
@@ -491,27 +486,28 @@ musicdownload_text.grid(row=3,column=1,padx=10,pady=10)
 musicdownload_bt = tk.Button(root,text='音乐下载',command=music.start,width=15)
 musicdownload_bt.grid(row=2,column=2,
               padx=10,pady=10)
-#抽奖
 '''
-lottery_text = tk.Label(root,#放在框架1里面
-                text = '点击直播抽奖',
-                justify='left',#左对齐
-                padx=5,
-                pady=20,
-                compound='left',width=15)
-lottery_text.grid(row=6,column=1,padx=10,pady=10)
+#直播抽奖
+lottery_bt = tk.Button(root,text='直播抽奖',command=lottery.start,width=15)
+lottery_bt.grid(row=3,column=2,
+              padx=10,pady=10)
 '''
 lottery_bt = tk.Button(root,text='直播抽奖',command=lottery.start,width=15)
 lottery_bt.grid(row=3,column=2,
               padx=10,pady=10)
+#开启wifi热点
+wifi_bt = tk.Button(root,text='wifi热点',command=wifi.start,width=15)
+wifi_bt.grid(row=3,column=2,
+              padx=10,pady=10)
+              
 #定时关机
 poweroff_bt = tk.Button(root,text='定时关机',command=poweroff.start,width=15)
 poweroff_bt.grid(row=4,column=2,
               padx=10,pady=10)
 
-#开启wifi热点
-wifi_bt = tk.Button(root,text='wifi热点',command=wifi.start,width=15)
-wifi_bt.grid(row=5,column=2,
+#ecs_init
+ecs_init_bt = tk.Button(root,text='ecs初始化',command=ecs_init.start,width=15)
+ecs_init_bt.grid(row=5,column=2,
               padx=10,pady=10)
 
 #筛选表格
