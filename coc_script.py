@@ -39,7 +39,6 @@ configpath = r"Config.ini"
 ddpath = config_read(configpath,"coc","ddpath")
 configdir = os.path.dirname(os.path.abspath(configpath))#配置文件目录
 backupdir = configdir + os.sep + "backup"
-logincheck_lists = config_read(configpath,"coc", "logincheck_lists").split()
 QQlists = config_read(configpath,"coc", "QQlists").split()
     
 def kill_adb():

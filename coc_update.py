@@ -5,27 +5,6 @@ from multiprocessing import Process as p
 import time
 
 
-
-
-#coc_scriptdir_src = r"E:\Program Files\Python\Python38\works\\tool\\"
-#src_file = r"E:\Program Files\Python\Python38\works\\tool\*.py"
-'''
-dir_src = r"E:\Program Files\Python\Python38\works\\tool\\"
-Coclog_src = r'E:\Program Files\Python\Python38\works\tool\coclog.txt'
-configpath_src = r"E:\Program Files\Python\Python38\works\tool\Config.ini"
-ddpath_src = r'D:\Program Files\DundiEmu\DunDiEmu.exe'
-
-dir_dest = r"\\Amadeus\\tool\\"
-Coclog_dest = r'D:\Program Files\Python38\works\tool\\coclog.txt'
-configpath_dest = r"D:\Program Files\Python38\works\tool\\Config.ini"
-ddpath_dest = r'D:\Program Files\DundiEmu\\DunDiEmu.exe'
-
-dest_old_dir = r"\\oldman\\tool\\"
-Coclog_old_dest = r'C:\Program Files\Python38\project\tool\\coclog.txt'
-configpath_old_dest = r"C:\Program Files\Python38\project\tool\\Config.ini"
-ddpath_old_dest = r'C:\Program Files\DundiEmu\\DunDiEmu.exe'
-'''
-
 src_makise = {
 'dir_src':r"E:\Program Files\Python\Python38\works\\tool\\",
 'backup_config_worker02':r"E:\Program Files\Python\Python38\works\\tool\\backup_worker02\\",
@@ -82,7 +61,7 @@ def backup_config(src,dest_dir):
 
     
 def start():
-    #update(src_makise,dest_worker02)
+    update(src_makise,dest_worker02)
     update(src_makise,dest_worker01)
-    #backup_config(dest_worker02,src_makise['backup_config_worker02'])
+    backup_config(dest_worker02,src_makise['backup_config_worker02'])
     backup_config(dest_worker01,src_makise['backup_config_worker01'])

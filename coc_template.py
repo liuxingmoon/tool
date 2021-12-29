@@ -18,7 +18,6 @@ from config_ctrl import *
 configpath = r"Config.ini"
 QQlists = config_read(configpath,"coc", "QQlists").split()
 baidulists = config_read(configpath,"coc", "baidulists").split()
-logincheck_lists = config_read(configpath,"coc", "logincheck_lists").split()
 
 # 元素坐标,建立新号都是用240的
 pos = {
