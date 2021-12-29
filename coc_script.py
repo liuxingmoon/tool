@@ -40,6 +40,7 @@ ddpath = config_read(configpath,"coc","ddpath")
 configdir = os.path.dirname(os.path.abspath(configpath))#配置文件目录
 backupdir = configdir + os.sep + "backup"
 logincheck_lists = config_read(configpath,"coc", "logincheck_lists").split()
+QQlists = config_read(configpath,"coc", "QQlists").split()
     
 def kill_adb():
     subprocess.Popen('taskkill /f /t /im adb.exe',shell=True)
@@ -560,11 +561,8 @@ if __name__ == "__main__":
             end = everyid.split("-")[1]
             #临时跳过列表,注意这里的元素是int,必须全部转换为str，不然不一致了
             skiplist = [str(x) for x in range(int(start),int(end)+1)]
-            print(skiplist)
-            print(skipids)
             skipids.extend(skiplist)
             skipids.remove(everyid)#删除该列表
-            print(skipids)
             skipids = [str(x) for x in skipids]#需要把int转换成str，不然下面会报错
             skipids = list(set(skipids))#去重
 
@@ -901,7 +899,7 @@ if __name__ == "__main__":
             restartplay(90)
 
         #确认登录捐兵号，点击登录按钮
-        logincheck_lists = [ x for x in logincheck_lists if x in donateids_for_paid ]
+        logincheck_lists = [ x for x in donateids_for_paid if x not in QQlists ]
         for logincheckid in logincheck_lists:
             login_click(logincheckid)
             

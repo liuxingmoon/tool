@@ -45,6 +45,8 @@ def update_tb(tbname,values):
     money_last = int(values[6]) #本月收入替换上月收入
     money_all = int(info[7]) + int(values[7])
     status = values[8]
+    coc_customer = values[9]
+    server_name = values[10]
     table[index] = table[index].replace(info[0],coc_id,1)
     table[index] = table[index].replace(info[1],coc_name,1)
     table[index] = table[index].replace(info[3],start_time,1)
@@ -53,6 +55,8 @@ def update_tb(tbname,values):
     table[index] = table[index].replace(info[6],str(money_last),1)#加上替换次数，不然会因为第一个月收入与总收入一致导致把总收入也替换了
     table[index] = rreplace(table[index],info[7],str(money_all),1)#从右往左替换，不然第一个月总收入和收入一致导致只替换第一个月收入
     table[index] = table[index].replace(info[8],str(status),1)
+    #table[index] = table[index].replace(info[9],str(coc_customer),1) 用户续费自然不更新用户
+    table[index] = table[index].replace(info[10],str(server_name),1)
     #将更新后的table直接覆盖写入到表中
     # 创建文件对象
     with open(tbname,'w',encoding='gb2312',newline="") as f:
@@ -72,9 +76,10 @@ def get_coc_info():
     srv_month = coc_srv_month_ny.get()
     money_last = coc_money_ny.get()
     coc_customer = coc_customer_ny.get()
+    server_name = get_server(coc_id)
     if (coc_id,coc_clan_name,srv_month) == ("","","") and money_last != "":
         coc_id,coc_clan_name,srv_month = 0,'部落首领转让',0
-    return (int(coc_id),coc_clan_name,float(srv_month),int(money_last),coc_customer)
+    return (int(coc_id),coc_clan_name,float(srv_month),int(money_last),coc_customer,server_name)
 
 #根据模拟器id获取信息
 def get_coc_name(coc_id):
@@ -87,8 +92,18 @@ def get_coc_name(coc_id):
     #coc_name = '星陨'
     return (coc_name)
 
+def get_server(coc_id):
+    coc_id = int(coc_id)
+    if coc_id in range(1,9):#1-8
+        server_name = "server_02"
+    elif coc_id in range(9,18):#9-17
+        server_name = "server_01"
+    else:
+        server_name = "server_03"
+    return (server_name)
+        
 #计算并输出截止时间
-def deadtime(month):
+def deadtime(month,coc_name):
     #month==租的月数
     # 当前时间
     start_time = datetime.datetime.now()
@@ -100,10 +115,9 @@ def deadtime(month):
     dead_time = start_time + srv_days
     dead_time_hr = dead_time.strftime('%Y-%m-%d %H:%M')
     #打印结果
-    message = '尊敬的用户，您的服务已经开始为您服务！\n服务开始时间为：%s\n一共服务时间：%d 天\n服务结束时间：%s\n用户须知：\n1、每天凌晨0:00 - 6:30是打资源时间段；\n2、默认兵种：胖子、法师、气球、皮卡、飞龙、飞龙宝宝、雷龙、雪怪、野猪骑士、女武神；攻城武器：车、气球；可以指定兵种，也可以识别文字，如果文字识别失败默认捐气球；\n默认药水：雷电、狂暴、冰冻、毒药、地震、急速；\n3、如果游戏版本更新，我们会尽快在当天实现版本更新为您提供服务；\n4、为了不影响其他用户，原则上捐兵兵种仅在晚上做变更，兵种种类(包含攻城武器)<=14,总兵力<=500，药水种类<=7,总药水<=20；\n5、在线4小时会自动下线，会有15分钟强制下线时间，请等待20分钟，如果还是未上线，详情请联系我。\n有疑问请随时联系我,祝您游戏愉快！' %(start_time_hr,srv_days_hr,dead_time_hr)
+    message = '尊敬的用户，捐兵奶号：%s 已经开始为您服务！\n服务开始时间为：%s\n一共服务时间：%d 天\n服务结束时间：%s\n用户须知：\n1、每天凌晨0:00 - 6:30是打资源时间段；\n2、默认兵种：胖子、法师、气球、皮卡、飞龙、飞龙宝宝、雷龙、雪怪、野猪骑士、女武神；攻城武器：车、气球；可以指定兵种，也可以识别文字，如果文字识别失败默认捐气球；\n默认药水：雷电、狂暴、冰冻、毒药、地震、急速；\n3、如果游戏版本更新，我们会尽快在当天实现版本更新为您提供服务；\n4、为了不影响其他用户，原则上捐兵兵种仅在晚上做变更，兵种种类(包含攻城武器)<=14,总兵力<=500，药水种类<=7,总药水<=20；\n5、在线4小时会自动下线，会有15分钟强制下线时间，请等待20分钟，如果还是未上线，详情请联系我。\n有疑问请随时联系我,祝您游戏愉快！' %(coc_name,start_time_hr,srv_days_hr,dead_time_hr)
     g.msgbox(msg=message,title='用户信息')
     setText(message)
-    print('尊敬的用户，您的服务已经开始为您服务！\n服务开始时间为：%s\n一共服务时间：%d 天\n服务结束时间：%s' %(start_time_hr,srv_days_hr,dead_time_hr))
     return (start_time_hr,dead_time_hr,srv_days_hr)
 
 def setText(message):   #重设剪贴板文本
@@ -239,7 +253,7 @@ def clarm(tbname):
                             choices=('已停止', '暂不停止服务'))
                 if flag_deadtime == '已停止':
                     status = 'stop'
-                    update_tb(tbname, [coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, 0, status,coc_customer])
+                    update_tb(tbname, [coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, 0, status,coc_customer,server_name])
 
         elif status == 'stop':
             pass
@@ -281,6 +295,7 @@ def submit(tbname):
     coc_customer = info[4]
     if coc_customer == "":#不输入用户名默认是部落名
         coc_customer = coc_clan_name
+    server_name = info[5]
     #判断是否存在coc_customer.csv
     if tbname in os.listdir():
         # 如果存在表
@@ -291,7 +306,6 @@ def submit(tbname):
         # 核对用户部落名
         index = -1 #记录用户的index
         flag = False #记录是否有该用户名称
-
         for column in table:
             info = column.split(',')
             if coc_clan_name == info[2]:
@@ -309,25 +323,25 @@ def submit(tbname):
             start_time_hr = time_srv[0]
             dead_time_hr = time_srv[1]
             srv_days_hr = time_srv[2]
-            update_tb(tbname,[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, money_all, status,coc_customer])
+            update_tb(tbname,[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, money_all, status,coc_customer,server_name])
         elif flag == False: #新用户，插入新数据
                 # 插入新用户信息
                 status = 'running'
-                time_srv = deadtime(srv_month)
+                time_srv = deadtime(srv_month,coc_name)
                 start_time_hr = time_srv[0]
                 dead_time_hr = time_srv[1]
                 srv_days_hr = time_srv[2]
-                insert_tb('coc_customer.csv',[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, money_all, status,coc_customer])
+                insert_tb('coc_customer.csv',[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, money_all, status,coc_customer,server_name])
     else:
         # 如果不存在表，就直接建表，并插入数据
         # 插入新用户信息
         status = 'running'
-        time_srv = deadtime(srv_month)
+        time_srv = deadtime(srv_month,coc_name)
         start_time_hr = time_srv[0]
         dead_time_hr = time_srv[1]
         srv_days_hr = time_srv[2]
-        create_tb('coc_customer.csv',["模拟器id", "模拟器别名", "用户部落名", "开始服务时间", "结束服务时间", "总服务时间(天)", "上次消费金额", "总消费金额","运行状态"])
-        insert_tb('coc_customer.csv',[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, money_all, status,coc_customer])
+        create_tb('coc_customer.csv',["模拟器id", "模拟器别名", "用户部落名", "开始服务时间", "结束服务时间", "总服务时间(天)", "上次消费金额", "总消费金额","运行状态","服务器名"])
+        insert_tb('coc_customer.csv',[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, money_all, status,coc_customer,server_name])
         select_tb('coc_customer.csv')
 
 def start():
