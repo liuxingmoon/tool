@@ -15,6 +15,18 @@ from xlsx_ctrl import *
 reportFile = r"部落冲突客户信息.xlsx"
 cocSheet = r"部落冲突"
 
+def get_server(coc_id):
+    coc_id = int(coc_id)
+    if coc_id == 0:
+        server_name = ""
+    elif coc_id in range(1,9):#1-8
+        server_name = "server_02"
+    elif coc_id in range(9,18):#9-17
+        server_name = "server_01"
+    else:
+        server_name = "server_03"
+    return (server_name)
+
 def openfile(excelFile):
     subprocess.Popen(excelFile,shell=True)
     
@@ -56,7 +68,8 @@ def update_tb(tbname,values):
     table[index] = rreplace(table[index],info[7],str(money_all),1)#从右往左替换，不然第一个月总收入和收入一致导致只替换第一个月收入
     table[index] = table[index].replace(info[8],str(status),1)
     #table[index] = table[index].replace(info[9],str(coc_customer),1) 用户续费自然不更新用户
-    table[index] = table[index].replace(info[10],str(server_name),1)
+    if server_name != "":#不为空才替换
+        table[index] = table[index].replace(info[10],str(server_name),1)
     #将更新后的table直接覆盖写入到表中
     # 创建文件对象
     with open(tbname,'w',encoding='gb2312',newline="") as f:
@@ -91,16 +104,6 @@ def get_coc_name(coc_id):
                 coc_name = configline.split('=')[-1].rstrip('\n')
     #coc_name = '星陨'
     return (coc_name)
-
-def get_server(coc_id):
-    coc_id = int(coc_id)
-    if coc_id in range(1,9):#1-8
-        server_name = "server_02"
-    elif coc_id in range(9,18):#9-17
-        server_name = "server_01"
-    else:
-        server_name = "server_03"
-    return (server_name)
         
 #计算并输出截止时间
 def deadtime(month,coc_name):
@@ -204,7 +207,6 @@ def renewal(month,values):
     g.msgbox(msg=message, title='用户信息')
     open_windows(coc_clan_dict)#打开对应部落冲突部落QQ和wechat会话窗口，并发送消息
     setText(message)
-    print('尊敬的用户，您的服务已经续费成功！\n续费服务时间：%d 天\n服务结束时间：%s\n祝您游戏愉快！' %(srv_days_hr,dead_time_hr))
     return (start_time_hr,dead_time_hr,srv_days_hr)
 
 
