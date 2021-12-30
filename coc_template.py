@@ -462,9 +462,9 @@ def train_siege_unit(startport):
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     click(pos['trainning'][0], pos['trainning'][1], startport,3)
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
-    click_short(pos['train_siege_unit01'][0], pos['train_siege_unit01'][1], startport, 2)
-    click_short(pos['train_siege_unit02'][0], pos['train_siege_unit02'][1], startport, 2)
-    click_short(pos['train_siege_unit03'][0], pos['train_siege_unit03'][1], startport, 2)
+    click_short(pos['train_siege_unit03'][0], pos['train_siege_unit03'][1], startport, 1)
+    click_short(pos['train_siege_unit02'][0], pos['train_siege_unit02'][1], startport, 1)
+    click_short(pos['train_siege_unit01'][0], pos['train_siege_unit01'][1], startport, 1)
     time.sleep(3)
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     
