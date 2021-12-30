@@ -14,8 +14,9 @@ import random
 from multiprocessing import Process
 import easygui as g
 from config_ctrl import *
+from read_config import configpath
 
-configpath = r"Config.ini"
+
 QQlists = config_read(configpath,"coc", "QQlists").split()
 baidulists = config_read(configpath,"coc", "baidulists").split()
 
@@ -257,9 +258,6 @@ IDcard = {
 
 }
 
-#配置文件路径
-configpath = r"Config.ini"
- 
 
 #获取位置信息
 def get_pos():

@@ -7,6 +7,7 @@ import win32clipboard
 import win32gui
 from win32.lib import win32con
 import configparser
+from read_config import configpath
 
 # 保证兼容python2以及python3
 IS_PY3 = sys.version_info.major == 3
@@ -28,8 +29,6 @@ else:
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
-#配置文件路径
-configpath = r"Config.ini"
 config = configparser.ConfigParser()
 config.read(configpath, encoding="utf-8")
 #启动id范围

@@ -2,8 +2,7 @@
 import pandas as pd
 import configparser
 import os
-
-configpath = r"D:\Program Files\Python38\works\tools\Config.ini"
+from read_config import configpath
 
 config = configparser.ConfigParser()
 config.read(configpath, encoding="utf-8")

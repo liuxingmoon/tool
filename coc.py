@@ -8,12 +8,10 @@ import AutoClick as ak
 import coc_update,coc_resume,coc_config
 from config_ctrl import *
 from file_ctrl import rename,replace
+from read_config import configpath
 
 basedir = os.getcwd()#tool目录
-configpath='Config.ini'
-#ddavd_path = r"%s" %(config_read(configpath,"coc","ddavd_path"))
 ddavd_path = r"D:\Program Files\DundiEmu\DundiData\avd"
-print(type(ddavd_path),ddavd_path)
 
 def start():
     #启动部落冲突自动启动鼠标连点
@@ -25,7 +23,7 @@ def start():
         def getinfo():
             info = coc_id.get()
             config = configparser.ConfigParser()
-            config.read("Config.ini", encoding="utf-8")
+            config.read(configpath, encoding="utf-8")
             if (info == ""):
                 # 不写就打开部落战id和升级id
                 startidlist = config.get("coc", "warids").split()
@@ -111,7 +109,7 @@ def start():
                 startidlist = [x for x in resourceids_work01]
             elif info in ['u', 'U', 'up', 'UP']:  # 升级的模拟器id
                 config = configparser.ConfigParser()
-                config.read("Config.ini", encoding="utf-8")
+                config.read(configpath, encoding="utf-8")
                 startid = int(config.get("coc", "maxid")) + 1
                 endid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(ddavd_path) if x != 'vboxData'])
                 startidlist = [x for x in range(startid, (endid + 1))]
@@ -197,7 +195,7 @@ def start():
             startidlist = getinfo()
             startid = coc_id.get()  # 获取输入框信息
             config = configparser.ConfigParser()
-            config.read("Config.ini", encoding="utf-8")
+            config.read(configpath, encoding="utf-8")
             skipids = config.get("coc", "skipids").split()
             levelupids = [int(x) for x in skipids if x not in ['0', '15']]
             #输入框为空自动定义为最大id
@@ -221,13 +219,13 @@ def start():
             startidlist = [int(x) for x in startidlist]
             startid = coc_id.get()  # 获取输入框信息
             config = configparser.ConfigParser()
-            config.read("Config.ini", encoding="utf-8")
+            config.read(configpath, encoding="utf-8")
             skipids = config.get("coc", "skipids").split()
             levelupids = [int(x) for x in skipids if x not in ['0', '15']]
             #输入框为空自动定义为最大id
             if startid == "":
                 config = configparser.ConfigParser()
-                config.read("Config.ini", encoding="utf-8")
+                config.read(configpath, encoding="utf-8")
                 startid = int(config.get("coc", "maxid")) + 1
                 endid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(ddavd_path) if x != 'vboxData'])
                 if startid > endid:#maxid后没有新建模拟器，只升级levelupids

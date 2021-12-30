@@ -11,18 +11,25 @@ import time
 from pandas import read_excel 
 from rreplace import rreplace
 from xlsx_ctrl import *
+from config_ctrl import *
 
 reportFile = r"部落冲突客户信息.xlsx"
 cocSheet = r"部落冲突"
-
+try:
+    donateids_for_paid_server01 = config_read(r'\\server01\\tool\\Config.ini','coc','donateids_for_paid').split()
+    donateids_for_paid_server02 = config_read(r'\\server02\\tool\\Config.ini','coc','donateids_for_paid').split()
+except:
+    donateids_for_paid_server01 = [ "9","10","11" ]
+    donateids_for_paid_server02 = [ "1","2","3","4","5","6","7","8" ]
+    
 def get_server(coc_id):
-    coc_id = int(coc_id)
+    coc_id = str(coc_id)
     if coc_id == 0:
         server_name = ""
-    elif coc_id in range(1,9):#1-8
-        server_name = "server_02"
-    elif coc_id in range(9,18):#9-17
+    elif coc_id in donateids_for_paid_server01:
         server_name = "server_01"
+    elif coc_id in donateids_for_paid_server02:
+        server_name = "server_02"
     else:
         server_name = "server_03"
     return (server_name)

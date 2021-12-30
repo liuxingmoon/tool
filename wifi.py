@@ -1,9 +1,8 @@
 import tkinter as tk
 import subprocess as pcs
 import configparser
+from read_config import configpath
 
-#配置文件路径
-configpath = r"D:\Program Files\Python38\works\tool\\Config.ini"
 config = configparser.ConfigParser()
 config.read(configpath, encoding="utf-8")
 

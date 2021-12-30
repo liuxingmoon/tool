@@ -8,8 +8,8 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import win32gui
 from win32.lib import win32con
+from read_config import configpath
 
-configpath = "Config.ini"
 excelFile = config_read(configpath,'work','硬件故障记录')
 commit_person = config_read(configpath,'work','commit_person')
 cmdb_url = r"http://10.128.128.238/report/cmdb/v_server"

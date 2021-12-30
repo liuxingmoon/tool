@@ -17,6 +17,8 @@ from multiprocessing import Process
 import file_ctrl as fc
 from config_ctrl import *
 from readfile import *
+from read_config import configpath
+
 #元素坐标
 pos = {
   'coc_script':[500,680],
@@ -35,7 +37,6 @@ pos = {
 
 #日志路径
 Coclog = r'coclog.txt'
-configpath = r"Config.ini"
 ddpath = config_read(configpath,"coc","ddpath")
 configdir = os.path.dirname(os.path.abspath(configpath))#配置文件目录
 backupdir = configdir + os.sep + "backup"
@@ -574,11 +575,11 @@ if __name__ == "__main__":
     donateids_for_paid = config.get("coc", "donateids_for_paid").split()#获取付费捐兵id的list
     donateids = config.get("coc", "donateids").split()#获取捐兵id的list
     levelupids = config.get("coc", "levelupids").split()#获取9本升级id的list
-    resourceids_work01 = config.get("coc", "resourceids_work01").split()#获取持续打资源id的list
-    resourceids_work02 = config.get("coc", "resourceids_work02").split()#获取持续打资源id的list
-    resourceids_work03 = config.get("coc", "resourceids_work03").split()#获取持续打资源id的list
+    resourceids_server01 = config.get("coc", "resourceids_server01").split()#获取持续打资源id的list
+    resourceids_server02 = config.get("coc", "resourceids_server02").split()#获取持续打资源id的list
+    resourceids_server03 = config.get("coc", "resourceids_server03").split()#获取持续打资源id的list
     #在持续打资源的list去除付费捐兵的list
-    resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]
+    resourceids = [x for x in resourceids_server01 if x not in donateids_for_paid]
     #在捐兵列表中去除付费捐兵的list和持续打资源的list
     donateids = [x for x in donateids if (x not in donateids_for_paid) and (x not in resourceids)]
     donatenames_for_paid = {}
@@ -625,9 +626,9 @@ if __name__ == "__main__":
     skipids.extend(donateids_for_paid)#添加捐兵的id到跳过id列表中
     skipids.extend(donateids)#添加捐兵的id到跳过id列表中
     skipids.extend(levelupids)#添加9本升级的id到跳过id列表中
-    skipids.extend(resourceids_work01)#添加持续打资源的id到跳过id列表中
-    skipids.extend(resourceids_work02)#添加持续打资源的id到跳过id列表中
-    skipids.extend(resourceids_work03)#添加持续打资源的id到跳过id列表中
+    skipids.extend(resourceids_server01)#添加持续打资源的id到跳过id列表中
+    skipids.extend(resourceids_server02)#添加持续打资源的id到跳过id列表中
+    skipids.extend(resourceids_server03)#添加持续打资源的id到跳过id列表中
     skipids = list(set(skipids))#去重
     skipids.sort()
     print('============================= 跳过的实例id如下 ===============================\n%s' %(skipids))

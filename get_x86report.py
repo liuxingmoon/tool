@@ -16,9 +16,9 @@ from remind_write_weekreport import x86_members
 import time,configparser
 from clip_ctrl import clip
 from file_ctrl import replace
+from read_config import configpath
 
 notepad_path = r"D:\Program Files\Notepad++\notepad++.exe"
-configpath = r"Config.ini"
 config = configparser.ConfigParser()
 config.read(configpath, encoding="utf-8")
 weekReportDir = "%s" %(config.get("work", "weekReportDir"))

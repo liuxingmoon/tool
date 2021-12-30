@@ -4,8 +4,8 @@ import time
 import win32gui
 from win32.lib import win32con
 from config_ctrl import *
+from read_config import configpath
 
-configpath = r"Config.ini"
 QQlists = config_read(configpath,"coc", "QQlists").split()
 baidulists = config_read(configpath,"coc", "baidulists").split()
 
