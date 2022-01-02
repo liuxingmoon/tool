@@ -20,6 +20,7 @@ from read_config import configpath
 QQlists = config_read(configpath,"coc", "QQlists").split()
 baidulists = config_read(configpath,"coc", "baidulists").split()
 
+
 # 元素坐标,建立新号都是用240的
 pos = {
     'pointleft': [149, 456],
@@ -134,6 +135,8 @@ pos = {
     'train_siege_unit02': [410, 500],
     'train_siege_unit03': [650, 500],
     'train_siege_unit04': [880, 500],
+    'train_siege_unit05': [1120, 500],
+    'train_siege_unit06': [850, 500],
     'attack_troop01': [200, 655],
     'attack_troop02': [300, 655],
     'attack_troop03': [400, 655],
@@ -207,7 +210,10 @@ pos = {
     'del_army_pt04': [410, 400],
     'del_army_pt05': [510, 400],
     'del_army_pt06': [610, 400],
-    'del_army_pt07': [710, 400]
+    'del_army_pt07': [710, 400],
+    'del_army_siege01': [950, 200],
+    'del_army_siege02': [1050, 200],
+    'del_army_siege03': [1150, 200]
 
 }
 # 建立字典存储所有位置信息
@@ -458,13 +464,21 @@ def train_template(train_template,startport,*args):
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
 
 #训练攻城器
-def train_siege_unit(startport):
+def train_siege_unit(startport,siege_num):
+    sort = 0#攻城器的种类 1：车 2：艇 3：球 4：营 5：木 6：焰
+    siege = {}
+    for n in siege_num:
+        sort += 1
+        num = int(n)
+        siege[sort]=num
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     click(pos['trainning'][0], pos['trainning'][1], startport,3)
     click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,3)
-    click_short(pos['train_siege_unit03'][0], pos['train_siege_unit03'][1], startport, 1)
-    click_short(pos['train_siege_unit02'][0], pos['train_siege_unit02'][1], startport, 1)
-    click_short(pos['train_siege_unit01'][0], pos['train_siege_unit01'][1], startport, 1)
+    for sort in siege:
+        if sort > 5:#前5种不用滑屏，超过就要滑屏
+            swipe('right',startport)
+            time.sleep(1)
+        click_mid(pos['train_siege_unit0%d'%(sort)][0], pos['train_siege_unit0%d'%(sort)][1], startport, siege[sort])
     time.sleep(3)
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     
@@ -474,7 +488,7 @@ def cancel_troop(startport):
     click(pos['trainning'][0], pos['trainning'][1], startport,2)
     print('取消兵种')
     click(pos['trainningitem2'][0], pos['trainningitem2'][1], startport,5)
-    click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 600)
+    click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 450)
     time.sleep(3)
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     time.sleep(5)
@@ -489,7 +503,18 @@ def cancel_potion(startport):
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     time.sleep(5)
     
-#取消现有兵种和药水
+#取消训练中的攻城器
+def cancel_siege(startport):
+    click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
+    click(pos['trainning'][0], pos['trainning'][1], startport,2)
+    print('取消攻城器')
+    click(pos['trainningitem4'][0], pos['trainningitem4'][1], startport,5)
+    click_short(pos['script_canceltroop'][0], pos['script_canceltroop'][1], startport, 20)
+    time.sleep(3)
+    click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
+    time.sleep(5)
+    
+#取消现有兵种、药水、攻城器
 def cancel_army(startport):
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
     click(pos['trainning'][0], pos['trainning'][1], startport,3)
@@ -503,9 +528,9 @@ def cancel_army(startport):
     time.sleep(5)
     for n in range(1,8):#取消药水
         click_short(pos['del_army_pt0%d' %(n)][0], pos['del_army_pt0%d' %(n)][1], startport, 10)
-    #重启一下server
-    #restart_server()
-    #connect(startport)
+    for n in range(1,4):#取消攻城器
+        click_short(pos['del_army_siege0%d' %(n)][0], pos['del_army_siege0%d' %(n)][1], startport, 4)
+        
     time.sleep(8)
     click(pos['del_army'][0], pos['del_army'][1], startport, 3)#确定删除
     time.sleep(5)
@@ -1204,33 +1229,38 @@ def start_script(startport,*args):
     swipeport(pos['script_swipetop'][0], pos['script_swipetop'][1], pos['script_swipebot'][0],pos['script_swipebot'][1], startport)
     time.sleep(5)
     if len(args) > 0:
-        if args[0] == "donate":#切换为donate
-            click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
-            # 从下往上滑动
-            for n in range(7):
-                swipeport(pos['script_swipebot'][0], pos['script_swipebot'][1], pos['script_swipetop'][0],pos['script_swipetop'][1], startport)
-            #切换夜世界不打资源
-            click(pos['script_night_attackmode'][0], pos['script_night_attackmode'][1], startport, 3)
-            click(pos['script_night_attackmode_no'][0], pos['script_night_attackmode_no'][1], startport, 3)
-            #点击夜世界模式
-            click(pos['script_night_auto_collect'][0], pos['script_night_auto_collect'][1], startport,)
-            click(pos['script_night_Accelerate_tower'][0], pos['script_night_Accelerate_tower'][1], startport)
-            click(pos['script_night_auto_weeding'][0], pos['script_night_auto_weeding'][1], startport)
-            click(pos['script_night_auto_levelup'][0], pos['script_night_auto_levelup'][1], startport)
-            click(pos['script_night_auto_research'][0], pos['script_night_auto_research'][1], startport)
-        elif args[0] == "play":#切换为play
-            click(pos['script_play'][0], pos['script_play'][1], startport, 3)
-            # 从下往上滑动
-            for n in range(7):
-                swipeport(pos['script_swipebot'][0], 950, pos['script_swipetop'][0], 370, startport)
-            click(pos['script_night_attackmode'][0], pos['script_night_attackmode'][1], startport, 3)
-            click(pos['script_night_attackmode_prize'][0], pos['script_night_attackmode_prize'][1], startport, 3)
-            #点击夜世界模式
-            click(pos['script_night_auto_collect'][0], pos['script_night_auto_collect'][1], startport)
-            click(pos['script_night_Accelerate_tower'][0], pos['script_night_Accelerate_tower'][1], startport)
-            click(pos['script_night_auto_weeding'][0], pos['script_night_auto_weeding'][1], startport)
-            click(pos['script_night_auto_levelup'][0], pos['script_night_auto_levelup'][1], startport)
-            click(pos['script_night_auto_research'][0], pos['script_night_auto_research'][1], startport)
+        id = getid(startport)
+        status_now = config_read(configpath,'coc','startid%d'%(id)).split()[0]#当前捐兵状态
+        if status_now == args[0]:#如果当前捐兵状态就是要切换的状态就不用再切换了
+            pass
+        else:
+            if args[0] == "donate":#切换为donate
+                click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
+                # 从下往上滑动
+                for n in range(7):
+                    swipeport(pos['script_swipebot'][0], pos['script_swipebot'][1], pos['script_swipetop'][0],pos['script_swipetop'][1], startport)
+                #切换夜世界不打资源
+                click(pos['script_night_attackmode'][0], pos['script_night_attackmode'][1], startport, 3)
+                click(pos['script_night_attackmode_no'][0], pos['script_night_attackmode_no'][1], startport, 3)
+                #点击夜世界模式
+                click(pos['script_night_auto_collect'][0], pos['script_night_auto_collect'][1], startport,)
+                click(pos['script_night_Accelerate_tower'][0], pos['script_night_Accelerate_tower'][1], startport)
+                click(pos['script_night_auto_weeding'][0], pos['script_night_auto_weeding'][1], startport)
+                click(pos['script_night_auto_levelup'][0], pos['script_night_auto_levelup'][1], startport)
+                click(pos['script_night_auto_research'][0], pos['script_night_auto_research'][1], startport)
+            elif args[0] == "play":#切换为play
+                click(pos['script_play'][0], pos['script_play'][1], startport, 3)
+                # 从下往上滑动
+                for n in range(7):
+                    swipeport(pos['script_swipebot'][0], 950, pos['script_swipetop'][0], 370, startport)
+                click(pos['script_night_attackmode'][0], pos['script_night_attackmode'][1], startport, 3)
+                click(pos['script_night_attackmode_prize'][0], pos['script_night_attackmode_prize'][1], startport, 3)
+                #点击夜世界模式
+                click(pos['script_night_auto_collect'][0], pos['script_night_auto_collect'][1], startport)
+                click(pos['script_night_Accelerate_tower'][0], pos['script_night_Accelerate_tower'][1], startport)
+                click(pos['script_night_auto_weeding'][0], pos['script_night_auto_weeding'][1], startport)
+                click(pos['script_night_auto_levelup'][0], pos['script_night_auto_levelup'][1], startport)
+                click(pos['script_night_auto_research'][0], pos['script_night_auto_research'][1], startport)
     click(pos['script_start'][0], pos['script_start'][1], startport)
     time.sleep(20)
     click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
@@ -1243,26 +1273,31 @@ def start_script(startport,*args):
         
 #切换打鱼和捐兵
 def convert_mode(convert_id,*args):
+    convert_id = int(convert_id)
+    startid_info = config_read(configpath,"coc", "startid%d"%(convert_id)).split()
+    statusnow = startid_info[0]
+    try:
+        siege_num = startid_info[1]
+    except IndexError as reason:
+        print('没有配置攻城器，默认2车2艇2球')
+        siege_num = '222000'
     #args[0]表示当前状态，args[1]表示删掉已经造好的兵种的模拟器id
     config = configparser.ConfigParser()
     #for nowid in startlist:
     #读取一次配置文件
     config.read(configpath, encoding="utf-8")
     donateids_for_paid = config.get("coc", "donateids_for_paid").split()
-    #nowid = int(nowid)
-    convert_id = int(convert_id)
     startport = getport(convert_id)
     kill_adb()#重启一下adb
     #查看是否在捐兵配置中，没有就配置为捐兵
     try:
         if len(args) > 0:
             status = args[0]
-            statusnow = config.get("coc", "startid%d"%(convert_id))
         else:
-            status = config.get("coc", "startid%d"%(convert_id))
-            statusnow = config.get("coc", "startid%d"%(convert_id))
+            startid_info = config.get("coc", "startid%d"%(convert_id)).split()
     except:
-        config.set("coc", "startid%d"%(convert_id),"donate")
+        #如果没有记录默认捐兵状态 2车2艇2球
+        config.set("coc", "startid%d"%(convert_id),"donate 222000")
         config.write(open(configpath, "w",encoding='utf-8'))
         status = "donate"
     #转换状态并保存
@@ -1307,32 +1342,31 @@ def convert_mode(convert_id,*args):
             #船
             click(pos['boat'][0], pos['boat'][1], startport, 15)
 
-            #取消训练中的兵种,2次确保删除
-            cancel_troop(startport)
+            #取消训练中的兵种
             cancel_troop(startport)
             if (str(convert_id) in donateids_for_paid):#付费捐兵删完造2轮兵
                 print('开始执行删除现有兵种，需要全部删除的id为%s'%(donateids_for_paid))
                 print('删除%d的现有兵种和药水并造兵' %(convert_id))
                 # 取消训练中的药水
                 cancel_potion(startport)
+                # 取消训练中的攻城器
+                cancel_siege(startport)
                 #取消现有兵种和药水
                 cancel_army(startport)
                 # 造捐兵兵种
                 train_template('train_template02', startport)
             print('删除兵种结束')
             #造攻城器，防止中断期间把攻城器弄掉了
-            train_siege_unit(startport)
+            train_siege_unit(startport,siege_num)
             #造捐兵兵种
             train_template('train_template03', startport)
-            #train_template('train_template03', startport)
         #暂停几秒钟保存切换后状态
         time.sleep(5)
         close_emu_id(convert_id)#关闭该模拟器
-        #close()
     else:
         status = statusnow
         close_emu_id(convert_id)#关闭该模拟器
-        #close()
     #保存当前状态
-    config.set("coc", "startid%d"%(convert_id),status)
+    startid_info = status + " " + siege_num
+    config.set("coc", "startid%d"%(convert_id),startid_info)
     config.write(open(configpath, "w",encoding='utf-8'))

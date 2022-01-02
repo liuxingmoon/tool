@@ -818,7 +818,7 @@ if __name__ == "__main__":
                 shutdown()#关机，必须配合自动开机功能使用
             elif flag_reboot in ['True','1','T']:
                 with open(Coclog,'a') as Coclogfile:
-                    Coclogfile.write('开机时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
+                    Coclogfile.write('早上切换打资源状态为捐兵,切换开始时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
                 close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
                 close_emu_all(donatenames)#关闭所有自用捐兵号
                 #print(r'============================= 等待30分钟避免切换时没有授权导致切换失败 ===============================')

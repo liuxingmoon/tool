@@ -234,7 +234,6 @@ def getid(startport):
 # 连接模拟器
 def connect(startport):
     if startport == 5555:
-        subprocess.Popen(r'adb connect emulator-5554',shell = True)
         subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True)
     else:
         result = subprocess.Popen(r'adb connect 127.0.0.1:%d' %(startport),shell = True,stdout=subprocess.PIPE)
@@ -263,8 +262,6 @@ def finish(startport):
     time.sleep(3)
 # 点击屏幕
 def click(x,y,startport,*args):
-    if startport == 5555:
-        subprocess.Popen(r'adb -s emulator-5554 shell input tap %d %d' %(x,y),shell=True)
     subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
     print(x,y)
     time.sleep(3)
@@ -276,6 +273,14 @@ def click_short(x,y,startport,times):
         process = subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
         time.sleep(0.1)
         print(x,y)
+        
+# 慢速多次点击屏幕
+def click_mid(x,y,startport,times):
+    for n in range(times):
+        process = subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
+        time.sleep(2)
+        print(x,y)
+        
 #长按屏幕
 def click_long(x,y,time,startport):
     process = subprocess.Popen(r'adb -s 127.0.0.1:%d shell input swipe %d %d %d %d %d' %(startport,x,y,x,y,time*1000),shell=True)
@@ -289,10 +294,10 @@ def swipe(drt,startport):
         process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 640 650 640 150' % (startport), shell=True)
         time.sleep(2)
     elif drt == 'left':
-        process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 100 360 1000 360' % (startport), shell=True)
+        process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 100 380 1000 360' % (startport), shell=True)
         time.sleep(2)
     elif drt == 'right':
-        process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 1000 360 100 360' % (startport), shell=True)
+        process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 1000 380 100 360' % (startport), shell=True)
         time.sleep(2)
 #定点滑动
 def swipeport(x1,y1,x2,y2,startport):
@@ -458,11 +463,7 @@ def restart_server():
 
 #打开黑松鼠
 def coc_script_black(startport,wait_time):
-    if startport == 5555:
-        subprocess.Popen(r'adb -s emulator-5554 shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity',shell=True)
-        subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
-    else:
-        subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
+    subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' %(startport),shell=True,stdout=subprocess.PIPE)
     time.sleep(wait_time)
 
 #开始脚本操作
@@ -470,7 +471,10 @@ def coc_script_black(startport,wait_time):
 def start(startid):
     #startid = g.buttonbox(msg='选择启动的模拟器',title='coc',choices=['QQ1','QQ2','QQ3','QQ4','QQ5','星陨6','码奴7','码奴8','码奴9'])
     print(startid)
-    action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' %(startid)
+    if int(startid) == 0:
+        action = r"D:\Program Files\DundiEmu\DunDiEmu.exe"
+    else:
+        action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' %(startid)
     #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(startid)
     start_emu_id(action,startid)#开模拟器
     print('启动模拟器完成')
