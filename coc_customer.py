@@ -113,7 +113,7 @@ def get_coc_name(coc_id):
     return (coc_name)
         
 #计算并输出截止时间
-def deadtime(month,coc_name):
+def deadtime(month,coc_name,server_name):
     #month==租的月数
     # 当前时间
     start_time = datetime.datetime.now()
@@ -241,33 +241,32 @@ def clarm(tbname):
         except:
             status = 'running'
         coc_customer = info[9]#用户名
+        server_name = info[10]#服务器位置
         #转换截止时间
         dead_time = datetime.datetime.strptime(str(dead_time_hr), '%Y-%m-%d %H:%M')
         #3天时提醒
         if status == 'running':#状态为正常运行服务的用户才需要提醒
             if datetime.timedelta(days=2) <= (dead_time - now_time) <= datetime.timedelta(days=3):
-                message = '尊敬的用户：%s，您的部落 %s : %s ，奶号 %s\n捐兵服务在3天内即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_customer,coc_id,coc_clan_name,coc_name,dead_time_hr,money_last)
+                message = '尊敬的用户：%s，您的部落 %s : %s ，服务器：%s，奶号：%s\n捐兵服务在3天内即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_customer,coc_id,coc_clan_name,server_name,coc_name,dead_time_hr,money_last)
                 coc_clan_dict[coc_customer] = message#添加到到期部落和信息 {'用户名':'信息'}
                 g.msgbox(msg=message)
                 open_windows(coc_clan_dict)#打开对应部落冲突部落QQ和wechat会话窗口，并发送消息
                 setText(message)
             elif datetime.timedelta(days=0) <= (dead_time - now_time) <= datetime.timedelta(days=1):
-                message = '尊敬的用户：%s，您的部落 %s : %s ，奶号 %s\n捐兵服务在 24 小时内 即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_customer,coc_id,coc_clan_name,coc_name,dead_time_hr,money_last)
+                message = '尊敬的用户：%s，您的部落 %s : %s ，服务器：%s，奶号：%s\n捐兵服务在 24 小时内 即将到期！\n服务结束时间：%s\n为了不影响您正常捐收兵，还请及时续费，续费金额：%s元\n很高兴为您服务，祝您游戏愉快！' %(coc_customer,coc_id,coc_clan_name,server_name,coc_name,dead_time_hr,money_last)
                 coc_clan_dict[coc_customer] = message#添加到到期部落和信息 {'用户名':'信息'}
                 g.msgbox(msg=message)
                 open_windows(coc_clan_dict)#打开对应部落冲突部落QQ和wechat会话窗口，并发送消息
                 setText(message)
             elif (dead_time - now_time) < datetime.timedelta(days=0):#过期如果不点击已停止，会一直提醒
-                flag_deadtime = g.buttonbox(msg='部落 %s : %s ，奶号 %s\n捐兵服务已经到期！\n服务结束时间：%s\n确认是否已停止！'%(coc_id,coc_clan_name,coc_name,dead_time_hr), title='确认停止服务',
+                flag_deadtime = g.buttonbox(msg='部落 %s : %s ，服务器：%s，奶号：%s\n捐兵服务已经到期！\n服务结束时间：%s\n确认是否已停止！'%(coc_id,coc_clan_name,server_name,coc_name,dead_time_hr), title='确认停止服务',
                             choices=('已停止', '暂不停止服务'))
                 if flag_deadtime == '已停止':
                     status = 'stop'
-                    update_tb(tbname, [coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, 0, status,coc_customer,server_name])
-
+                    update_tb(tbname,[coc_id, coc_name, coc_clan_name, start_time_hr, dead_time_hr, srv_days_hr, money_last, money_all, status,coc_customer,server_name])
         elif status == 'stop':
             pass
 
-    
 #查询信息
 def query(tbname):
     clarm(tbname)
@@ -292,7 +291,6 @@ def query(tbname):
 
 #提交信息，保存到csv表中
 def submit(tbname):
-    #clarm(tbname)
     # 获取输入信息
     info = get_coc_info()
     coc_id = info[0]
@@ -336,7 +334,7 @@ def submit(tbname):
         elif flag == False: #新用户，插入新数据
                 # 插入新用户信息
                 status = 'running'
-                time_srv = deadtime(srv_month,coc_name)
+                time_srv = deadtime(srv_month,coc_name,server_name)
                 start_time_hr = time_srv[0]
                 dead_time_hr = time_srv[1]
                 srv_days_hr = time_srv[2]
@@ -345,7 +343,7 @@ def submit(tbname):
         # 如果不存在表，就直接建表，并插入数据
         # 插入新用户信息
         status = 'running'
-        time_srv = deadtime(srv_month,coc_name)
+        time_srv = deadtime(srv_month,coc_name,server_name)
         start_time_hr = time_srv[0]
         dead_time_hr = time_srv[1]
         srv_days_hr = time_srv[2]

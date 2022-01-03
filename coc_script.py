@@ -301,7 +301,7 @@ def play_resource(resourceids):
     #获取上一次运行的打资源id
     #global resourceid_now
     resourceid_now = config.get("coc", "resourceid_now")#str
-    flag_play_resource = config.get("coc", "flag_play_resource")
+    flag_play_resource = config.get("coc", "flag_play_resource")#False:切换 True：不切换一直运行
     #获取即将运行的捐兵index
     if resourceid_now in resourceids:
         try:
