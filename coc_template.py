@@ -16,10 +16,8 @@ import easygui as g
 from config_ctrl import *
 from read_config import configpath
 
-
 QQlists = config_read(configpath,"coc", "QQlists").split()
 baidulists = config_read(configpath,"coc", "baidulists").split()
-
 
 # 元素坐标,建立新号都是用240的
 pos = {
@@ -989,8 +987,6 @@ def start_coc(startidlist):
 
 #更新coc
 def update_coc(startidlist):
-    config = configparser.ConfigParser()
-    config.read(configpath, encoding="utf-8")
     for nowid in startidlist:
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(nowid))
         #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (int(nowid))
@@ -999,11 +995,11 @@ def update_coc(startidlist):
         connect(startport)
         time.sleep(10)
         if nowid in QQlists:#QQ
-            coc_path = config.get("coc", "app_path_tencent")
+            coc_path = config_read(configpath,"coc", "app_path_tencent")
         elif nowid in baidulists:#baidu
-            coc_path = config.get("coc", "app_path_baidu")
+            coc_path = config_read(configpath,"coc", "app_path_baidu")
         else:
-            coc_path = config.get("coc", "app_path_kunlun")
+            coc_path = config_read(configpath,"coc", "app_path_kunlun")
         coc_path = r"%s" %(coc_path)
         subprocess.Popen('adb install -r %s' % (coc_path), shell=True)
         time.sleep(60)
@@ -1012,8 +1008,6 @@ def update_coc(startidlist):
     g.msgbox(msg='升级部落冲突完成')
     
 def update_hss(startidlist):
-    config = configparser.ConfigParser()
-    config.read(configpath, encoding="utf-8")
     for nowid in startidlist:
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(nowid))
         #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (int(nowid))
@@ -1021,7 +1015,7 @@ def update_hss(startidlist):
         startport = getport(int(nowid))
         connect(startport)
         time.sleep(10)
-        heisongshu_path = config.get("coc", "app_path_heisongshu") 
+        heisongshu_path = config_read("coc", "app_path_heisongshu") 
         heisongshu_path = r"%s" %(heisongshu_path)
         print(heisongshu_path)
         subprocess.Popen('adb install -r %s' % (heisongshu_path), shell=True)
@@ -1282,11 +1276,7 @@ def convert_mode(convert_id,*args):
         print('没有配置攻城器，默认2车2艇2球')
         siege_num = '222000'
     #args[0]表示当前状态，args[1]表示删掉已经造好的兵种的模拟器id
-    config = configparser.ConfigParser()
-    #for nowid in startlist:
-    #读取一次配置文件
-    config.read(configpath, encoding="utf-8")
-    donateids_for_paid = config.get("coc", "donateids_for_paid").split()
+    donateids_for_paid = config_read(configpath,"coc", "donateids_for_paid").split()
     startport = getport(convert_id)
     kill_adb()#重启一下adb
     #查看是否在捐兵配置中，没有就配置为捐兵
@@ -1294,11 +1284,10 @@ def convert_mode(convert_id,*args):
         if len(args) > 0:
             status = args[0]
         else:
-            startid_info = config.get("coc", "startid%d"%(convert_id)).split()
+            startid_info = config_read(configpath,"coc", "startid%d"%(convert_id)).split()
     except:
         #如果没有记录默认捐兵状态 2车2艇2球
-        config.set("coc", "startid%d"%(convert_id),"donate 222000")
-        config.write(open(configpath, "w",encoding='utf-8'))
+        config_write(configpath,"coc", "startid%d"%(convert_id),"donate 222000")
         status = "donate"
     #转换状态并保存
     if (status == statusnow) or (len(args) == 2):
@@ -1368,5 +1357,4 @@ def convert_mode(convert_id,*args):
         close_emu_id(convert_id)#关闭该模拟器
     #保存当前状态
     startid_info = status + " " + siege_num
-    config.set("coc", "startid%d"%(convert_id),startid_info)
-    config.write(open(configpath, "w",encoding='utf-8'))
+    config_write(configpath,"coc", "startid%d"%(convert_id),startid_info)

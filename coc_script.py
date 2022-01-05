@@ -38,6 +38,7 @@ pos = {
 #日志路径
 Coclog = r'coclog.txt'
 ddpath = config_read(configpath,"coc","ddpath")
+ddavd_path = config_read(configpath,'coc','ddavd_path')
 configdir = os.path.dirname(os.path.abspath(configpath))#配置文件目录
 backupdir = configdir + os.sep + "backup"
 QQlists = config_read(configpath,"coc", "QQlists").split()
@@ -176,12 +177,9 @@ def getport(startid,*skipids):
         return startport
         
 def play(wait_time,skipids):
-    # 参数获取
-    #config = configparser.ConfigParser()
-    #config.read(configpath, encoding="utf-8")
     #为了指定关闭startid，全局
     global startid
-    startid = config.get("coc", "startid")#获取的下一个准备开启的id
+    startid = config_read(configpath,"coc", "startid")#获取的下一个准备开启的id
     startid = int(startid)#取出数据为string，获取启动模拟器id
     startlist = getport(startid,skipids)
     startid = int(startlist[0])#获取启动模拟器id,这里不能注释掉，因为getport函数会重新根据skipids递归获取新的startid
@@ -212,14 +210,13 @@ def play(wait_time,skipids):
     #回滚startid
     if startid == maxid:   #结束id
         startid = minid-1   #开始id - 1
-    config.set("coc", "startid", str(startid + 1))#只能存储str类型数据
-    config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+    config_write(configpath,"coc", "startid", str(startid + 1))#只能存储str类型数据
 
 #付费捐兵号
 def play_donate_for_paid(donateids):
     #获取上一次运行的捐兵id
     global donateid_now
-    donateid_now = config.get("coc", "donateid_for_paid_now")#str
+    donateid_now = config_read(configpath,"coc", "donateid_for_paid_now")#str
     #获取即将运行的捐兵index
     if donateid_now in donateids:
         try:
@@ -234,8 +231,7 @@ def play_donate_for_paid(donateids):
     else:
         donateid_now = donateids[donateindex + 1]
     #写入config
-    config.set("coc", "donateid_for_paid_now", donateid_now)#只能存储str类型数据
-    config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+    config_write(configpath,"coc", "donateid_for_paid_now", donateid_now)#只能存储str类型数据
     startport = getport(int(donateid_now))
     action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(donateid_now))
     #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(int(donateid_now))
@@ -256,7 +252,7 @@ def play_donate_for_paid(donateids):
 def play_donate(donateids):
     #获取上一次运行的捐兵id
     global donateid_now#这是为了让handler能够获取到该id
-    donateid_now = config.get("coc", "donateid_now")#str
+    donateid_now = config_read(configpath,"coc", "donateid_now")#str
     #获取即将运行的捐兵index
     if donateid_now in donateids:
         try:
@@ -277,8 +273,7 @@ def play_donate(donateids):
     #关闭前一个模拟器
     close_emu_id(close_id)
     #写入config
-    config.set("coc", "donateid_now", donateid_now)#只能存储str类型数据
-    config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+    config_write(configpath,"coc", "donateid_now", donateid_now)#只能存储str类型数据
     startport = getport(int(donateid_now))
     action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(donateid_now))
     #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(int(donateid_now))
@@ -300,8 +295,8 @@ def play_donate(donateids):
 def play_resource(resourceids):
     #获取上一次运行的打资源id
     #global resourceid_now
-    resourceid_now = config.get("coc", "resourceid_now")#str
-    flag_play_resource = config.get("coc", "flag_play_resource")#False:切换 True：不切换一直运行
+    resourceid_now = config_read(configpath,"coc", "resourceid_now")#str
+    flag_play_resource = config_read(configpath,"coc", "flag_play_resource")#False:切换 True：不切换一直运行
     #获取即将运行的捐兵index
     if resourceid_now in resourceids:
         try:
@@ -321,8 +316,7 @@ def play_resource(resourceids):
     close_id = resourceids[close_index]
     def start_resource():
         #写入config
-        config.set("coc", "resourceid_now", resourceid_now)#只能存储str类型数据
-        config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+        config_write(configpath,"coc", "resourceid_now", resourceid_now)#只能存储str类型数据
         if int(resourceid_now) == 0:
             startport = 5555
         else:
@@ -346,7 +340,7 @@ def play_resource(resourceids):
         close_emu_id(close_id)
         start_resource()
     elif (len(resourceids) == resourceids_num) and (flag_play_resource == "False"):
-        config.set("coc", "flag_play_resource", "True")
+        config_write(configpath,"coc", "flag_play_resource", "True")
         start_resource()
     else:
         print(r'============================= 跳过持续打资源号切换 ===============================')
@@ -415,7 +409,9 @@ def close_emu_all(closelist,*args):
 #关闭模拟器（关闭id）
 def close_emu_id(close_id):
     try:
-        close_config = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' %(int(close_id))
+        config_path = [ ddavd_path , '\dundi%d\config.ini' %(int(close_id)) ]
+        close_config = "".join(config_path)
+        #close_config = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' %(int(close_id))
         with open(close_config,'r') as close_file:
             configlines = close_file.readlines()
             for configline in configlines:
@@ -494,8 +490,7 @@ def restartplay(wait_time):
     '''
     for times in range(instance_num):
         #获取捐兵号的状态（当前是在捐兵还是在打资源）
-        config.read(configpath, encoding="utf-8")
-        donate_status = config.get("coc", "donate_status")
+        donate_status = config_read(configpath,"coc", "donate_status")
         #获取当前时间的参数并运行持久化运行号
         result = instance(donate_switch,donate_status)
         #现在时间段
@@ -538,20 +533,15 @@ if __name__ == "__main__":
     #close()
     #打开自动点击
     ak.start()
-    #获取配置文件参数skipid,donateids,instance_num,instance_time
-    config = configparser.ConfigParser()
-    config.read(configpath, encoding="utf-8")
     #启动id范围
-    minid = int(config.get("coc", "minid"))
+    minid = int(config_read(configpath,"coc","minid"))
     maxid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\') if x != 'vboxData'])
-    #maxid = int(config.get("coc", "maxid"))
-    #restart_time = float(config.get("coc", "restart_time"))
     #捐兵模式：一直捐兵（A)，还是半捐
-    donate_mode = config.get("coc", "donate_mode")
+    donate_mode = config_read(configpath,"coc","donate_mode")
     #跳过启动的id初始列表
-    skipidlists = config.get("coc", "skipids").split()
+    skipidlists = config_read(configpath,"coc","skipids").split()
     skipids = skipidlists.copy()
-    warids = config.get("coc", "warids").split()
+    warids = config_read(configpath,"coc", "warids").split()
     skipids.extend(warids)#添加部落战控制的id到跳过id列表中
     skipids = list(set(skipids))#去重
     #skipids = [str(x) for x in skipids]#需要把int转换成str，不然下面会报错
@@ -567,17 +557,17 @@ if __name__ == "__main__":
             skipids = list(set(skipids))#去重
 
     #捐兵（一直运行）
-    donate_for_paid_switch = config.get("coc", "donate_for_paid_switch")#是否开启持续打资源
-    play_resource_switch = config.get("coc", "play_resource_switch")#是否开启持续打资源
-    donate_switch = config.get("coc", "donate_switch")#是否开启自用捐兵
-    play_switch = config.get("coc", "play_switch")#是否开启轮循打资源
-    war_donate_switch = config.get("coc", "war_donate_switch")#是否开启自动部落战捐兵
-    donateids_for_paid = config.get("coc", "donateids_for_paid").split()#获取付费捐兵id的list
-    donateids = config.get("coc", "donateids").split()#获取捐兵id的list
-    levelupids = config.get("coc", "levelupids").split()#获取9本升级id的list
-    resourceids_server01 = config.get("coc", "resourceids_server01").split()#获取持续打资源id的list
-    resourceids_server02 = config.get("coc", "resourceids_server02").split()#获取持续打资源id的list
-    resourceids_server03 = config.get("coc", "resourceids_server03").split()#获取持续打资源id的list
+    donate_for_paid_switch = config_read(configpath,"coc", "donate_for_paid_switch")#是否开启持续打资源
+    play_resource_switch = config_read(configpath,"coc", "play_resource_switch")#是否开启持续打资源
+    donate_switch = config_read(configpath,"coc", "donate_switch")#是否开启自用捐兵
+    play_switch = config_read(configpath,"coc", "play_switch")#是否开启轮循打资源
+    war_donate_switch = config_read(configpath,"coc", "war_donate_switch")#是否开启自动部落战捐兵
+    donateids_for_paid = config_read(configpath,"coc", "donateids_for_paid").split()#获取付费捐兵id的list
+    donateids = config_read(configpath,"coc", "donateids").split()#获取捐兵id的list
+    levelupids = config_read(configpath,"coc", "levelupids").split()#获取9本升级id的list
+    resourceids_server01 = config_read(configpath,"coc", "resourceids_server01").split()#获取持续打资源id的list
+    resourceids_server02 = config_read(configpath,"coc", "resourceids_server02").split()#获取持续打资源id的list
+    resourceids_server03 = config_read(configpath,"coc", "resourceids_server03").split()#获取持续打资源id的list
     #在持续打资源的list去除付费捐兵的list
     resourceids = [x for x in resourceids_server01 if x not in donateids_for_paid]
     #在捐兵列表中去除付费捐兵的list和持续打资源的list
@@ -659,20 +649,20 @@ if __name__ == "__main__":
     except FileNotFoundError as reason:
         print('============================= 当前的打资源号不全:%s ===============================' %(reason))
     #白天和夜晚运行的实例数量和时间
-    instance_num_day = int(config.get("coc", "instance_num_day"))
-    instance_time_day = float(config.get("coc", "instance_time_day"))
-    instance_num_night = int(config.get("coc", "instance_num_night"))
-    instance_time_night = float(config.get("coc", "instance_time_night"))
-    instance_num_morning = int(config.get("coc", "instance_num_morning"))
-    instance_time_morning = float(config.get("coc", "instance_time_morning"))
+    instance_num_day = int(config_read(configpath,"coc", "instance_num_day"))
+    instance_time_day = float(config_read(configpath,"coc", "instance_time_day"))
+    instance_num_night = int(config_read(configpath,"coc", "instance_num_night"))
+    instance_time_night = float(config_read(configpath,"coc", "instance_time_night"))
+    instance_num_morning = int(config_read(configpath,"coc", "instance_num_morning"))
+    instance_time_morning = float(config_read(configpath,"coc", "instance_time_morning"))
     #获取时间段
-    day_time = config.get("coc", "day_time")
-    night_time = config.get("coc", "night_time")
-    morning_time = config.get("coc", "morning_time")
+    day_time = config_read(configpath,"coc", "day_time")
+    night_time = config_read(configpath,"coc", "night_time")
+    morning_time = config_read(configpath,"coc", "morning_time")
     #获取当前时间判断启动持续时间
     donatetime_start = datetime.datetime.now()
     # 获取捐兵号的状态（当前是在捐兵还是在打资源）
-    donate_status = config.get("coc", "donate_status")
+    donate_status = config_read(configpath,"coc", "donate_status")
     result = instance(donate_switch,donate_status)
     #获取付费捐兵号数量
     if donate_for_paid_switch in ['True','1','T']:
@@ -683,17 +673,17 @@ if __name__ == "__main__":
     time_status = result[2]
     if play_resource_switch in ['True','1','T']:
         #获取持续打资源id的list
-        resourceids_num = int(config.get("coc", "resourceids_num"))#打资源号的个数
+        resourceids_num = int(config_read(configpath,"coc", "resourceids_num"))#打资源号的个数
     elif play_resource_switch in ['False','0','F']:
         resourceids_num = 0
     #获取重启模拟器时间（小时）
-    restart_time = int(config.get("coc", "restart_time"))
+    restart_time = int(config_read(configpath,"coc", "restart_time"))
     #切换重启状态为'F'，表示已经过了那个重启的时间，把状态归零
     restart_status = 'F'
     #第一次启动时间
     starttime_global = datetime.datetime.now()
     #获取付费捐兵号第二梯队列表
-    donateids_for_paid_2nd = config.get("coc", "donateids_for_paid_2nd").split()
+    donateids_for_paid_2nd = config_read(configpath,"coc", "donateids_for_paid_2nd").split()
     #首次运行打开付费捐兵号
     if ((time_status != '凌晨') and (donate_status == 'donate')) or ((time_status == '凌晨') and (donate_status == 'play')):
         #启动付费捐兵号
@@ -702,7 +692,7 @@ if __name__ == "__main__":
             restart_emu(donatenames_for_paid,donateids_for_paid_2nd)#启动了第二梯队
         #启动持续打资源号
         if play_resource_switch in ['True','1','T']:
-            config.set("coc", "flag_play_resource", "False")
+            config_write(configpath,"coc", "flag_play_resource", "False")
             if resourceids_num != 0:
                 for n in range(resourceids_num):
                     try:
@@ -739,8 +729,7 @@ if __name__ == "__main__":
                 Coclogfile.write('============================= 运行时间超过 %d 天重启主机,重启时间：%s =============================\n' %(runtime_days , time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             reboot()
         #获取捐兵号的状态（当前是在捐兵还是在打资源）
-        config.read(configpath, encoding="utf-8")
-        donate_status = config.get("coc", "donate_status")
+        donate_status = config_read(configpath,"coc", "donate_status")
         #关闭
         #close()
         #获取当前时间的参数并运行持久化运行号
@@ -762,14 +751,14 @@ if __name__ == "__main__":
             if donate_mode == "A":
                 donate_num = len(donateids)
             elif donate_switch in ['True','1','T']:
-                donate_num = int(config.get("coc", "donate_num_morning"))#捐兵号的个数
+                donate_num = int(config_read(configpath,"coc", "donate_num_morning"))#捐兵号的个数
             elif donate_switch == "F":
                 donate_num = 0
         else:
             if donate_mode == "A":
                 donate_num = len(donateids)
             elif donate_switch in ['True','1','T']:
-                donate_num = int(config.get("coc", "donate_num"))#捐兵号的个数
+                donate_num = int(config_read(configpath,"coc", "donate_num"))#捐兵号的个数
             elif donate_switch not in ['True','1','T']:
                 donate_num = 0
         instance_num = instance_num - donate_num - donateids_for_paid_num - resourceids_num
@@ -777,9 +766,7 @@ if __name__ == "__main__":
         if (time_status == '凌晨') and (donate_status == 'donate'):
             fc.copy_file("Config.ini",configdir,backupdir)#备份
             flag_reboot = 'False'#设置flag为FALSE
-            config.read(configpath, encoding="utf-8")
-            config.set("coc", "flag_reboot", flag_reboot)#只能存储str类型数据，设置flag为FALSE
-            config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+            config_write(configpath,"coc", "flag_reboot", flag_reboot)#只能存储str类型数据，设置flag为FALSE
             close()#关闭kill_adb()
             restart_server()
             with open(Coclog,'a') as Coclogfile:
@@ -798,9 +785,7 @@ if __name__ == "__main__":
             with open(Coclog,'a') as Coclogfile:
                 Coclogfile.write('凌晨切换捐兵状态为打资源,切换完成时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             donate_status = 'play'
-            config.read(configpath, encoding="utf-8")
-            config.set("coc", "donate_status", donate_status)#只能存储str类型数据
-            config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+            config_write(configpath,"coc", "donate_status", donate_status)#只能存储str类型数据
             #部落战捐兵
             if war_donate_switch in ['True', '1', 'T']:
                 coc_template.wardonate(warids)
@@ -808,12 +793,10 @@ if __name__ == "__main__":
                 restart_emu(donatenames_for_paid)#只重启付费捐兵号
         #早晨关机休息
         elif (time_status != '凌晨') and (donate_status == 'play'):
-            config.read(configpath, encoding="utf-8")
-            flag_reboot = config.get("coc", "flag_reboot")#获取重启flag
+            flag_reboot = config_read(configpath,"coc", "flag_reboot")#获取重启flag
             if flag_reboot not in ['True','1','T']:
                 flag_reboot = 'True'
-                config.set("coc", "flag_reboot", flag_reboot)#只能存储str类型数据，设置flag为True
-                config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+                config_write(configpath,"coc", "flag_reboot", flag_reboot)#只能存储str类型数据，设置flag为True
                 #reboot()#重启
                 shutdown()#关机，必须配合自动开机功能使用
             elif flag_reboot in ['True','1','T']:
@@ -864,9 +847,7 @@ if __name__ == "__main__":
             with open(Coclog,'a') as Coclogfile:
                 Coclogfile.write('============================= 早上切换打资源状态为捐兵,切换完成时间：%s =============================\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             donate_status = 'donate'
-            config.read(configpath, encoding="utf-8")
-            config.set("coc", "donate_status", donate_status)#只能存储str类型数据
-            config.write(open(configpath, "w",encoding='utf-8'))  # 保存到Config.ini
+            config_write(configpath,"coc", "donate_status", donate_status)#只能存储str类型数据
             if donate_for_paid_switch in ['True','1','T']:
                 restart_emu(donatenames_for_paid,donateids_for_paid_2nd)#只重启付费捐兵号
         #关闭持续打资源号
@@ -874,7 +855,7 @@ if __name__ == "__main__":
         #启动持续打资源号
         if play_resource_switch in ['True','1','T']:
             if resourceids_num != 0:
-                config.set("coc", "flag_play_resource", "False")
+                config_write(configpath,"coc", "flag_play_resource", "False")
                 for n in range(resourceids_num):
                     try:
                         play_resource(resourceids)
@@ -908,8 +889,7 @@ if __name__ == "__main__":
         for time_minite in range(t,0,-1):
             print('============================= 进入等待,还剩 %d 分钟 =============================' %(time_minite))
             #获取捐兵号的状态（当前是在捐兵还是在打资源）
-            config.read(configpath, encoding="utf-8")
-            donate_status = config.get("coc", "donate_status")
+            donate_status = config_read(configpath,"coc", "donate_status")
             #获取当前时间的参数并运行持久化运行号
             result = instance(donate_switch,donate_status)
             #现在时间段

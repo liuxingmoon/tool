@@ -1,4 +1,4 @@
-import tkinter as tk
+import tkinter
 import tkinter.messagebox as messagebox
 import tkinter.filedialog
 import tkinter.colorchooser as colorchooser
@@ -24,13 +24,13 @@ import win32gui,win32api,packpy
 from win32.lib import win32con
 import ocr,statistics_dev,statistics_resource,ecs_init,base64_ctrl
 
-root = tk.Tk()
+root = tkinter.Tk()
 appname = "流梦星璃"
 root.title(appname)
-title = tk.Label(root,text='小工具').grid(row=0,column=2)
+title = tkinter.Label(root,text='小工具').grid(row=0,column=2)
 #鼠标连点
 '''
-autoclick_text = tk.Label(root,#放在框架1里面
+autoclick_text = tkinter.Label(root,#放在框架1里面
                 text = '"`"为开关',
                 justify='left',#左对齐
                 padx=5,
@@ -39,7 +39,7 @@ autoclick_text = tk.Label(root,#放在框架1里面
 autoclick_text.grid(row=1,column=1,padx=10,pady=10)
 '''
 #开启鼠标连点
-autoclick_bt = tk.Button(root,text='连点"!"长按"~"',command=ak.start,width=15)
+autoclick_bt = tkinter.Button(root,text='连点"!"长按"~"',command=ak.start,width=15)
 autoclick_bt.grid(row=1,column=1,
               padx=10,pady=10)
 
@@ -410,28 +410,28 @@ def start_printScreen():
 def start_ocr():
     startscreenocr()
     
-screenShot_bt = tk.Button(root,text='截屏"Print Screen"',command=start_printScreen,width=15)
+screenShot_bt = tkinter.Button(root,text='截屏"Print Screen"',command=start_printScreen,width=15)
 screenShot_bt.grid(row=2,column=1,
               padx=10,pady=10)
               
-ocr_bt = tk.Button(root,text='识图"Pause Break"',command=start_ocr,width=15)
+ocr_bt = tkinter.Button(root,text='识图"Pause Break"',command=start_ocr,width=15)
 ocr_bt.grid(row=3,column=1,
               padx=10,pady=10)
               
 #开启过滤侠客风云传位置
-pos_bt = tk.Button(root,text='侠客位置"·"',command=pos.start,width=15)
+pos_bt = tkinter.Button(root,text='侠客位置"·"',command=pos.start,width=15)
 pos_bt.grid(row=4,column=1,
               padx=10,pady=10)
 
 #迅雷、芯次元签到
 '''
-thunderSign_bt = tk.Button(root,text='每日签到',command=thunder_sign_in.start,width=15)
+thunderSign_bt = tkinter.Button(root,text='每日签到',command=thunder_sign_in.start,width=15)
 thunderSign_bt.grid(row=5,column=1,
               padx=10,pady=10)
 '''
 #迅雷任务
 '''
-thundertask_text = tk.Label(root,#放在框架1里面
+thundertask_text = tkinter.Label(root,#放在框架1里面
                 text = '迅雷任务',
                 justify='left',#左对齐
                 padx=5,
@@ -439,29 +439,29 @@ thundertask_text = tk.Label(root,#放在框架1里面
                 compound='left',width=15)
 thundertask_text.grid(row=5,column=1,padx=10,pady=10)
 
-thundertask_bt = tk.Button(root,text='迅雷任务',command=tdtask.start,width=15)
+thundertask_bt = tkinter.Button(root,text='迅雷任务',command=tdtask.start,width=15)
 thundertask_bt.grid(row=5,column=1,
               padx=10,pady=10)
 '''
 #部落冲突脚本
-coc_bt = tk.Button(root,text='部落冲突',command=coc.start,width=15)
+coc_bt = tkinter.Button(root,text='部落冲突',command=coc.start,width=15)
 coc_bt.grid(row=5,column=1,
               padx=10,pady=10)
               
 #ODPS授权
-coc_bt = tk.Button(root,text='ODPS授权',command=odps_grant.start,width=15)
+coc_bt = tkinter.Button(root,text='ODPS授权',command=odps_grant.start,width=15)
 coc_bt.grid(row=6,column=1,
               padx=10,pady=10)
               
 #故障设备
-statistics_dev_bt = tk.Button(root,text='故障设备',command=statistics_dev.start,width=15)
+statistics_dev_bt = tkinter.Button(root,text='故障设备',command=statistics_dev.start,width=15)
 statistics_dev_bt.grid(row=7,column=1,
               padx=10,pady=10)
               
               
 #视频下载
 '''
-videodownload_text = tk.Label(root,#放在框架1里面
+videodownload_text = tkinter.Label(root,#放在框架1里面
                 text = '网页视频下载',
                 justify='left',#左对齐
                 padx=5,
@@ -469,13 +469,13 @@ videodownload_text = tk.Label(root,#放在框架1里面
                 compound='left',width=15)
 videodownload_text.grid(row=2,column=1,padx=10,pady=10)
 '''
-videodownload_bt = tk.Button(root,text='视频下载',command=vd.start,width=15)
+videodownload_bt = tkinter.Button(root,text='视频下载',command=vd.start,width=15)
 videodownload_bt.grid(row=1,column=2,
               padx=10,pady=10)
 
 #音乐下载
 '''
-musicdownload_text = tk.Label(root,#放在框架1里面
+musicdownload_text = tkinter.Label(root,#放在框架1里面
                 text = '音乐下载',
                 justify='left',#左对齐
                 padx=5,
@@ -483,40 +483,40 @@ musicdownload_text = tk.Label(root,#放在框架1里面
                 compound='left',width=15)
 musicdownload_text.grid(row=3,column=1,padx=10,pady=10)
 '''
-musicdownload_bt = tk.Button(root,text='音乐下载',command=music.start,width=15)
+musicdownload_bt = tkinter.Button(root,text='音乐下载',command=music.start,width=15)
 musicdownload_bt.grid(row=2,column=2,
               padx=10,pady=10)
 '''
 #直播抽奖
-lottery_bt = tk.Button(root,text='直播抽奖',command=lottery.start,width=15)
+lottery_bt = tkinter.Button(root,text='直播抽奖',command=lottery.start,width=15)
 lottery_bt.grid(row=3,column=2,
               padx=10,pady=10)
 '''
-lottery_bt = tk.Button(root,text='直播抽奖',command=lottery.start,width=15)
+lottery_bt = tkinter.Button(root,text='直播抽奖',command=lottery.start,width=15)
 lottery_bt.grid(row=3,column=2,
               padx=10,pady=10)
 #开启wifi热点
-wifi_bt = tk.Button(root,text='wifi热点',command=wifi.start,width=15)
+wifi_bt = tkinter.Button(root,text='wifi热点',command=wifi.start,width=15)
 wifi_bt.grid(row=3,column=2,
               padx=10,pady=10)
               
 #定时关机
-poweroff_bt = tk.Button(root,text='定时关机',command=poweroff.start,width=15)
+poweroff_bt = tkinter.Button(root,text='定时关机',command=poweroff.start,width=15)
 poweroff_bt.grid(row=4,column=2,
               padx=10,pady=10)
 
 #ecs_init
-ecs_init_bt = tk.Button(root,text='ecs初始化',command=ecs_init.start,width=15)
+ecs_init_bt = tkinter.Button(root,text='ecs初始化',command=ecs_init.start,width=15)
 ecs_init_bt.grid(row=5,column=2,
               padx=10,pady=10)
 
 #筛选表格
-work_tb_bt = tk.Button(root,text='筛选表格',command=work_tb.start,width=15)
+work_tb_bt = tkinter.Button(root,text='筛选表格',command=work_tb.start,width=15)
 work_tb_bt.grid(row=6,column=2,
               padx=10,pady=10)
               
 #转码base64
-base64_bt = tk.Button(root,text='转码base64',command=base64_ctrl.start,width=15)
+base64_bt = tkinter.Button(root,text='转码base64',command=base64_ctrl.start,width=15)
 base64_bt.grid(row=7,column=2,
               padx=10,pady=10)
               
@@ -529,7 +529,7 @@ def colorchoose():
     print(rgb)
 '''
 #颜色选择器
-colorchooser_text = tk.Label(root,
+colorchooser_text = tkinter.Label(root,
                              text='颜色选择器',
                              justify='left',  # 左对齐
                              padx=5,
@@ -537,45 +537,45 @@ colorchooser_text = tk.Label(root,
                              compound='left', width=15)
 colorchooser_text.grid(row=4,column=1,padx=10,pady=10)
 '''
-colorchooser_bt = tk.Button(root,text='颜色选择',command=colorchoose,width=15)
+colorchooser_bt = tkinter.Button(root,text='颜色选择',command=colorchoose,width=15)
 colorchooser_bt.grid(row=1,column=3,
               padx=10,pady=10)
               
 #翻译
-translate_bt = tk.Button(root,text='翻译',command=translate.start,width=15)
+translate_bt = tkinter.Button(root,text='翻译',command=translate.start,width=15)
 translate_bt.grid(row=2,column=3,
               padx=10,pady=10)
 #IP地址查询
-netmask_bt = tk.Button(root,text='掩码IP查询',command=netmask.start,width=15)
+netmask_bt = tkinter.Button(root,text='掩码IP查询',command=netmask.start,width=15)
 netmask_bt.grid(row=3,column=3,
               padx=10,pady=10)
 #股票信息
-stock_bt = tk.Button(root,text='股票信息',command=stock.start,width=15)
+stock_bt = tkinter.Button(root,text='股票信息',command=stock.start,width=15)
 stock_bt.grid(row=4,column=3,
               padx=10,pady=10)
               
 #过滤迅雷链接
-translateurl_bt = tk.Button(root,text='过滤链接',command=translate_url.start,width=15)
+translateurl_bt = tkinter.Button(root,text='过滤链接',command=translate_url.start,width=15)
 translateurl_bt.grid(row=5,column=3,
               padx=10,pady=10)
 #打包程序
-packpy_bt = tk.Button(root,text='打包程序',command=packpy.start,width=15)
+packpy_bt = tkinter.Button(root,text='打包程序',command=packpy.start,width=15)
 packpy_bt.grid(row=6,column=3,
               padx=10,pady=10)
               
 #统计资源
-statistics_resource_bt = tk.Button(root,text='统计资源',command=statistics_resource.start,width=15)
+statistics_resource_bt = tkinter.Button(root,text='统计资源',command=statistics_resource.start,width=15)
 statistics_resource_bt.grid(row=7,column=3,
               padx=10,pady=10)
 '''
 #周报汇总
-report_bt = tk.Button(root,text='周报汇总',command=report.start,width=15)
+report_bt = tkinter.Button(root,text='周报汇总',command=report.start,width=15)
 report_bt.grid(row=6,column=3,
               padx=10,pady=10)
               
 #伊人av下载
 
-avyrdownload_text = tk.Label(root,#放在框架1里面
+avyrdownload_text = tkinter.Label(root,#放在框架1里面
                 text = '伊人下载',
                 justify='left',#左对齐
                 padx=5,
@@ -583,14 +583,14 @@ avyrdownload_text = tk.Label(root,#放在框架1里面
                 compound='left',width=15)
 avyrdownload_text.grid(row=4,column=1,padx=10,pady=10)
 
-avyrdownload_bt = tk.Button(root,text='伊人下载',command=avyrdl.start,width=15)
+avyrdownload_bt = tkinter.Button(root,text='伊人下载',command=avyrdl.start,width=15)
 avyrdownload_bt.grid(row=3,column=2,
               padx=10,pady=10)
 '''
 
 #小说下载
 '''
-novel_bt = tk.Button(root,text='小说下载',command=novel.start,width=15)
+novel_bt = tkinter.Button(root,text='小说下载',command=novel.start,width=15)
 novel_bt.grid(row=4,column=2,
               padx=10,pady=10)
 '''
