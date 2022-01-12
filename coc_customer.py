@@ -14,7 +14,7 @@ from xlsx_ctrl import *
 from config_ctrl import *
 
 reportFile = r"部落冲突客户信息.xlsx"
-cocSheet = r"部落冲突"
+cocSheet = r"Sheet1"
 try:
     donateids_for_paid_server01 = config_read(r'\\server01\\tool\\Config.ini','coc','donateids_for_paid').split()
     donateids_for_paid_server02 = config_read(r'\\server02\\tool\\Config.ini','coc','donateids_for_paid').split()

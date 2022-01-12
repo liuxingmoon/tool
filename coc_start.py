@@ -340,25 +340,31 @@ def close_emu_err():
     close_window = win32gui.FindWindow(None, "VirtualBox Headless Frontend")
     win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
     
-#关闭模拟器名字    
-def close_emu_id(close_id):
-    close_id = int(close_id)
-    close_config = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' %(close_id)
-    with open(close_config,'r') as close_file:
-        configlines = close_file.readlines()
-        for configline in configlines:
-            if 'EmulatorTitleName' in configline:
-                close_name = configline.split('=')[-1].rstrip('\n')
-        close_emu_err()
-        close_window = win32gui.FindWindow(None, close_name)
-        win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)# 关闭一个捐兵号
-    '''
-    action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --stop' %(close_id)
-    subprocess.Popen(action,shell=True)
-    '''
-    print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
+    
+def close_windows(close_name):
+    close_window = win32gui.FindWindow(None, close_name)
+    try:
+        win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
+    except:
+        print ("配额不足，无法处理，跳过！")
+        pass
         
-
+#关闭模拟器（关闭id）
+def close_emu_id(close_id):
+    try:
+        close_config = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' %(int(close_id))
+        #close_config = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' %(int(close_id))
+        with open(close_config,'r') as close_file:
+            configlines = close_file.readlines()
+            for configline in configlines:
+                if 'EmulatorTitleName' in configline:
+                    close_name = configline.split('=')[-1].rstrip('\n')
+    except:
+        close_name = '未知模拟器'
+        print("============================= 没有该模拟器:%d ===============================" %(int(close_id)))
+    close_emu_err()#关闭模拟器已停止工作报错
+    close_windows(close_name)
+    print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
     
 
 #开模拟器

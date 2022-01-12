@@ -48,8 +48,8 @@ def update(src,dest):
             file_ctrl.copy_file(filename,src['dir_src'],dest['dir_dest'])
     os.chdir(dest['dir_dest'])#切换到目标目录
 
-    file_ctrl.replace_utf8(src['resourceids'],dest['resourceids'],'coc_script.py')
-    file_ctrl.replace_utf8(src['resourceids'],dest['resourceids'],'coc.py')
+    #file_ctrl.replace_utf8(src['resourceids'],dest['resourceids'],'coc_script.py')
+    #file_ctrl.replace_utf8(src['resourceids'],dest['resourceids'],'coc.py')
 
     file_ctrl.copy_file('coc_customer.csv',src['dir_src'],dest['dir_dest'])
     file_ctrl.copy_file('stock_info.csv',src['dir_src'],dest['dir_dest'])

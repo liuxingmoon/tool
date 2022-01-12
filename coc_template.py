@@ -1331,7 +1331,8 @@ def convert_mode(convert_id,*args):
             #船
             click(pos['boat'][0], pos['boat'][1], startport, 15)
 
-            #取消训练中的兵种
+            #取消训练中的兵种,2次确保删除
+            cancel_troop(startport)
             cancel_troop(startport)
             if (str(convert_id) in donateids_for_paid):#付费捐兵删完造2轮兵
                 print('开始执行删除现有兵种，需要全部删除的id为%s'%(donateids_for_paid))

@@ -12,12 +12,12 @@ import coc_template
 import os
 import AutoClick as ak
 import keyboard as k
-from coc_start import connect,login_click,close_emu_err
+from coc_start import connect,login_click,close_emu_err,close_emu_id,close_windows
 from multiprocessing import Process
 import file_ctrl as fc
 from config_ctrl import *
 from readfile import *
-from read_config import configpath
+from read_config import *
 
 #元素坐标
 pos = {
@@ -61,14 +61,6 @@ def restart_server():
     kill_adb()
     kill_server()
     #start_server()
-
-def close_windows(close_name):
-    close_window = win32gui.FindWindow(None, close_name)
-    try:
-        win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
-    except:
-        print ("配额不足，无法处理，跳过！")
-        pass
     
 def close_VirtualBox():
     #关闭模拟器报错
@@ -405,23 +397,6 @@ def close_emu_all(closelist,*args):
         print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
         if len(args) >0:#暂停args[0]分钟关闭
             timewait(args[0])
-
-#关闭模拟器（关闭id）
-def close_emu_id(close_id):
-    try:
-        config_path = [ ddavd_path , '\dundi%d\config.ini' %(int(close_id)) ]
-        close_config = "".join(config_path)
-        #close_config = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' %(int(close_id))
-        with open(close_config,'r') as close_file:
-            configlines = close_file.readlines()
-            for configline in configlines:
-                if 'EmulatorTitleName' in configline:
-                    close_name = configline.split('=')[-1].rstrip('\n')
-    except:
-        print("============================= 没有该模拟器:%d ===============================" %(int(close_id)))
-    close_emu_err()#关闭模拟器已停止工作报错
-    close_windows(close_name)
-    print('============================= 关闭的模拟器名字为：%s ===============================' %(close_name))
         
 #启动模拟器（列表中所有）       
 def start_emu(start_id,wait_time):
@@ -565,11 +540,12 @@ if __name__ == "__main__":
     donateids_for_paid = config_read(configpath,"coc", "donateids_for_paid").split()#获取付费捐兵id的list
     donateids = config_read(configpath,"coc", "donateids").split()#获取捐兵id的list
     levelupids = config_read(configpath,"coc", "levelupids").split()#获取9本升级id的list
-    resourceids_server01 = config_read(configpath,"coc", "resourceids_server01").split()#获取持续打资源id的list
-    resourceids_server02 = config_read(configpath,"coc", "resourceids_server02").split()#获取持续打资源id的list
-    resourceids_server03 = config_read(configpath,"coc", "resourceids_server03").split()#获取持续打资源id的list
+    resourceids_server01 = get_resourceids("server01")
+    resourceids_server02 = get_resourceids("server02")
+    resourceids_server03 = get_resourceids("server03")
     #在持续打资源的list去除付费捐兵的list
-    resourceids = [x for x in resourceids_server01 if x not in donateids_for_paid]
+    resourceids = get_resourceids(servername)#本主机的捐兵列表
+    resourceids = [x for x in resourceids if x not in donateids_for_paid]
     #在捐兵列表中去除付费捐兵的list和持续打资源的list
     donateids = [x for x in donateids if (x not in donateids_for_paid) and (x not in resourceids)]
     donatenames_for_paid = {}
@@ -767,8 +743,19 @@ if __name__ == "__main__":
             fc.copy_file("Config.ini",configdir,backupdir)#备份
             flag_reboot = 'False'#设置flag为FALSE
             config_write(configpath,"coc", "flag_reboot", flag_reboot)#只能存储str类型数据，设置flag为FALSE
-            close()#关闭kill_adb()
+            close()#关闭所有模拟器、adb
             restart_server()
+            #启动持续打资源号
+            if play_resource_switch in ['True','1','T']:
+                if resourceids_num != 0:
+                    config_write(configpath,"coc", "flag_play_resource", "False")
+                    for n in range(resourceids_num):
+                        try:
+                            play_resource(resourceids)
+                        except IndexError as reason:
+                            print(reason)
+                            continue
+                restart_server()
             with open(Coclog,'a') as Coclogfile:
                 Coclogfile.write('凌晨切换捐兵状态为打资源,切换开始时间：%s\n' %(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
             if donate_for_paid_switch in ['True','1','T']:
@@ -806,6 +793,17 @@ if __name__ == "__main__":
                 close_emu_all(donatenames)#关闭所有自用捐兵号
                 #print(r'============================= 等待30分钟避免切换时没有授权导致切换失败 ===============================')
                 #timewait(30)#等待30分钟避免启动时没有授权登录
+            #启动持续打资源号
+            if play_resource_switch in ['True','1','T']:
+                if resourceids_num != 0:
+                    config_write(configpath,"coc", "flag_play_resource", "False")
+                    for n in range(resourceids_num):
+                        try:
+                            play_resource(resourceids)
+                        except IndexError as reason:
+                            print(reason)
+                            continue
+                restart_server()
             #早上切换打资源状态为捐兵
             if donate_for_paid_switch in ['True','1','T']:
                 for convert_id in donateids_for_paid:
@@ -814,11 +812,12 @@ if __name__ == "__main__":
                     coc_template.start_convert(action, convert_id, 80)#启动
                     startport = getport(convert_id)
                     coc_template.start_script(startport,'donate')#切换
-                    timewait(3)#等待4分钟避免切换的时候刚好被打导致切换失败
-                    click(pos['cancel'][0], pos['cancel'][1],startport)
-                    time.sleep(30)
-                    close_emu_id(convert_id)#关闭模拟器
-                #close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
+                    if convert_id == donateids_for_paid[-1]:#最后一个模拟器等待3分钟避免切换的时候刚好被打导致切换失败
+                        timewait(3)
+                        click(pos['cancel'][0], pos['cancel'][1],startport)
+                        time.sleep(30)
+                        close_emu_all(donatenames_for_paid)#关闭所有付费捐兵号
+                    #close_emu_id(convert_id)#关闭模拟器
                 for convert_id in donateids_for_paid:
                     coc_template.convert_mode(convert_id,donate_status)#删除兵+造兵
                 restart_server()
@@ -832,10 +831,12 @@ if __name__ == "__main__":
                             coc_template.start_convert(action, convert_id, 80)#启动
                             startport = getport(convert_id)
                             coc_template.start_script(startport,'donate')#切换
-                            timewait(3)#等待3分钟避免切换的时候刚好被打导致切换失败
-                            click(pos['cancel'][0], pos['cancel'][1],startport)
-                            time.sleep(30)
-                            close_emu_id(convert_id)#关闭模拟器
+                            if convert_id == donateids[-1]:#最后一个模拟器等待3分钟避免切换的时候刚好被打导致切换失败
+                                timewait(3)
+                                click(pos['cancel'][0], pos['cancel'][1],startport)
+                                time.sleep(30)
+                                close_emu_all(donatenames)#关闭所有付费捐兵号
+                            #close_emu_id(convert_id)#关闭模拟器
                         for convert_id in donateids:
                             coc_template.convert_mode(convert_id,donate_status)#删除兵+造兵
                         restart_server()

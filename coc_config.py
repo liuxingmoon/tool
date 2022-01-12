@@ -2,17 +2,16 @@ import tkinter as tk
 import configparser
 import os
 import ast
+from config_ctrl import *
+from read_config import *
 
 basedir = os.getcwd()
 def start():
     def getinfo():
         info = coc_query_id_entry.get()
-        # 读取配置
-        config = configparser.ConfigParser()
-        config.read("Config.ini", encoding="utf-8")
         if (info == "") or (info in ['w','W','war','War']):
             # 不写就打开部落战id
-            startidlist = config.get("coc", "warids").split()
+            startidlist = config_read(configpath,"coc", "warids").split()
         elif info.isdigit():
             # 如果输入的是数字
             startidlist = [info]
@@ -30,7 +29,7 @@ def start():
             startidlist = emunum
         elif info in ['P','paid','Paid']:
             #P代表付费捐兵号
-            startidlist = config.get("coc", "donateids_for_paid").split()
+            startidlist = config_read(configpath,"coc", "donateids_for_paid").split()
         elif info in ['p','play','PLAY']:
             #p代表启动除了捐兵号，跳过号以及部落战号剩下的play号
             os.chdir(r'D:\Program Files\DundiEmu\DundiData\avd')
@@ -40,22 +39,23 @@ def start():
             emunum = []
             for emu in emulist:
                 emunum.append(int(emu.replace('dundi', '')))
-            skipids = config.get("coc", "skipids").split()
-            levelupids = config.get("coc", "levelupids").split()
-            resourceids_work01 = config.get("coc", "resourceids_work01").split()#获取持续打资源id的list
-            resourceids_work02 = config.get("coc", "resourceids_work02").split()#获取持续打资源id的list
-            resourceids_work03 = config.get("coc", "resourceids_work03").split()#获取持续打资源id的list
-            warids = config.get("coc", "warids").split()
-            donateids_for_paid = config.get("coc", "donateids_for_paid").split()
-            resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]#在持续打资源的list去除付费捐兵的list
-            donateids = config.get("coc", "donateids").split()
+            skipids = config_read(configpath,"coc", "skipids").split()
+            levelupids = config_read(configpath,"coc", "levelupids").split()
+            resourceids_server01 = get_resourceids("server01")
+            resourceids_server02 = get_resourceids("server02")
+            resourceids_server03 = get_resourceids("server03")
+            warids = config_read(configpath,"coc", "warids").split()
+            donateids_for_paid = config_read(configpath,"coc", "donateids_for_paid").split()
+            resourceids = get_resourceids(servername)#本主机的捐兵列表
+            resourceids = [x for x in resourceids if x not in donateids_for_paid]
+            donateids = config_read(configpath,"coc", "donateids").split()
             skipids.extend(warids)  # 添加部落战控制的id到跳过id列表中
             skipids.extend(donateids_for_paid)  # 添加部落战控制的id到跳过id列表中
             skipids.extend(donateids)  # 添加捐兵控制的id到跳过id列表中
             skipids.extend(levelupids)  # 添加捐兵控制的id到跳过id列表中
-            skipids.extend(resourceids_work01)#添加持续打资源的id到跳过id列表中
-            skipids.extend(resourceids_work02)#添加持续打资源的id到跳过id列表中
-            skipids.extend(resourceids_work03)#添加持续打资源的id到跳过id列表中
+            skipids.extend(resourceids_server01)#添加持续打资源的id到跳过id列表中
+            skipids.extend(resourceids_server02)#添加持续打资源的id到跳过id列表中
+            skipids.extend(resourceids_server03)#添加持续打资源的id到跳过id列表中
             skipids = [int(x) for x in skipids] # 转换str型为int
             #删除所有在emunum而也在skipids的
             startidlist = [x for x in emunum if x not in skipids]
@@ -63,26 +63,21 @@ def start():
             startidlist.sort()
         #9本升级的id，用于主pc升级完后放到worker03去打资源
         elif info in ['l', 'L', 'levelup', 'LEVELUP']:
-            levelupids = config.get("coc", "levelupids").split()
+            levelupids = config_read(configpath,"coc", "levelupids").split()
             startidlist = [x for x in levelupids]
         elif info in ['s', 'S', 'skip', 'SKIP']:
-            skipids = config.get("coc", "skipids").split()
+            skipids = config_read(configpath,"coc", "skipids").split()
             #删除0和15
             startidlist = [x for x in skipids if x not in ['0','15','1','2','3','4','5']]
         elif info in ['d', 'D', 'donate', 'DONATE']:
-            donateids = config.get("coc", "donateids").split()
-            donateids_for_paid = config.get("coc", "donateids_for_paid").split()#获取付费捐兵id的list
-            resourceids_work01 = config.get("coc", "resourceids_work01").split()  # 获取持续打资源id的list
-            resourceids_work02 = config.get("coc", "resourceids_work02").split()  # 获取持续打资源id的list
-            resourceids_work03 = config.get("coc", "resourceids_work03").split()  # 获取持续打资源id的list
-            # 在持续打资源的list去除付费捐兵的list
-            resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]
+            donateids = config_read(configpath,"coc", "donateids").split()
+            donateids_for_paid = config_read(configpath,"coc", "donateids_for_paid").split()#获取付费捐兵id的list
+            resourceids = get_resourceids(servername)#本主机的捐兵列表
+            resourceids = [x for x in resourceids if x not in donateids_for_paid]
             #在捐兵列表中去除付费捐兵的list和持续打资源的list
             startidlist = [x for x in donateids if (x not in donateids_for_paid) and (x not in resourceids)]
         elif info in ['u', 'U', 'up', 'UP']:#3本升级的模拟器id
-            config = configparser.ConfigParser()
-            config.read("Config.ini", encoding="utf-8")
-            startid = int(config.get("coc", "maxid")) + 1
+            startid = int(config_read(configpath,"coc", "maxid")) + 1
             endid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\') if x != 'vboxData'])
             startidlist = [x for x in range(startid,(endid + 1))]
         else:
@@ -94,13 +89,11 @@ def start():
 
     def getstatus(startidlist):
         startid_status_dict = {}
-        config = configparser.ConfigParser()
-        config.read("Config.ini", encoding="utf-8")
         for id in startidlist:
             startid = "startid%s" %(id)
             #获取各个id的捐兵状态
             try:
-                startid_status = config.get("coc", startid)
+                startid_status = config_read(configpath,"coc", startid)
             except configparser.NoOptionError as reason:
                 print(reason)
                 startid_status = 'No_option'
@@ -113,19 +106,14 @@ def start():
         coc_query_status_entry.delete(0,'end')
         coc_query_status_entry.insert(0,startid_status_dict)
     def save_config():
-        # 读取配置
-        config = configparser.ConfigParser()
-        config.read("Config.ini", encoding="utf-8")
-        
+        # 读取配置       
         day_time = coc_time_day_entry.get()
         night_time = coc_time_night_entry.get()
         morning_time = coc_time_morning_entry.get()
         donateids_for_paid = coc_donateids_for_paid_entry.get()
         donateids_for_paid_2nd = coc_donateids_for_paid_2nd_entry.get()
         donateids = coc_donateids_entry.get()
-        resourceids_work01 = coc_resourceids_work01_entry.get()
-        resourceids_work02 = coc_resourceids_work02_entry.get()
-        resourceids_work03 = coc_resourceids_work03_entry.get()
+        resourceids = coc_resourceids_entry.get()
         resourceids_num = coc_resourceids_num_entry.get()
         donate_num = coc_donate_num_entry.get()
         donate_num_morning = coc_donate_num_morning_entry.get()
@@ -145,46 +133,38 @@ def start():
             flag_status = "exist" 
 
         #保存配置
-        config.set("coc", "day_time", day_time)#只能存储str类型数据
-        config.set("coc", "night_time", night_time)#只能存储str类型数据
-        config.set("coc", "morning_time", morning_time)#只能存储str类型数据
-        config.set("coc", "donateids_for_paid", donateids_for_paid)#只能存储str类型数据
-        config.set("coc", "donateids_for_paid_2nd", donateids_for_paid_2nd)#只能存储str类型数据
-        config.set("coc", "donateids", donateids)#只能存储str类型数据
-        config.set("coc", "resourceids_work01", resourceids_work01)#只能存储str类型数据
-        config.set("coc", "resourceids_work02", resourceids_work02)#只能存储str类型数据
-        config.set("coc", "resourceids_work03", resourceids_work03)#只能存储str类型数据
-        config.set("coc", "resourceids_num", resourceids_num)#只能存储str类型数据
-        config.set("coc", "donate_num", donate_num)#只能存储str类型数据
-        config.set("coc", "donate_num_morning", donate_num_morning)#只能存储str类型数据
-        config.set("coc", "instance_num_day", instance_num_day)#只能存储str类型数据
-        config.set("coc", "instance_time_day", instance_time_day)#只能存储str类型数据
-        config.set("coc", "instance_num_night", instance_num_night)#只能存储str类型数据
-        config.set("coc", "instance_time_night", instance_time_night)#只能存储str类型数据
-        config.set("coc", "instance_num_morning", instance_num_morning)#只能存储str类型数据
-        config.set("coc", "instance_time_morning", instance_time_morning)#只能存储str类型数据
-        config.set("coc", "levelupids", levelupids)#只能存储str类型数据
-        config.set("coc", "skipids", skipids)#只能存储str类型数据
+        config_write(configpath,"coc", "day_time", day_time)#只能存储str类型数据
+        config_write(configpath,"coc", "night_time", night_time)#只能存储str类型数据
+        config_write(configpath,"coc", "morning_time", morning_time)#只能存储str类型数据
+        config_write(configpath,"coc", "donateids_for_paid", donateids_for_paid)#只能存储str类型数据
+        config_write(configpath,"coc", "donateids_for_paid_2nd", donateids_for_paid_2nd)#只能存储str类型数据
+        config_write(configpath,"coc", "donateids", donateids)#只能存储str类型数据
+        config_write(configpath,"coc", "resourceids", resourceids)#只能存储str类型数据
+        config_write(configpath,"coc", "resourceids_num", resourceids_num)#只能存储str类型数据
+        config_write(configpath,"coc", "donate_num", donate_num)#只能存储str类型数据
+        config_write(configpath,"coc", "donate_num_morning", donate_num_morning)#只能存储str类型数据
+        config_write(configpath,"coc", "instance_num_day", instance_num_day)#只能存储str类型数据
+        config_write(configpath,"coc", "instance_time_day", instance_time_day)#只能存储str类型数据
+        config_write(configpath,"coc", "instance_num_night", instance_num_night)#只能存储str类型数据
+        config_write(configpath,"coc", "instance_time_night", instance_time_night)#只能存储str类型数据
+        config_write(configpath,"coc", "instance_num_morning", instance_num_morning)#只能存储str类型数据
+        config_write(configpath,"coc", "instance_time_morning", instance_time_morning)#只能存储str类型数据
+        config_write(configpath,"coc", "levelupids", levelupids)#只能存储str类型数据
+        config_write(configpath,"coc", "skipids", skipids)#只能存储str类型数据
 
         if flag_status == "exist" :
             #保存各个实例的状态
             for mu_id in coc_query_status:
-                config.set("coc", mu_id, coc_query_status[mu_id])#只能存储str类型数据
-        #写到配置文件
-        config.write(open("Config.ini", "w",encoding='utf-8'))  # 保存到Config.ini
-        
+                config_write(configpath,"coc", mu_id, coc_query_status[mu_id])#只能存储str类型数据
 
     root = tk.Tk()
     root.title('脚本配置')
     title = tk.Label(root, text='部落冲突脚本配置功能')
     title.grid(row=0, column=1,columnspan=6,sticky='w'+'e')
-    # 读取配置
-    config = configparser.ConfigParser()
-    config.read("Config.ini", encoding="utf-8")
     #获取时间段
-    day_time = config.get("coc", "day_time")
-    night_time = config.get("coc", "night_time")
-    morning_time = config.get("coc", "morning_time")
+    day_time = config_read(configpath,"coc", "day_time")
+    night_time = config_read(configpath,"coc", "night_time")
+    morning_time = config_read(configpath,"coc", "morning_time")
     #切换时间节点
     coc_time_day_lb = tk.Label(root, text='早上节点（切换捐兵）')
     coc_time_day_lb.grid(row=1, column=1, sticky='w' + 'e',padx=10, pady=10)  # 居中
@@ -205,9 +185,9 @@ def start():
     coc_time_morning_entry.grid(row=1, column=6,padx=10, pady=10)
 
     #捐兵号
-    donateids_for_paid = config.get("coc", "donateids_for_paid")#获取付费捐兵id
-    donateids_for_paid_2nd = config.get("coc", "donateids_for_paid_2nd")
-    donateids = config.get("coc", "donateids")#获取捐兵id
+    donateids_for_paid = config_read(configpath,"coc", "donateids_for_paid")#获取付费捐兵id
+    donateids_for_paid_2nd = config_read(configpath,"coc", "donateids_for_paid_2nd")
+    donateids = config_read(configpath,"coc", "donateids")#获取捐兵id
 
     coc_donateids_for_paid_lb = tk.Label(root, text='付费捐兵号')
     coc_donateids_for_paid_lb.grid(row=2, column=1, sticky='w' + 'e',padx=10, pady=10)  # 居中
@@ -228,32 +208,23 @@ def start():
     coc_donateids_entry.grid(row=2, column=6,padx=10, pady=10)
 
     #打资源号
-    resourceids_work01 = config.get("coc", "resourceids_work01")#获取持续打资源id的list
-    resourceids_work02 = config.get("coc", "resourceids_work02")#获取持续打资源id的list
-    resourceids_work03 = config.get("coc", "resourceids_work03")#获取持续打资源id的list
+    resourceids_server01 = get_resourceids("server01")
+    resourceids_server02 = get_resourceids("server02")
+    resourceids_server03 = get_resourceids("server03")
+    resourceids = get_resourceids(servername)#本主机的捐兵列表
+    resourceids = [x for x in resourceids if x not in donateids_for_paid]
 
-    coc_resourceids_work01_lb = tk.Label(root, text='持续打资源号worker01')
-    coc_resourceids_work01_lb.grid(row=3, column=1, sticky='w' + 'e',padx=10, pady=10)  # 居中
-    coc_resourceids_work01_entry = tk.Entry(root)
-    coc_resourceids_work01_entry.insert(0,resourceids_work01)
-    coc_resourceids_work01_entry.grid(row=3, column=2,padx=10, pady=10)
+    coc_resourceids_lb = tk.Label(root, text='持续打资源号')
+    coc_resourceids_lb.grid(row=3, column=1, sticky='w' + 'e',padx=10, pady=10)  # 居中
+    coc_resourceids_entry = tk.Entry(root)
+    coc_resourceids_entry.insert(0,resourceids_server01)
+    coc_resourceids_entry.grid(row=3, column=2,columnspan=5,sticky='w'+'e',padx=10, pady=10)
 
-    coc_resourceids_work02_lb = tk.Label(root, text='持续打资源号worker02')
-    coc_resourceids_work02_lb.grid(row=3, column=3, sticky='w' + 'e',padx=10, pady=10)  # 居中
-    coc_resourceids_work02_entry = tk.Entry(root)
-    coc_resourceids_work02_entry.insert(0,resourceids_work02)
-    coc_resourceids_work02_entry.grid(row=3, column=4,padx=10, pady=10)
-
-    coc_resourceids_work03_lb = tk.Label(root, text='持续打资源号worker03')
-    coc_resourceids_work03_lb.grid(row=3, column=5, sticky='w' + 'e',padx=10, pady=10)  # 居中
-    coc_resourceids_work03_entry = tk.Entry(root)
-    coc_resourceids_work03_entry.insert(0,resourceids_work03)
-    coc_resourceids_work03_entry.grid(row=3, column=6,padx=10, pady=10)
 
     #启动实例数量
-    resourceids_num = int(config.get("coc", "resourceids_num"))#打资源号的个数
-    donate_num = int(config.get("coc", "donate_num"))#捐兵号的个数
-    donate_num_morning = int(config.get("coc", "donate_num_morning"))#凌晨打资源时间段捐兵号的个数
+    resourceids_num = int(config_read(configpath,"coc", "resourceids_num"))#打资源号的个数
+    donate_num = int(config_read(configpath,"coc", "donate_num"))#捐兵号的个数
+    donate_num_morning = int(config_read(configpath,"coc", "donate_num_morning"))#凌晨打资源时间段捐兵号的个数
 
     coc_resourceids_num_lb = tk.Label(root, text='持续打资源号数量')
     coc_resourceids_num_lb.grid(row=4, column=1, sticky='w' + 'e',padx=10, pady=10)  # 居中
@@ -274,12 +245,12 @@ def start():
     coc_donate_num_morning_entry.grid(row=4, column=6,padx=10, pady=10)
 
     #白天和夜晚运行的实例数量和时间
-    instance_num_day = int(config.get("coc", "instance_num_day"))
-    instance_time_day = int(config.get("coc", "instance_time_day"))
-    instance_num_night = int(config.get("coc", "instance_num_night"))
-    instance_time_night = int(config.get("coc", "instance_time_night"))
-    instance_num_morning = int(config.get("coc", "instance_num_morning"))
-    instance_time_morning = int(config.get("coc", "instance_time_morning"))
+    instance_num_day = int(config_read(configpath,"coc", "instance_num_day"))
+    instance_time_day = int(config_read(configpath,"coc", "instance_time_day"))
+    instance_num_night = int(config_read(configpath,"coc", "instance_num_night"))
+    instance_time_night = int(config_read(configpath,"coc", "instance_time_night"))
+    instance_num_morning = int(config_read(configpath,"coc", "instance_num_morning"))
+    instance_time_morning = int(config_read(configpath,"coc", "instance_time_morning"))
 
     coc_instance_num_day_lb = tk.Label(root, text='早上节点总实例数量')
     coc_instance_num_day_lb.grid(row=5, column=1, sticky='w' + 'e',padx=10, pady=10)  # 居中
@@ -325,7 +296,7 @@ def start():
     
     #升级实例id
     try:
-        levelupids = config.get("coc", "levelupids")
+        levelupids = config_read(configpath,"coc", "levelupids")
     except configparser.NoOptionError as reason:
         print(reason)
         levelupids = ''
@@ -336,7 +307,7 @@ def start():
     coc_lvup_id_entry.grid(row=7, column=4,padx=10, pady=10)
     
     #跳过实例id
-    skipids = config.get("coc", "skipids")
+    skipids = config_read(configpath,"coc", "skipids")
     coc_skip_id_lb = tk.Label(root, text='跳过实例id')
     coc_skip_id_lb.grid(row=8, column=1, sticky='w' + 'e',padx=10, pady=10)  # 居中
     coc_skip_id_entry = tk.Entry(root)

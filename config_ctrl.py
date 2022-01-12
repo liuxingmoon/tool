@@ -1,15 +1,15 @@
-#²Ù×÷config
+#è¯»å†™configé…ç½®
 import configparser
 
-#¶Á
+#è¯»
 def config_read(configpath,tag,key):
     config = configparser.ConfigParser()
     config.read(configpath, encoding="utf-8")
     values = config.get(tag, key)
     return (values)
-#Ğ´    
+#å†™
 def config_write(configpath,tag,key,values):
     config = configparser.ConfigParser()
     config.read(configpath, encoding="utf-8")
-    config.set(tag, key, flag_reboot, values)
+    config.set(tag, key, values)
     config.write(open(configpath, "w",encoding='utf-8'))

@@ -8,7 +8,7 @@ import datetime,os
 from xlsx_ctrl import *
 
 reportFile = r"股票信息.xlsx"
-stockSheet = r"股票信息"
+stockSheet = r"Sheet1"
 
 def openfile(excelFile):
     subprocess.Popen(excelFile,shell=True)

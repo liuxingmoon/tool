@@ -8,7 +8,7 @@ import AutoClick as ak
 import coc_update,coc_resume,coc_config
 from config_ctrl import *
 from file_ctrl import rename,replace
-from read_config import configpath
+from read_config import *
 
 basedir = os.getcwd()#tool目录
 ddavd_path = r"D:\Program Files\DundiEmu\DundiData\avd"
@@ -22,16 +22,14 @@ def start():
     try:
         def getinfo():
             info = coc_id.get()
-            config = configparser.ConfigParser()
-            config.read(configpath, encoding="utf-8")
             if (info == ""):
                 # 不写就打开部落战id和升级id
-                startidlist = config.get("coc", "warids").split()
-                levelupids = config.get("coc", "levelupids").split()
+                startidlist = config_read(configpath,"coc", "warids").split()
+                levelupids = config_read(configpath,"coc", "levelupids").split()
                 startidlist.extend(levelupids)#合并列表
             elif (info in ['w', 'W', 'war', 'War']):
                 #部落战id
-                startidlist = config.get("coc", "warids").split()
+                startidlist = config_read(configpath,"coc", "warids").split()
             elif info.isdigit():
                 # 如果输入的是数字
                 startidlist = [info]
@@ -50,7 +48,7 @@ def start():
                 startidlist = emunum
             elif info in ['P', 'paid', 'Paid']:
                 # P代表付费捐兵号
-                startidlist = config.get("coc", "donateids_for_paid").split()
+                startidlist = config_read(configpath,"coc", "donateids_for_paid").split()
             elif info in ['p', 'play', 'PLAY']:
                 # p代表启动除了捐兵号，跳过号以及部落战号剩下的play号
                 os.chdir(ddavd_path)
@@ -61,22 +59,21 @@ def start():
                 emunum = []
                 for emu in emulist:
                     emunum.append(int(emu.replace('dundi', '')))
-                skipids = config.get("coc", "skipids").split()
-                levelupids = config.get("coc", "levelupids").split()
-                resourceids_work01 = config.get("coc", "resourceids_work01").split()  # 获取持续打资源id的list
-                resourceids_work02 = config.get("coc", "resourceids_work02").split()  # 获取持续打资源id的list
-                resourceids_work03 = config.get("coc", "resourceids_work03").split()  # 获取持续打资源id的list
-                warids = config.get("coc", "warids").split()
-                donateids_for_paid = config.get("coc", "donateids_for_paid").split()
-                resourceids = [x for x in resourceids_work02 if x not in donateids_for_paid]  # 在持续打资源的list去除付费捐兵的list
-                donateids = config.get("coc", "donateids").split()
+                skipids = config_read(configpath,"coc", "skipids").split()
+                levelupids = config_read(configpath,"coc", "levelupids").split()
+                donateids_for_paid = config_read(configpath,"coc", "donateids_for_paid").split()#获取付费捐兵id的list
+                resourceids_server01 = get_resourceids("server01")
+                resourceids_server02 = get_resourceids("server02")
+                resourceids_server03 = get_resourceids("server03")
+                warids = config_read(configpath,"coc", "warids").split()
+                donateids = config_read(configpath,"coc", "donateids").split()
                 skipids.extend(levelupids)  # 添加升级的id到跳过id列表中
                 skipids.extend(warids)  # 添加部落战控制的id到跳过id列表中
                 skipids.extend(donateids_for_paid)  # 添加部落战控制的id到跳过id列表中
                 skipids.extend(donateids)  # 添加捐兵控制的id到跳过id列表中
-                skipids.extend(resourceids_work01)  # 添加持续打资源的id到跳过id列表中
-                skipids.extend(resourceids_work02)  # 添加持续打资源的id到跳过id列表中
-                skipids.extend(resourceids_work03)  # 添加持续打资源的id到跳过id列表中
+                skipids.extend(resourceids_server01)  # 添加持续打资源的id到跳过id列表中
+                skipids.extend(resourceids_server02)  # 添加持续打资源的id到跳过id列表中
+                skipids.extend(resourceids_server03)  # 添加持续打资源的id到跳过id列表中
                 skipids = [int(x) for x in skipids]  # 转换str型为int
                 # 删除所有在emunum而也在skipids的
                 startidlist = [x for x in emunum if x not in skipids]
@@ -84,33 +81,28 @@ def start():
                 startidlist.sort()
             #9本升级的id，用于主pc升级完后放到worker03去打资源
             elif info in ['l', 'L', 'levelup', 'LEVELUP']:
-                levelupids = config.get("coc", "levelupids").split()
+                levelupids = config_read(configpath,"coc", "levelupids").split()
                 startidlist = [x for x in levelupids]
             elif info in ['s', 'S', 'skip', 'SKIP']:
-                skipids = config.get("coc", "skipids").split()
+                skipids = config_read(configpath,"coc", "skipids").split()
                 # 删除0和15
                 # startidlist = [x for x in skipids if x not in ['0','15','28','35','39']]
                 startidlist = [x for x in skipids if x not in ['0', '15', '1', '2', '3', '4', '5']]
             elif info in ['d', 'D', 'donate', 'DONATE']:
-                donateids = config.get("coc", "donateids").split()
-                donateids_for_paid = config.get("coc", "donateids_for_paid").split()  # 获取付费捐兵id的list
-                resourceids_work01 = config.get("coc", "resourceids_work01").split()  # 获取持续打资源id的list
-                resourceids_work02 = config.get("coc", "resourceids_work02").split()  # 获取持续打资源id的list
-                resourceids_work03 = config.get("coc", "resourceids_work03").split()  # 获取持续打资源id的list
-                # 在持续打资源的list去除付费捐兵的list
-                resourceids = [x for x in resourceids_work01 if x not in donateids_for_paid]
+                donateids = config_read(configpath,"coc", "donateids").split()
+                donateids_for_paid = config_read(configpath,"coc", "donateids_for_paid").split()#获取付费捐兵id的list
+                #在持续打资源的list去除付费捐兵的list
+                resourceids = get_resourceids(servername)#本主机的捐兵列表
+                resourceids = [x for x in resourceids if x not in donateids_for_paid]
                 # 在捐兵列表中去除付费捐兵的list和持续打资源的list
                 startidlist = [x for x in donateids if (x not in donateids_for_paid) and (x not in resourceids)]
             elif info in ['r', 'R', 'resourceids']:
-                resourceids_work01 = config.get("coc", "resourceids_work01").split()  # 获取持续打资源id的list
-                resourceids_work02 = config.get("coc", "resourceids_work02").split()  # 获取持续打资源id的list
-                resourceids_work03 = config.get("coc", "resourceids_work03").split()  # 获取持续打资源id的list
+                resourceids = get_resourceids(servername)#本主机的捐兵列表
+                resourceids = [x for x in resourceids if x not in donateids_for_paid]
                 # 在持续打资源的list去除付费捐兵的list
-                startidlist = [x for x in resourceids_work01]
+                startidlist = [x for x in resourceids]
             elif info in ['u', 'U', 'up', 'UP']:  # 升级的模拟器id
-                config = configparser.ConfigParser()
-                config.read(configpath, encoding="utf-8")
-                startid = int(config.get("coc", "maxid")) + 1
+                startid = int(config_read(configpath,"coc", "maxid")) + 1
                 endid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(ddavd_path) if x != 'vboxData'])
                 startidlist = [x for x in range(startid, (endid + 1))]
             else:
@@ -194,13 +186,11 @@ def start():
         def cocRC():
             startidlist = getinfo()
             startid = coc_id.get()  # 获取输入框信息
-            config = configparser.ConfigParser()
-            config.read(configpath, encoding="utf-8")
-            skipids = config.get("coc", "skipids").split()
+            skipids = config_read(configpath,"coc", "skipids").split()
             levelupids = [int(x) for x in skipids if x not in ['0', '15']]
             #输入框为空自动定义为最大id
             if startid == "":
-                startid = int(config.get("coc", "maxid")) + 1
+                startid = int(config_read(configpath,"coc", "maxid")) + 1
                 endid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(ddavd_path) if x != 'vboxData'])
                 if startid > endid:#maxid后没有新建模拟器，只升级levelupids
                     for levelupid in levelupids:
@@ -218,15 +208,11 @@ def start():
             startidlist = getinfo()
             startidlist = [int(x) for x in startidlist]
             startid = coc_id.get()  # 获取输入框信息
-            config = configparser.ConfigParser()
-            config.read(configpath, encoding="utf-8")
-            skipids = config.get("coc", "skipids").split()
+            skipids = config_read(configpath,"coc", "skipids").split()
             levelupids = [int(x) for x in skipids if x not in ['0', '15']]
             #输入框为空自动定义为最大id
             if startid == "":
-                config = configparser.ConfigParser()
-                config.read(configpath, encoding="utf-8")
-                startid = int(config.get("coc", "maxid")) + 1
+                startid = int(config_read(configpath,"coc", "maxid")) + 1
                 endid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(ddavd_path) if x != 'vboxData'])
                 if startid > endid:#maxid后没有新建模拟器，只升级levelupids
                     for levelupid in levelupids:
