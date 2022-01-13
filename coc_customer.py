@@ -169,9 +169,9 @@ def open_windows(coc_clan_dict):     #打开QQ和wechat会话窗口，发送消�
         #win32gui.ShowWindow(wechat_hwnd,win32con.SW_SHOW)
         print("正在打开会话窗口...\n")
         time.sleep(1)
-        for coc_clan_name in coc_clan_dict:
+        for coc_customer in coc_clan_dict:
             #打开会话窗口
-            setText(coc_clan_name)
+            setText(coc_customer)
             win32api.keybd_event(13, 0, 0, 0)
             win32gui.SetForegroundWindow(qq_hwnd)
             win32gui.SetActiveWindow(qq_hwnd)
@@ -183,7 +183,7 @@ def open_windows(coc_clan_dict):     #打开QQ和wechat会话窗口，发送消�
             win32api.keybd_event(0x0D, win32api.MapVirtualKey(0x0D, 0), 0, 0)   
             win32api.keybd_event(0x0D, win32api.MapVirtualKey(0x0D, 0), win32con.KEYEVENTF_KEYUP, 0)
             #发送信息
-            send_qq(coc_clan_dict[coc_clan_name])
+            send_qq(coc_clan_dict[coc_customer])
     except:
         print("没有找到QQ或微信程序")
 #续费
