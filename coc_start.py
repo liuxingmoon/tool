@@ -426,18 +426,21 @@ def login_click(startid):
     startport = getport(startid)
     restart_server()
     connect(startport)#连接    
-    time.sleep(10)
+    time.sleep(30)
     if int(startid) == 1:#如果是星陨，尝试点击登录
+        click(pos['start_script'][0],pos['start_script'][1],startport,5)
         click(pos['login_wandoujia1'][0], pos['login_wandoujia1'][1], startport,3)
         click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
     #elif str(startid) not in notplaylist:#双重否定表肯定，在轮循打资源列表中的id
     elif str(startid) in QQlists:#QQ
         click(pos['start_script'][0],pos['start_script'][1],startport,5)
     elif str(startid) in baidulists:#baidu
+        click(pos['start_script'][0],pos['start_script'][1],startport,5)
         click(pos['login_baidu1'][0],pos['login_baidu1'][1],startport,5)
         click(pos['login_baidu2'][0],pos['login_baidu2'][1],startport,3)
     else:
         #昆仑
+        click(pos['start_script'][0],pos['start_script'][1],startport,5)
         click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
         click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
         click(pos['login_kunlun3'][0], pos['login_kunlun3'][1], startport,3)
@@ -491,9 +494,8 @@ def start(startid):
     print('启动黑松鼠脚本完成')
     time.sleep(10)
     click(pos['sure'][0],pos['sure'][1],startport)
-    time.sleep(10)
+    time.sleep(60)
     click(pos['start_script'][0],pos['start_script'][1],startport)
-    time.sleep(15)
     login_click(startid)
     
 

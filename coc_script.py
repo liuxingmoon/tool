@@ -191,10 +191,9 @@ def play(wait_time,skipids):
     time.sleep(3)
     coc_script(startport,10)
     click(pos['sure'][0], pos['sure'][1],startport)
-    time.sleep(20)
+    time.sleep(60)
     click(pos['start_script'][0],pos['start_script'][1],startport)
     print('============================= 启动打资源脚本完成 =============================')
-    time.sleep(20)
     login_click(startid)
     #打印分割线
     read_id = playnames[startid]
@@ -233,9 +232,8 @@ def play_donate_for_paid(donateids):
     coc_script(startport,10)
     time.sleep(5)
     click(pos['sure'][0], pos['sure'][1],startport)
-    time.sleep(20)
+    time.sleep(60)
     click(pos['start_script'][0],pos['start_script'][1],startport)
-    time.sleep(20)
     login_click(donateid_now)
     print(r'============================= 启动付费捐兵脚本完成 ===============================')
 
@@ -275,12 +273,11 @@ def play_donate(donateids):
     coc_script(startport,10)
     time.sleep(5)
     click(pos['sure'][0], pos['sure'][1],startport)
-    time.sleep(20)
+    time.sleep(60)
     click(pos['start_script'][0],pos['start_script'][1],startport)
-    #time.sleep(20)
-    login_click(donateid_now)
     print(r'============================= 启动自用捐兵脚本完成 ===============================')
     #打印分割线
+    login_click(donateid_now)
     read_id = donatenames[donateid_now]
     print(r'============================= %s 实例启动完成 ===============================' %(read_id))
     
@@ -322,9 +319,8 @@ def play_resource(resourceids):
         coc_script(startport,10)
         time.sleep(10)
         click(pos['sure'][0], pos['sure'][1],startport)
-        time.sleep(20)
+        time.sleep(60)
         click(pos['start_script'][0],pos['start_script'][1],startport,5)
-        #time.sleep(20)
         login_click(resourceid_now)
         print(r'============================= 启动持续打资源脚本完成 ===============================')
     if (len(resourceids) > resourceids_num):#如果持续打资源号数量要大于设定数量才关闭切换，不然就直接一直运行不切换了
@@ -413,13 +409,12 @@ def start_emu(start_id,wait_time):
     if int(start_id == 6):#星核多等45秒，总是卡住
         time.sleep(60)
     else:
-        time.sleep(15)
+        time.sleep(60)
     click(pos['start_script'][0],pos['start_script'][1],startport,5)
-    #time.sleep(20)
-    login_click(start_id)
+    #login_click(start_id)
     print(r'============================= 启动实例（%d）脚本完成 ==============================='%(int(start_id)))
-    if (str(start_id) in (donateids_for_paid + resourceids)) and (int(start_id) > 6):
-        login_click(start_id)
+    #if (str(start_id) in (donateids_for_paid + resourceids)) and (int(start_id) > 6):
+    login_click(start_id)
     print(r'============================= 确认登录实例（%d）完成 ==============================='%(int(start_id)))
         
 #依次重启模拟器（列表中所有）
