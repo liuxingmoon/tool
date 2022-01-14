@@ -209,16 +209,44 @@ QQ3 = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi 2 -disable_audio  -fps 4
 QQ4 = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi 3 -disable_audio  -fps 40'
 QQ5 = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi 4 -disable_audio  -fps 40'
 
-#获取启动port
-def getport(startid):
-    startid = int(startid)
-    #获取启动端口
-    if startid == 0:
-        startport = 5555
-        return startport
+
+#获取启动port      
+def getport(startid,*skipids):
+    if len(skipids) > 0:
+        #获取启动端口
+        if int(startid) == 0:
+            #如果恰好既是第一个id，又是要跳过的id，或者是捐兵id，需要往下id+1
+            if str(startid) in skipids[0]:
+                print(r'该模拟器id %d 在禁止启动名单之中，跳过!' %(startid))
+                startid += 1
+                #递归获取port
+                return getport(startid,skipids[0])
+            else:
+                startport = 5555
+                return [startid,startport]
+        #skipids
+        elif str(startid) in skipids[0]:
+            #如果恰好既是最后一个id，又是要跳过的id，需要直接循环为初始id
+            if startid == maxid:
+                print(r'该模拟器id %d 在禁止启动名单之中，跳过!' %(startid))
+                startid = minid
+                #递归获取port
+                return getport(startid,skipids[0])
+            else:
+                print(r'============================= 该模拟器id %d 在禁止启动名单之中，跳过! ===============================' %(startid))
+                startid += 1
+                #递归获取port
+                return getport(startid,skipids[0])
+        else:
+            startport = 52550 + startid
+            return [startid,startport]
     else:
-        startport = 52550 + int(startid)
+        if int(startid) == 0:
+            startport = 5555
+        else:
+            startport = 52550 + int(startid)
         return startport
+        
 
 #获取启动id
 def getid(startport):
@@ -300,7 +328,7 @@ def swipe(drt,startport):
         process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 1000 380 100 360' % (startport), shell=True)
         time.sleep(2)
 #定点滑动
-def swipeport(x1,y1,x2,y2,startport):
+def swipepoint(x1,y1,x2,y2,startport):
     subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe %d %d %d %d' % (startport,x1,y1,x2,y2), shell=True)
     time.sleep(3)
 # 输入文本
@@ -340,7 +368,7 @@ def close_emu_err():
     close_window = win32gui.FindWindow(None, "VirtualBox Headless Frontend")
     win32gui.PostMessage(close_window, win32con.WM_CLOSE, 0, 0)
     
-    
+#关闭窗口
 def close_windows(close_name):
     close_window = win32gui.FindWindow(None, close_name)
     try:
@@ -392,13 +420,14 @@ def start_emu_id(action,startid,*args):
                 time.sleep(3)
     #等待系统开机
     time.sleep(80)
-    
+
+#关闭模拟器    
 def close():
     subprocess.Popen('taskkill /f /t /im DunDiEmu.exe & taskkill /f /t /im DdemuHandle.exe & taskkill /f /t /im adb.exe',shell=True)
     time.sleep(3)
     
-#等待
-def timewait(min,startport):
+#等待并点击右上角防止下线
+def timewait_click(min,startport):
     for n in range(min):
         time.sleep(60)
         click(pos['cancel'][0], pos['cancel'][1], startport)
@@ -499,8 +528,8 @@ def start(startid):
     login_click(startid)
     
 
-#转换模式启动
-def start_convert(action,startid,time_wait):
+#转换模式启动模拟器
+def start_emu_convert(action,startid,time_wait):
     subprocess.Popen(action,shell=True)
     #等待系统开机
     time.sleep(time_wait)

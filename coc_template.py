@@ -735,7 +735,7 @@ def register(name,startid):
     click(pos['trainning_bt'][0], pos['trainning_bt'][1], startport)
     click_short(pos['train_troop01'][0], pos['train_troop01'][1], startport,50)
     print("等待造兵")
-    timewait(7,startport)
+    timewait_click(7,startport)
     print("进攻哥布林")
     time.sleep(5)
     click(pos['cancel'][0], pos['cancel'][1], startport)
@@ -812,7 +812,7 @@ def register(name,startid):
     click(pos['cancel'][0], pos['cancel'][1], startport)
     print("造兵")
     train_troop('train_troop01',40,startport)
-    timewait(25,startport)
+    timewait_click(25,startport)
     print("升级矿场1,2")
     levelup_mine1(startport)
     time.sleep(60)
@@ -831,7 +831,7 @@ def register(name,startid):
     time.sleep(5)
     click(pos['cancel'][0], pos['cancel'][1], startport)
     print("造城墙")
-    timewait(15,startport)
+    timewait_click(15,startport)
     print("收集一次资源确保选中不会出意外")
     click(pos['mine1'][0], pos['mine1'][1], startport)
     click(pos['mine2'][0], pos['mine2'][1], startport)
@@ -855,7 +855,7 @@ def register(name,startid):
     print("造兵")
     train_troop('train_troop01', 40, startport)
     print("等待矿场升级完毕")
-    timewait(20, startport)
+    timewait_click(20, startport)
     print("打哥布林")
     click(pos['attack'][0], pos['attack'][1], startport)
     click(pos['attack_single'][0], pos['attack_single'][1], startport)
@@ -872,7 +872,7 @@ def register(name,startid):
     print("造兵")
     train_troop('train_troop01', 40, startport)
     print("等待收集器升级完毕")
-    timewait(20, startport)
+    timewait_click(20, startport)
     print("升级罐子和瓶子")
     levelup_saver(startport)
     cancel(startport)
@@ -933,7 +933,7 @@ def wardonate(startlist):
         startcoc(startport,35)
         cancel(startport)
         #等待1分
-        #timewait(1,startport)
+        #timewait_click(1,startport)
         #夜世界切换
         #归到右上角
         swipe('top',startport)
@@ -1088,7 +1088,7 @@ def levelup_3(nowid):
     click(pos['store_2'][0], pos['store_2'][1], startport)
     time.sleep(1)
     click(pos['built22'][0], pos['built22'][1], startport)
-    timewait(5,startport)
+    timewait_click(5,startport)
     # 造实验室
     storebuild(startport)
     click(pos['storeitem1'][0], pos['storeitem1'][1], startport)
@@ -1206,21 +1206,39 @@ def removeTree_night(startid):
         stop_thread(t2)
         flag = 0     
         
-#启动黑松鼠
+#切换夜世界
+def night_world(night_attackmode,startport):
+    # 从下往上滑动
+    for n in range(7):
+        swipepoint(pos['script_swipebot'][0], pos['script_swipebot'][1], pos['script_swipetop'][0],pos['script_swipetop'][1], startport)
+    #点击夜世界模式
+    click(pos['script_night_auto_collect'][0], pos['script_night_auto_collect'][1], startport,)
+    click(pos['script_night_Accelerate_tower'][0], pos['script_night_Accelerate_tower'][1], startport)
+    click(pos['script_night_auto_weeding'][0], pos['script_night_auto_weeding'][1], startport)
+    click(pos['script_night_auto_levelup'][0], pos['script_night_auto_levelup'][1], startport)
+    click(pos['script_night_auto_research'][0], pos['script_night_auto_research'][1], startport)
+    if night_attackmode == 'donate':
+        #切换夜世界不打资源
+        click(pos['script_night_attackmode'][0], pos['script_night_attackmode'][1], startport, 3)
+        click(pos['script_night_attackmode_no'][0], pos['script_night_attackmode_no'][1], startport, 3)
+    elif night_attackmode == 'play'::
+        click(pos['script_night_attackmode'][0], pos['script_night_attackmode'][1], startport, 3)
+        click(pos['script_night_attackmode_prize'][0], pos['script_night_attackmode_prize'][1], startport, 3)
+
+#启动脚本
 def start_script(startport,*args):
     restart_server()
     connect(startport)
     # 启动黑松鼠
-    subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.ais.foxsquirrel.coc/ui.activity.SplashActivity' % (startport),shell=True)
-    time.sleep(20)
+    coc_script_black(startport,20)
     #点击更新
     click(pos['sure'][0], pos['sure'][1], startport)
-    time.sleep(20)
+    time.sleep(80)
     # 点击模式设置
     click(pos['script_item3'][0], pos['script_item3'][1], startport, 3)
     click(pos['script_switch_mode'][0], pos['script_switch_mode'][1], startport, 3)
     # 从上往下滑动
-    swipeport(pos['script_swipetop'][0], pos['script_swipetop'][1], pos['script_swipebot'][0],pos['script_swipebot'][1], startport)
+    swipepoint(pos['script_swipetop'][0], pos['script_swipetop'][1], pos['script_swipebot'][0],pos['script_swipebot'][1], startport)
     time.sleep(5)
     if len(args) > 0:
         id = getid(startport)
@@ -1230,31 +1248,10 @@ def start_script(startport,*args):
         else:
             if args[0] == "donate":#切换为donate
                 click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
-                # 从下往上滑动
-                for n in range(7):
-                    swipeport(pos['script_swipebot'][0], pos['script_swipebot'][1], pos['script_swipetop'][0],pos['script_swipetop'][1], startport)
-                #切换夜世界不打资源
-                click(pos['script_night_attackmode'][0], pos['script_night_attackmode'][1], startport, 3)
-                click(pos['script_night_attackmode_no'][0], pos['script_night_attackmode_no'][1], startport, 3)
-                #点击夜世界模式
-                click(pos['script_night_auto_collect'][0], pos['script_night_auto_collect'][1], startport,)
-                click(pos['script_night_Accelerate_tower'][0], pos['script_night_Accelerate_tower'][1], startport)
-                click(pos['script_night_auto_weeding'][0], pos['script_night_auto_weeding'][1], startport)
-                click(pos['script_night_auto_levelup'][0], pos['script_night_auto_levelup'][1], startport)
-                click(pos['script_night_auto_research'][0], pos['script_night_auto_research'][1], startport)
+                #night_world("donate",startport)#黑松鼠夜世界不能用，不切夜世界了
             elif args[0] == "play":#切换为play
                 click(pos['script_play'][0], pos['script_play'][1], startport, 3)
-                # 从下往上滑动
-                for n in range(7):
-                    swipeport(pos['script_swipebot'][0], 950, pos['script_swipetop'][0], 370, startport)
-                click(pos['script_night_attackmode'][0], pos['script_night_attackmode'][1], startport, 3)
-                click(pos['script_night_attackmode_prize'][0], pos['script_night_attackmode_prize'][1], startport, 3)
-                #点击夜世界模式
-                click(pos['script_night_auto_collect'][0], pos['script_night_auto_collect'][1], startport)
-                click(pos['script_night_Accelerate_tower'][0], pos['script_night_Accelerate_tower'][1], startport)
-                click(pos['script_night_auto_weeding'][0], pos['script_night_auto_weeding'][1], startport)
-                click(pos['script_night_auto_levelup'][0], pos['script_night_auto_levelup'][1], startport)
-                click(pos['script_night_auto_research'][0], pos['script_night_auto_research'][1], startport)
+                #night_world("play",startport)#黑松鼠夜世界不能用，不切夜世界了
     click(pos['script_start'][0], pos['script_start'][1], startport)
     time.sleep(20)
     click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
@@ -1297,7 +1294,7 @@ def convert_mode(convert_id,*args):
             #启动模拟器
             action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (convert_id)
             #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (convert_id)
-            start_convert(action, convert_id, 40)
+            start_emu_convert(action, convert_id, 40)
             # 重新登录qq
             click(pos['relogin'][0], pos['relogin'][1], startport,3)
             #切换为打资源
@@ -1308,7 +1305,7 @@ def convert_mode(convert_id,*args):
             #启动模拟器
             action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (convert_id)
             #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (convert_id)
-            start_convert(action, convert_id, 60)
+            start_emu_convert(action, convert_id, 60)
             # 重新登录qq
             #click(pos['relogin'][0], pos['relogin'][1], startport,3)
             #click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
@@ -1320,7 +1317,7 @@ def convert_mode(convert_id,*args):
             startcoc(startport,60)
             '''
             #有可能上线正在被打,等待3分钟后尝试返回
-            timewait(3,startport)
+            timewait_click(3,startport)
             click(pos['attack'][0], pos['attack'][1], startport,1)
             click(pos['cancel'][0], pos['cancel'][1], startport,1)
             '''
@@ -1330,7 +1327,6 @@ def convert_mode(convert_id,*args):
             swipe('right',startport)
             #船
             click(pos['boat'][0], pos['boat'][1], startport, 15)
-
             #取消训练中的兵种,2次确保删除
             cancel_troop(startport)
             cancel_troop(startport)

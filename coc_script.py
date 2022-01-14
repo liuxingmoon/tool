@@ -12,7 +12,7 @@ import coc_template
 import os
 import AutoClick as ak
 import keyboard as k
-from coc_start import connect,login_click,close_emu_err,close_emu_id,close_windows
+from coc_start import connect,login_click,close_emu_err,close_emu_id,close_windows,getport,click,close,kill_adb,kill_server,start_server,restart_server,start_emu_convert
 from multiprocessing import Process
 import file_ctrl as fc
 from config_ctrl import *
@@ -43,24 +43,6 @@ configdir = os.path.dirname(os.path.abspath(configpath))#配置文件目录
 backupdir = configdir + os.sep + "backup"
 QQlists = config_read(configpath,"coc", "QQlists").split()
     
-def kill_adb():
-    subprocess.Popen('taskkill /f /t /im adb.exe',shell=True)
-    time.sleep(3)
-    
-def kill_server():
-    # 关闭模拟器连接
-    subprocess.Popen('adb kill-server', shell=True)
-    time.sleep(3)
-
-def start_server():
-    #开启模拟器连接
-    subprocess.Popen('adb start-server', shell=True)
-    time.sleep(3)
-
-def restart_server():
-    kill_adb()
-    kill_server()
-    #start_server()
     
 def close_VirtualBox():
     #关闭模拟器报错
@@ -79,10 +61,6 @@ def start(action,startport,wait_time):
     restart_server()
     #重启并连接连接
     connect(startport)
-    time.sleep(3)
-    
-def close():
-    subprocess.Popen('taskkill /f /t /im DunDiEmu.exe & taskkill /f /t /im DdemuHandle.exe & taskkill /f /t /im adb.exe',shell=True)
     time.sleep(3)
 
 def shutdown():
@@ -116,57 +94,11 @@ def coc_script(startport,wait_time):
         coc_script(startport,wait_time)#递归重新执行一次
     time.sleep(20)
     
-    
-#点击屏幕
-def click(x,y,startport,*args):
-    if startport == 5555:
-        subprocess.Popen(r'adb -s emulator-5554 shell input tap %d %d' %(x,y),shell=True)
-    subprocess.Popen(r'adb -s 127.0.0.1:%d shell input tap %d %d' %(startport,x,y),shell=True)
-    print(x,y)
-    time.sleep(3)
-    if len(args) > 0:
-        time.sleep(args[0])
 
 #等待
 def timewait(min):
     for n in range(min):
         time.sleep(60)
-
-def getport(startid,*skipids):
-    if len(skipids) > 0:
-        #获取启动端口
-        if int(startid) == 0:
-            #如果恰好既是第一个id，又是要跳过的id，或者是捐兵id，需要往下id+1
-            if str(startid) in skipids[0]:
-                print(r'该模拟器id %d 在禁止启动名单之中，跳过!' %(startid))
-                startid += 1
-                #递归获取port
-                return getport(startid,skipids[0])
-            else:
-                startport = 5555
-                return [startid,startport]
-        #skipids
-        elif str(startid) in skipids[0]:
-            #如果恰好既是最后一个id，又是要跳过的id，需要直接循环为初始id
-            if startid == maxid:
-                print(r'该模拟器id %d 在禁止启动名单之中，跳过!' %(startid))
-                startid = minid
-                #递归获取port
-                return getport(startid,skipids[0])
-            else:
-                print(r'============================= 该模拟器id %d 在禁止启动名单之中，跳过! ===============================' %(startid))
-                startid += 1
-                #递归获取port
-                return getport(startid,skipids[0])
-        else:
-            startport = 52550 + startid
-            return [startid,startport]
-    else:
-        if int(startid) == 0:
-            startport = 5555
-        else:
-            startport = 52550 + int(startid)
-        return startport
         
 def play(wait_time,skipids):
     #为了指定关闭startid，全局
@@ -280,7 +212,28 @@ def play_donate(donateids):
     login_click(donateid_now)
     read_id = donatenames[donateid_now]
     print(r'============================= %s 实例启动完成 ===============================' %(read_id))
-    
+
+def start_resource(resourceid_now):
+    #写入config
+    config_write(configpath,"coc", "resourceid_now", resourceid_now)#只能存储str类型数据
+    if int(resourceid_now) == 0:
+        startport = 5555
+    else:
+        startport = 52550 + int(resourceid_now)
+    startport = getport(int(resourceid_now))
+    action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(resourceid_now))
+    #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(int(resourceid_now))
+    start(action,startport,40)
+    print(r'============================= 启动持续打资源模拟器完成 ===============================')
+    time.sleep(3)
+    coc_script(startport,10)
+    time.sleep(10)
+    click(pos['sure'][0], pos['sure'][1],startport)
+    time.sleep(60)
+    click(pos['start_script'][0],pos['start_script'][1],startport,5)
+    login_click(resourceid_now)
+    print(r'============================= 启动持续打资源脚本完成 ===============================')
+        
 def play_resource(resourceids):
     #获取上一次运行的打资源id
     #global resourceid_now
@@ -303,33 +256,13 @@ def play_resource(resourceids):
     if close_index < 0:
         close_index = len(resourceids) + close_index
     close_id = resourceids[close_index]
-    def start_resource():
-        #写入config
-        config_write(configpath,"coc", "resourceid_now", resourceid_now)#只能存储str类型数据
-        if int(resourceid_now) == 0:
-            startport = 5555
-        else:
-            startport = 52550 + int(resourceid_now)
-        startport = getport(int(resourceid_now))
-        action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(resourceid_now))
-        #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(int(resourceid_now))
-        start(action,startport,40)
-        print(r'============================= 启动持续打资源模拟器完成 ===============================')
-        time.sleep(3)
-        coc_script(startport,10)
-        time.sleep(10)
-        click(pos['sure'][0], pos['sure'][1],startport)
-        time.sleep(60)
-        click(pos['start_script'][0],pos['start_script'][1],startport,5)
-        login_click(resourceid_now)
-        print(r'============================= 启动持续打资源脚本完成 ===============================')
     if (len(resourceids) > resourceids_num):#如果持续打资源号数量要大于设定数量才关闭切换，不然就直接一直运行不切换了
         #关闭前一个模拟器
         close_emu_id(close_id)
-        start_resource()
+        start_resource(resourceid_now)
     elif (len(resourceids) == resourceids_num) and (flag_play_resource == "False"):
         config_write(configpath,"coc", "flag_play_resource", "True")
-        start_resource()
+        start_resource(resourceid_now)
     else:
         print(r'============================= 跳过持续打资源号切换 ===============================')
        
@@ -804,7 +737,7 @@ if __name__ == "__main__":
                 for convert_id in donateids_for_paid:
                     action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(convert_id))
                     #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (int(convert_id))
-                    coc_template.start_convert(action, convert_id, 80)#启动
+                    start_emu_convert(action, convert_id, 80)#启动
                     startport = getport(convert_id)
                     coc_template.start_script(startport,'donate')#切换
                     if convert_id == donateids_for_paid[-1]:#最后一个模拟器等待3分钟避免切换的时候刚好被打导致切换失败
@@ -823,7 +756,7 @@ if __name__ == "__main__":
                         for convert_id in donateids:
                             action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(convert_id))
                             #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (int(convert_id))
-                            coc_template.start_convert(action, convert_id, 80)#启动
+                            start_emu_convert(action, convert_id, 80)#启动
                             startport = getport(convert_id)
                             coc_template.start_script(startport,'donate')#切换
                             if convert_id == donateids[-1]:#最后一个模拟器等待3分钟避免切换的时候刚好被打导致切换失败
