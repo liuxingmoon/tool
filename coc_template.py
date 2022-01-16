@@ -1267,7 +1267,7 @@ def removeTree_night(startid):
 #切换夜世界
 def night_world(night_attackmode,startport):
     # 从下往上滑动
-    for n in range(7):
+    for n in range(15):
         swipepoint(pos['script_swipebot'][0], pos['script_swipebot'][1], pos['script_swipetop'][0],pos['script_swipetop'][1], startport)
     #点击夜世界模式
     click(pos['script_night_auto_collect'][0], pos['script_night_auto_collect'][1], startport,)
