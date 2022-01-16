@@ -4,10 +4,7 @@ import time
 import win32gui
 from win32.lib import win32con
 from config_ctrl import *
-from read_config import configpath
-
-QQlists = config_read(configpath,"coc", "QQlists").split()
-baidulists = config_read(configpath,"coc", "baidulists").split()
+from read_config import *
 
 
 #元素坐标
@@ -36,10 +33,10 @@ pos = {
     'login_wandoujia': [640, 500],
     'login_wandoujia1': [640, 300],
     'login_wandoujia2': [640, 500],
-    'login_kunlun': [640, 250],
-    'login_kunlun1': [1000, 300],
-    'login_kunlun2': [650, 200],
-    'login_kunlun3': [1000, 300],
+    'login_jiuyou': [640, 250],
+    'login_jiuyou1': [1000, 300],
+    'login_jiuyou2': [650, 200],
+    'login_jiuyou3': [1000, 300],
     'login_baidu1': [440, 545],
     'login_baidu2': [500, 460],
     'store_build': [300, 100],
@@ -274,7 +271,7 @@ def connect(startport):
                 restart_server()
                 action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' %(close_id)
                 #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(close_id)
-                start_emu_id(action,close_id)#启动     
+                start_emu_id(action,close_id,40)#启动     
                 connect(startport)#递归获取一下启动port
         except:
             pass
@@ -315,6 +312,7 @@ def click_long(x,y,time,startport):
     print(x,y)
 # 滑屏
 def swipe(drt,startport):
+    '''top:从上往下划；bot:从下往上划；left:从左往右划；right:从右往左划'''
     if drt == 'top':
         process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 640 200 640 700' % (startport), shell=True)
         time.sleep(2)
@@ -322,10 +320,10 @@ def swipe(drt,startport):
         process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 640 650 640 150' % (startport), shell=True)
         time.sleep(2)
     elif drt == 'left':
-        process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 100 380 1000 360' % (startport), shell=True)
+        process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 100 380 1000 380' % (startport), shell=True)
         time.sleep(2)
     elif drt == 'right':
-        process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 1000 380 100 360' % (startport), shell=True)
+        process = subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe 1000 380 100 380' % (startport), shell=True)
         time.sleep(2)
 #定点滑动
 def swipepoint(x1,y1,x2,y2,startport):
@@ -396,7 +394,7 @@ def close_emu_id(close_id):
     
 
 #开模拟器
-def start_emu_id(action,startid,*args):
+def start_emu_id(action,startid,time_seconds,*args):
     """0不用最小化,1最小化"""
     subprocess.Popen(action,shell=True)
     #确保模拟器进程已经启动
@@ -419,7 +417,17 @@ def start_emu_id(action,startid,*args):
                     pass
                 time.sleep(3)
     #等待系统开机
-    time.sleep(80)
+    time.sleep(time_seconds)
+    
+#转换模式启动模拟器
+def start_emu_convert(action,startid,time_wait):
+    start_emu_id(action,startid,time_wait)#启动
+    # 连接模拟器
+    startport = getport(startid)
+    # 开启模拟器连接
+    start_server()
+    #多连接几次确保连接上
+    connect(startport)
 
 #关闭模拟器    
 def close():
@@ -440,6 +448,8 @@ def startcoc(startport,wait_time):
         subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.tencent.tmgp.supercell.clashofclans/com.supercell.titan.tencent.GameAppTencent' % (startport), shell=True)
     elif start_id in baidulists:#百度
         subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.baidu/com.supercell.titan.kunlun.GameAppKunlun' % (startport), shell=True)
+    elif start_id in kunlunlists:#昆仑
+        subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.kunlun/com.supercell.titan.kunlun.GameAppKunlun' % (startport), shell=True)
     else:#九游
         subprocess.Popen(r'adb -s 127.0.0.1:%d shell am start -n com.supercell.clashofclans.uc/com.supercell.titan.kunlun.uc.GameAppKunlunUC' % (startport), shell=True)
     #豌豆荚
@@ -468,11 +478,11 @@ def login_click(startid):
         click(pos['login_baidu1'][0],pos['login_baidu1'][1],startport,5)
         click(pos['login_baidu2'][0],pos['login_baidu2'][1],startport,3)
     else:
-        #昆仑
+        #九游
         click(pos['start_script'][0],pos['start_script'][1],startport,5)
-        click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
-        click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
-        click(pos['login_kunlun3'][0], pos['login_kunlun3'][1], startport,3)
+        click(pos['login_jiuyou1'][0], pos['login_jiuyou1'][1], startport,3)
+        click(pos['login_jiuyou2'][0], pos['login_jiuyou2'][1], startport,3)
+        click(pos['login_jiuyou3'][0], pos['login_jiuyou3'][1], startport,3)
     
 #重启coc
 def restartcoc(startport):
@@ -514,7 +524,7 @@ def start(startid):
     else:
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' %(startid)
     #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(startid)
-    start_emu_id(action,startid)#开模拟器
+    start_emu_id(action,startid,40)#开模拟器
     print('启动模拟器完成')
     startport = getport(startid)
     connect(startport)
@@ -527,18 +537,6 @@ def start(startid):
     click(pos['start_script'][0],pos['start_script'][1],startport)
     login_click(startid)
     
-
-#转换模式启动模拟器
-def start_emu_convert(action,startid,time_wait):
-    subprocess.Popen(action,shell=True)
-    #等待系统开机
-    time.sleep(time_wait)
-    # 连接模拟器
-    startport = getport(startid)
-    # 开启模拟器连接
-    start_server()
-    #多连接几次确保连接上
-    connect(startport)
 
 class Thunder:
     def start(self):

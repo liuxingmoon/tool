@@ -14,10 +14,8 @@ import random
 from multiprocessing import Process
 import easygui as g
 from config_ctrl import *
-from read_config import configpath
+from read_config import *
 
-QQlists = config_read(configpath,"coc", "QQlists").split()
-baidulists = config_read(configpath,"coc", "baidulists").split()
 
 # 元素坐标,建立新号都是用240的
 pos = {
@@ -40,10 +38,10 @@ pos = {
     'store': [1200, 635],
     'relogin': [500, 825],
     'login_wandoujia': [640, 500],
-    'login_kunlun': [640, 250],
-    'login_kunlun1': [1000, 300],
-    'login_kunlun2': [650, 200],
-    'login_kunlun3': [1000, 300],
+    'login_jiuyou': [640, 250],
+    'login_jiuyou1': [1000, 300],
+    'login_jiuyou2': [650, 200],
+    'login_jiuyou3': [1000, 300],
     'login_baidu1': [440, 545],
     'login_baidu2': [500, 460],
     'store_build': [300, 100],
@@ -211,8 +209,26 @@ pos = {
     'del_army_pt07': [710, 400],
     'del_army_siege01': [950, 200],
     'del_army_siege02': [1050, 200],
-    'del_army_siege03': [1150, 200]
-
+    'del_army_siege03': [1150, 200],
+    'strengthen_place': [250, 295],
+    'strengthen_trp01': [280, 430],
+    'strengthen_trp02': [510, 430],
+    'strengthen_trp03': [750, 430],
+    'strengthen_trp04': [990, 430],
+    'strengthen_trp11': [280, 650],
+    'strengthen_trp12': [510, 650],
+    'strengthen_trp13': [750, 650],
+    'strengthen_trp14': [990, 650],
+    'strengthen_trp31': [280, 250],
+    'strengthen_trp32': [510, 250],
+    'strengthen_trp33': [750, 250],
+    'strengthen_trp34': [990, 250],
+    'strengthen_trp41': [280, 550],
+    'strengthen_trp42': [510, 550],
+    'strengthen_trp43': [750, 550],
+    'strengthen_trp44': [990, 550],
+    'strengthen_black_oil': [980, 640],
+    'strengthen_sure': [640, 540]
 }
 # 建立字典存储所有位置信息
 rm_pos = {}
@@ -440,6 +456,46 @@ def train_potion(train_troopid,num,startport):
     click(pos['trainningitem3'][0], pos['trainningitem3'][1], startport)
     click_short(pos[train_troopid][0], pos[train_troopid][1], startport,num)
     click(pos['exitstore'][0], pos['exitstore'][1], startport,3)
+
+#映射兵种和强化兵位置
+def mapping_strengthen(trp_name):
+    if trp_name in ['野','蛮']:
+        trp_name_pos_num = "01"
+    elif trp_name in ['弓','箭']:
+        trp_name_pos_num = "02"
+    elif trp_name in ['巨','胖']:
+        trp_name_pos_num = "03"
+    elif trp_name in ['哥','绿']:
+        trp_name_pos_num = "04"
+    elif trp_name in ['炸','弹']:
+        trp_name_pos_num = "11"
+    elif trp_name in ['气','球']:
+        trp_name_pos_num = "12"
+    elif trp_name in ['法','师']:
+        trp_name_pos_num = "13"
+    elif trp_name in ['飞','龙']:
+        trp_name_pos_num = "14"
+    return (trp_name_pos_num)
+    
+#强化超级兵    
+def strengthen(trp_names,startport):
+    if trp_names == "None":
+        pass
+    else:
+        #归到左上角
+        swipe('top', startport)
+        swipe('left', startport)
+        for trp_name in trp_names:
+            click(pos['strengthen_place'][0], pos['strengthen_place'][1], startport)#点击强化
+            trp_name_pos_num = int(mapping_strengthen(trp_name))#强化兵种位置
+            if trp_name_pos_num > 15:#第一页不用翻篇，大于14就是第二页需要翻页
+                swipe('bot', startport)
+                swipe('bot', startport)
+            click(pos['strengthen_trp%d'%(trp_name_pos_num)][0], pos['strengthen_trp%d'%(trp_name_pos_num)][1], startport)
+            click(pos['strengthen_black_oil'][0], pos['strengthen_black_oil'][1], startport)#点击使用黑油强化
+            click(pos['strengthen_sure'][0], pos['strengthen_sure'][1], startport)#点击确认强化
+            click(pos['exitstore'][0], pos['exitstore'][1], startport,3)#退出
+            click(pos['exitstore'][0], pos['exitstore'][1], startport,3)#退出
     
 #训练捐兵
 def train_template(train_template,startport,*args):
@@ -883,7 +939,7 @@ def register(name,startid):
 def resource_up(resourceid):
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' % (resourceid)
     #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (resourceid)
-    start_emu_id(action, resourceid,1)#最小化
+    start_emu_id(action, resourceid,40,1)#最小化
     startport = getport(resourceid)
     connect(startport)
     #重新登录qq
@@ -924,7 +980,7 @@ def wardonate(startlist):
         nowid = int(nowid)
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (nowid)
         #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (nowid)
-        start_emu_id(action, nowid,1)#最小化
+        start_emu_id(action, nowid,40,1)#最小化
         startport = getport(nowid)
         connect(startport)
         #重新登录qq
@@ -975,7 +1031,7 @@ def start_coc(startidlist):
     for nowid in startidlist:
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(nowid))
         #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (int(nowid))
-        start_emu_id(action, int(nowid),0)
+        start_emu_id(action, int(nowid),40,0)
         startport = getport(int(nowid))
         connect(startport)
         #重新登录qq
@@ -990,7 +1046,7 @@ def update_coc(startidlist):
     for nowid in startidlist:
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(nowid))
         #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (int(nowid))
-        start_emu_id(action, int(nowid),0)
+        start_emu_id(action, int(nowid),40,0)
         startport = getport(int(nowid))
         connect(startport)
         time.sleep(10)
@@ -998,8 +1054,10 @@ def update_coc(startidlist):
             coc_path = config_read(configpath,"coc", "app_path_tencent")
         elif nowid in baidulists:#baidu
             coc_path = config_read(configpath,"coc", "app_path_baidu")
-        else:
+        elif nowid in kunlunlists:#kunlun
             coc_path = config_read(configpath,"coc", "app_path_kunlun")
+        else:
+            coc_path = config_read(configpath,"coc", "app_path_jiuyou")
         coc_path = r"%s" %(coc_path)
         subprocess.Popen('adb install -r %s' % (coc_path), shell=True)
         time.sleep(60)
@@ -1011,7 +1069,7 @@ def update_hss(startidlist):
     for nowid in startidlist:
         action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(nowid))
         #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (int(nowid))
-        start_emu_id(action, int(nowid),0)
+        start_emu_id(action, int(nowid),40,0)
         startport = getport(int(nowid))
         connect(startport)
         time.sleep(10)
@@ -1028,7 +1086,7 @@ def update_hss(startidlist):
 def levelup_3(nowid):
     action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %s -disable_audio  -fps 40' % (nowid)
     #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (nowid)
-    start_emu_id(action, nowid,1)#最小化
+    start_emu_id(action, nowid,40,1)#最小化
     startport = getport(nowid)
     connect(startport)
     #重新登录qq
@@ -1221,7 +1279,8 @@ def night_world(night_attackmode,startport):
         #切换夜世界不打资源
         click(pos['script_night_attackmode'][0], pos['script_night_attackmode'][1], startport, 3)
         click(pos['script_night_attackmode_no'][0], pos['script_night_attackmode_no'][1], startport, 3)
-    elif night_attackmode == 'play'::
+    elif night_attackmode == 'play':
+        #切换夜世界打资源
         click(pos['script_night_attackmode'][0], pos['script_night_attackmode'][1], startport, 3)
         click(pos['script_night_attackmode_prize'][0], pos['script_night_attackmode_prize'][1], startport, 3)
 
@@ -1230,10 +1289,10 @@ def start_script(startport,*args):
     restart_server()
     connect(startport)
     # 启动黑松鼠
-    coc_script_black(startport,20)
+    coc_script_black(startport,120)
     #点击更新
     click(pos['sure'][0], pos['sure'][1], startport)
-    time.sleep(80)
+    time.sleep(20)
     # 点击模式设置
     click(pos['script_item3'][0], pos['script_item3'][1], startport, 3)
     click(pos['script_switch_mode'][0], pos['script_switch_mode'][1], startport, 3)
@@ -1248,15 +1307,15 @@ def start_script(startport,*args):
         else:
             if args[0] == "donate":#切换为donate
                 click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
-                #night_world("donate",startport)#黑松鼠夜世界不能用，不切夜世界了
+                night_world("donate",startport)
             elif args[0] == "play":#切换为play
                 click(pos['script_play'][0], pos['script_play'][1], startport, 3)
-                #night_world("play",startport)#黑松鼠夜世界不能用，不切夜世界了
+                night_world("play",startport)
     click(pos['script_start'][0], pos['script_start'][1], startport)
     time.sleep(20)
-    click(pos['login_kunlun1'][0], pos['login_kunlun1'][1], startport,3)
-    click(pos['login_kunlun2'][0], pos['login_kunlun2'][1], startport,3)
-    click(pos['login_kunlun3'][0], pos['login_kunlun3'][1], startport,3)
+    click(pos['login_jiuyou1'][0], pos['login_jiuyou1'][1], startport,3)
+    click(pos['login_jiuyou2'][0], pos['login_jiuyou2'][1], startport,3)
+    click(pos['login_jiuyou3'][0], pos['login_jiuyou3'][1], startport,3)
     if int(startport) == 52612:#百度
         click(pos['login_baidu1'][0], pos['login_baidu1'][1], startport,5)
         click(pos['login_baidu2'][0], pos['login_baidu2'][1], startport,3)
@@ -1272,6 +1331,12 @@ def convert_mode(convert_id,*args):
     except IndexError as reason:
         print('没有配置攻城器，默认2车2艇2球')
         siege_num = '222000'
+    try:
+        trp_names = startid_info[2]
+    except IndexError as reason:
+        print('没有配置强化，默认无强化兵：None')
+        trp_names = 'None'
+    
     #args[0]表示当前状态，args[1]表示删掉已经造好的兵种的模拟器id
     donateids_for_paid = config_read(configpath,"coc", "donateids_for_paid").split()
     startport = getport(convert_id)
@@ -1305,7 +1370,7 @@ def convert_mode(convert_id,*args):
             #启动模拟器
             action = r'"D:\Program Files\DundiEmu\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (convert_id)
             #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (convert_id)
-            start_emu_convert(action, convert_id, 60)
+            start_emu_convert(action, convert_id, 40)
             # 重新登录qq
             #click(pos['relogin'][0], pos['relogin'][1], startport,3)
             #click(pos['script_donate'][0], pos['script_donate'][1], startport, 3)
@@ -1339,6 +1404,8 @@ def convert_mode(convert_id,*args):
                 cancel_siege(startport)
                 #取消现有兵种和药水
                 cancel_army(startport)
+                #强化超级兵
+                #strengthen(trp_names,startport)
                 # 造捐兵兵种
                 train_template('train_template02', startport)
             print('删除兵种结束')
@@ -1353,5 +1420,5 @@ def convert_mode(convert_id,*args):
         status = statusnow
         close_emu_id(convert_id)#关闭该模拟器
     #保存当前状态
-    startid_info = status + " " + siege_num
+    startid_info = status + " " + siege_num + " " + trp_names
     config_write(configpath,"coc", "startid%d"%(convert_id),startid_info)

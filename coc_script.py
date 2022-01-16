@@ -12,7 +12,7 @@ import coc_template
 import os
 import AutoClick as ak
 import keyboard as k
-from coc_start import connect,login_click,close_emu_err,close_emu_id,close_windows,getport,click,close,kill_adb,kill_server,start_server,restart_server,start_emu_convert
+from coc_start import connect,login_click,close_emu_err,close_windows,getport,click,close,kill_adb,kill_server,start_server,restart_server,start_emu_convert,close_emu_id
 from multiprocessing import Process
 import file_ctrl as fc
 from config_ctrl import *
@@ -25,10 +25,10 @@ pos = {
   'start_script':[200,1070],
   'login_wandoujia1': [640, 300],
   'login_wandoujia2': [640, 500],
-  'login_kunlun': [640, 250],
-  'login_kunlun1': [1000, 300],
-  'login_kunlun2': [650, 200],
-  'login_kunlun3': [1000, 300],
+  'login_jiuyou': [640, 250],
+  'login_jiuyou1': [1000, 300],
+  'login_jiuyou2': [650, 200],
+  'login_jiuyou3': [1000, 300],
   'login_baidu1': [440, 545],
   'login_baidu2': [500, 460],
   'cancel': [1200, 50],
@@ -436,9 +436,6 @@ if __name__ == "__main__":
     #close()
     #打开自动点击
     ak.start()
-    #启动id范围
-    minid = int(config_read(configpath,"coc","minid"))
-    maxid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\') if x != 'vboxData'])
     #捐兵模式：一直捐兵（A)，还是半捐
     donate_mode = config_read(configpath,"coc","donate_mode")
     #跳过启动的id初始列表
@@ -737,7 +734,7 @@ if __name__ == "__main__":
                 for convert_id in donateids_for_paid:
                     action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(convert_id))
                     #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (int(convert_id))
-                    start_emu_convert(action, convert_id, 80)#启动
+                    start_emu_convert(action, convert_id, 40)#启动
                     startport = getport(convert_id)
                     coc_template.start_script(startport,'donate')#切换
                     if convert_id == donateids_for_paid[-1]:#最后一个模拟器等待3分钟避免切换的时候刚好被打导致切换失败
@@ -756,7 +753,7 @@ if __name__ == "__main__":
                         for convert_id in donateids:
                             action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' % (int(convert_id))
                             #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' % (int(convert_id))
-                            start_emu_convert(action, convert_id, 80)#启动
+                            start_emu_convert(action, convert_id, 40)#启动
                             startport = getport(convert_id)
                             coc_template.start_script(startport,'donate')#切换
                             if convert_id == donateids[-1]:#最后一个模拟器等待3分钟避免切换的时候刚好被打导致切换失败
