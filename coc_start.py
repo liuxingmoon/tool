@@ -328,7 +328,7 @@ def swipe(drt,startport):
 #定点滑动
 def swipepoint(x1,y1,x2,y2,startport):
     subprocess.Popen('adb -s 127.0.0.1:%s shell input swipe %d %d %d %d' % (startport,x1,y1,x2,y2), shell=True)
-    time.sleep(3)
+    time.sleep(1)
 # 输入文本
 def text(text,startport):
     subprocess.Popen('adb -s 127.0.0.1:%s shell input text %s' % (startport, text), shell=True)
