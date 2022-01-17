@@ -3,8 +3,9 @@ from config_ctrl import *
 
 #当前服务器名
 servername = socket.gethostname()
-
 configpath = r'\\%s\\tool\\Config.ini' %(servername)
+if os.path.isfile(configpath) == False:#如果tool没有在网络路径上（未分享）
+    configpath = r"D:\\Program Files\\Python38\\works\\tool\\Config.ini"
 minid = int(config_read(configpath,"coc","minid"))
 maxid = max([int(x.strip('dundi').rstrip('.rar')) for x in os.listdir(r'D:\Program Files\DundiEmu\DundiData\avd\\') if x != 'vboxData'])
 QQlists = config_read(configpath,"coc", "QQlists").split()
