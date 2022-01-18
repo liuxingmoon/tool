@@ -43,13 +43,17 @@ def deleteWS(excelFile,sheetname):
     wb.save(excelFile)
     
 #读取xlsx文件
-def readXlsx(excelFile):
+def readXlsx(excelFile,*args):
     try:
         wb = load_workbook(excelFile)
     except FileNotFoundError as reason:
         print(reason)
         g.msgbox("%s 该文件不存在！"%(excelFile))
-    ws = wb.active
+    if len(args) > 0:
+        sheetname = args[0]
+    else:
+        sheetname = wb.get_sheet_names()[0]
+    ws = wb[sheetname]
     data = []
     column_index = 0#用于定位行数
     for columons in ws.rows:

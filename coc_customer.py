@@ -19,7 +19,7 @@ try:
     donateids_for_paid_server01 = config_read(r'\\server01\\tool\\Config.ini','coc','donateids_for_paid').split()
     donateids_for_paid_server02 = config_read(r'\\server02\\tool\\Config.ini','coc','donateids_for_paid').split()
 except:
-    donateids_for_paid_server01 = [ "9","10","11" ]
+    donateids_for_paid_server01 = [ "9","10","11","12","13","14","15","16" ]
     donateids_for_paid_server02 = [ "1","2","3","4","5","6","7","8" ]
     
 def get_server(coc_id):
@@ -103,12 +103,15 @@ def get_coc_info():
 
 #根据模拟器id获取信息
 def get_coc_name(coc_id):
-    coc_config = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' % (coc_id)
-    with open(coc_config, 'r') as file:
-        configlines = file.readlines()
-        for configline in configlines:
-            if 'EmulatorTitleName' in configline:
-                coc_name = configline.split('=')[-1].rstrip('\n')
+    if coc_id in [0,'0','']:#id为空不更新id和coc_name
+        coc_name = get_coc_info()[1]
+    else:
+        coc_config = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%d\config.ini' % (coc_id)
+        with open(coc_config, 'r') as file:
+            configlines = file.readlines()
+            for configline in configlines:
+                if 'EmulatorTitleName' in configline:
+                    coc_name = configline.split('=')[-1].rstrip('\n')
     #coc_name = '星陨'
     return (coc_name)
         

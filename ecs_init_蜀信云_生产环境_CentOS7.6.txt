@@ -6,7 +6,7 @@ partprobe /dev/vdb
 mkfs.xfs -f /dev/vdb1
 mkdir /data && mount /dev/vdb1 /data && echo "/dev/vdb1 /data                       xfs    defaults        1 1" >> /etc/fstab
 mount -a
-df -Th
+chown -R app:app /data
 mkdir /etc/yum.repos.d/bak && mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/bak
 tee /etc/yum.repos.d/CentOS_76.repo << EOF
 [base]
@@ -36,3 +36,4 @@ baseurl=http://yum.oss-cn-chengdu-scnx-d01-a.prod.cloud.scrcu-inc.com/epel/7/\$b
 gpgcheck=0
 gpgkey=http://yum.oss-cn-chengdu-scnx-d01-a.prod.cloud.scrcu-inc.com/epel/RPM-GPG-KEY-EPEL-7
 EOF
+

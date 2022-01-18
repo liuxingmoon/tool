@@ -7,7 +7,7 @@ partprobe /dev/vdb
 mkfs.xfs -f /dev/vdb1
 mkdir /data && mount /dev/vdb1 /data && echo "/dev/vdb1 /data                       xfs    defaults        1 1" >> /etc/fstab
 mount -a
-df -Th
+chown -R app:app /data
 mkdir /etc/yum.repos.d/bak && mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/bak
 tee /etc/yum.repos.d/kylin.repo << EOF
 ###Kylin Linux Advanced Server 10 - os repo###

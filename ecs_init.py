@@ -13,6 +13,7 @@ def get_info():
     return (cloud,environment,os,script)
     
 def put_script(filename):
+    script_text.delete('1.0','end')#清空
     with open(filename,'r') as f:
         messages = f.readlines()
     for message in messages:

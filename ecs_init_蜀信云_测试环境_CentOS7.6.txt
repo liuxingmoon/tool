@@ -6,4 +6,4 @@ partprobe /dev/vdb
 mkfs.xfs -f /dev/vdb1
 mkdir /data && mount /dev/vdb1 /data && echo "/dev/vdb1 /data                       xfs    defaults        1 1" >> /etc/fstab
 mount -a
-df -Th
+chown -R app:app /data

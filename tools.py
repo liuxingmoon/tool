@@ -13,7 +13,7 @@ import poweroff,odps_grant
 import translate,translate_url,thunder_sign_in
 from PIL import ImageGrab
 from pynput.keyboard import Key, Listener
-import netmask,stock,subprocess,time,os,sys
+import netmask,stock,subprocess,time,os,sys,ali_users_create
 import wuxia_getpos as pos
 import inspect,ctypes,wifi,threading,novel,win32clipboard
 import work_table as work_tb
@@ -456,6 +456,11 @@ coc_bt.grid(row=6,column=1,
 #故障设备
 statistics_dev_bt = tkinter.Button(root,text='故障设备',command=statistics_dev.start,width=15)
 statistics_dev_bt.grid(row=7,column=1,
+              padx=10,pady=10)
+              
+#ASCM账号
+ali_users_create_bt = tkinter.Button(root,text='ASCM账号',command=ali_users_create.start,width=15)
+ali_users_create_bt.grid(row=8,column=1,
               padx=10,pady=10)
               
               
