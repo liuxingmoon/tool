@@ -24,7 +24,7 @@ def sub_info():
         odpsag = odpsag_prod
         admin = admin_prod
     if right == r'只读权限':
-        right = r'role_project_ro'
+        right = r'role_project_reader'
     elif right == r'开发权限':
         right = r'role_project_dev'
     elif right == r'管理权限':

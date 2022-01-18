@@ -1,5 +1,4 @@
 #ecs初始化命令辅助
-import subprocess as sub
 import tkinter as tk
 import win32gui,subprocess,base64
 from clip_ctrl import clip

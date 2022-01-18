@@ -100,6 +100,8 @@ def start():
         nc_sn = re.findall("Serial Number:.*",device_error_info)[0].split(": ")[1]
         try:
             disk_dev = re.findall(".*disk.*/sd.*",device_error_info)[0].strip("\/")
+            disk_num = re.findall("\d+",disk_dev)[0]
+            disk_name = re.findall("sd.*",disk_dev)[0]
         except IndexError as reason:
             disk_dev = re.findall(".*dev sd.*",device_error_info)[1].split(', ')[1]
         error_dev = "硬盘"
@@ -152,6 +154,7 @@ def start():
         writeXlsx(excelFile,data)
     except PermissionError as reason:
         close_windows(r"硬件故障记录.xlsx - WPS 表格")
+        close_windows(r"硬件故障记录.xlsx")
         time.sleep(2)
         writeXlsx(excelFile,data)
     openfile(excelFile)
@@ -179,11 +182,14 @@ def start():
         doc.replace_doc("ECS-IO8River-B-5de2", cluster)
         doc.replace_doc("nxba09506.cloud.a14.qm500", hostname)
         doc.replace_doc("14.0.0.66", IP_address)
+        doc.replace_doc("$disk_num", disk_num)
         doc.replace_doc("西信-西区 1F-NXBW-A-14",pos)
         doc.replace_doc("819603773",nc_sn)
-        doc.replace_doc("Sde/disk3",devicename)
-        doc.replace_doc("SA5212A074",disk_dev)
-        doc.replace_doc("Device Model:     ST8000NM0055-1RM112 + '\n' + Serial Number:    ZA1HBDEB",disk_info)
+        doc.replace_doc("sdm",disk_name)
+        doc.replace_doc("disk12","disk%s"%(disk_num))
+        doc.replace_doc("SA5212A074",devicename)
+        doc.replace_doc("ST8000NM0055-1RM112",disk_model)
+        doc.replace_doc("ZA1HBDEB",disk_sn)
         doc.close()
     with open('report_dev.txt','w') as rp:
         rp.write(report_itsm_info + '\n' + report_daily_info)
