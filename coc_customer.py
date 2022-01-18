@@ -18,9 +18,11 @@ cocSheet = r"Sheet1"
 try:
     donateids_for_paid_server01 = config_read(r'\\server01\\tool\\Config.ini','coc','donateids_for_paid').split()
     donateids_for_paid_server02 = config_read(r'\\server02\\tool\\Config.ini','coc','donateids_for_paid').split()
+    donateids_for_paid_server03 = config_read(r'\\server03\\tool\\Config.ini','coc','donateids_for_paid').split()
 except:
-    donateids_for_paid_server01 = [ "9","10","11","12","13","14","15","16" ]
+    donateids_for_paid_server01 = [ "17","18","19","20","21","22","23","24" ]
     donateids_for_paid_server02 = [ "1","2","3","4","5","6","7","8" ]
+    donateids_for_paid_server03 = [ "9","10","11","12","13","14","15","62" ]
     
 def get_server(coc_id):
     coc_id = str(coc_id)

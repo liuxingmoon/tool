@@ -7,11 +7,20 @@ import time
 
 src_makise = {
 'dir_src':r"E:\Program Files\Python\Python38\works\\tool\\",
-'backup_config_server02':r"E:\Program Files\Python\Python38\works\\tool\\backup_server02\\",
 'backup_config_server01':r"E:\Program Files\Python\Python38\works\\tool\\backup_server01\\",
+'backup_config_server02':r"E:\Program Files\Python\Python38\works\\tool\\backup_server02\\",
+'backup_config_server03':r"E:\Program Files\Python\Python38\works\\tool\\backup_server03\\",
 'Coclog_src':r'E:\Program Files\Python\Python38\works\\tool\\coclog.txt',
 'configpath_src':r"E:\Program Files\Python\Python38\works\tool\Config.ini",
 'ddpath_src':r'D:\Program Files\DundiEmu\DunDiEmu.exe',
+'resourceids':r"x for x in resourceids_server01"
+}
+
+dest_server01 = {
+'dir_dest':r"\\server01\\tool\\",
+'Coclog_dest':r'D:\Program Files\Python38\works\tool\\coclog.txt',
+'configpath_dest':r"D:\Program Files\Python38\works\tool\\Config.ini",
+'ddpath_dest':r'D:\Program Files\DundiEmu\\DunDiEmu.exe',
 'resourceids':r"x for x in resourceids_server01"
 }
 
@@ -23,15 +32,13 @@ dest_server02 = {
 'resourceids':r"x for x in resourceids_server02"
 }
 
-dest_server01 = {
-'dir_dest':r"\\server01\\tool\\",
+dest_server03 = {
+'dir_dest':r"\\server03\\tool\\",
 'Coclog_dest':r'D:\Program Files\Python38\works\tool\\coclog.txt',
 'configpath_dest':r"D:\Program Files\Python38\works\tool\\Config.ini",
 'ddpath_dest':r'D:\Program Files\DundiEmu\\DunDiEmu.exe',
-'resourceids':r"x for x in resourceids_server01"
+'resourceids':r"x for x in resourceids_server03"
 }
-
-
 
 
 #获取目录下文件
@@ -61,7 +68,9 @@ def backup_config(src,dest_dir):
 
     
 def start():
-    update(src_makise,dest_server02)
     update(src_makise,dest_server01)
-    backup_config(dest_server02,src_makise['backup_config_server02'])
+    update(src_makise,dest_server02)
+    update(src_makise,dest_server03)
     backup_config(dest_server01,src_makise['backup_config_server01'])
+    backup_config(dest_server02,src_makise['backup_config_server02'])
+    backup_config(dest_server03,src_makise['backup_config_server03'])
