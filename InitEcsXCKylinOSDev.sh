@@ -1,6 +1,7 @@
 #!/bin/sh
-useradd -u 500 app
+useradd app
 echo App@159357 | passwd --stdin app
+echo "app     ALL=(ALL)      NOPASSWD: /usr/bin/yum" >> /etc/sudoers
 echo Scrcu@123 | passwd --stdin root
 echo -e "n\np\n1\n\n\n\nw"|fdisk /dev/vdb
 partprobe /dev/vdb
@@ -13,19 +14,19 @@ tee /etc/yum.repos.d/kylin.repo << EOF
 ###Kylin Linux Advanced Server 10 - os repo###
 [ks10-adv-os]
 name = Kylin Linux Advanced Server 10 - Os 
-baseurl = http://10.36.64.202:/KylinOSrepo/\$basearch
+baseurl = http://14.60.64.242:/KylinOSrepo/\$basearch
 gpgcheck = 0
 enabled = 1
 
 [ks10-adv-updates]
 name = Kylin Linux Advanced Server 10 - Updates
-baseurl = http://10.36.64.202:/KylinOSrepo/\$basearch
+baseurl = http://14.60.64.242:/KylinOSrepo/\$basearch
 gpgcheck = 0
 enabled = 1
 
 [ks10-adv-addons]
 name = Kylin Linux Advanced Server 10 - Addons
-baseurl = http://10.36.64.202:/KylinOSrepo/\$basearch
+baseurl = http://14.60.64.242:/KylinOSrepo/\$basearch
 gpgcheck = 0
 enabled = 1
 EOF

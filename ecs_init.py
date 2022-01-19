@@ -4,9 +4,18 @@ import win32gui,subprocess,base64
 from clip_ctrl import clip
 import easygui as g
 
+mapping = {
+    "蜀信云":"SX",
+    "信创云":"XC",
+    "非生产环境":"Dev",
+    "生产环境":"Prod"
+}
+
 def get_info():
     cloud = cloud_listbox.get(cloud_listbox.curselection())
+    cloud = mapping[cloud]
     environment = environment_listbox.get(environment_listbox.curselection())
+    environment = mapping[environment]
     os = os_listbox.get(os_listbox.curselection())
     script = script_text.get('1.0','end')
     return (cloud,environment,os,script)
@@ -24,14 +33,14 @@ def put_script(filename):
     
 def change_script():
     cloud,environment,os,script = get_info()
-    filename = r'ecs_init_%s_%s_%s.txt' %(cloud,environment,os)
+    filename = r'InitEcs%s%s%s.sh' %(cloud,os,environment)
     with open(filename,'w') as f:
         messages = f.write(script)
     g.msgbox(msg='已成功修改文件',title=filename)
     
 def sub_info():
     cloud,environment,os,script = get_info()
-    filename = r'ecs_init_%s_%s_%s.txt' %(cloud,environment,os)
+    filename = r'InitEcs%s%s%s.sh' %(cloud,os,environment)
     put_script(filename)#显示脚本文本
 
 
@@ -68,7 +77,7 @@ def start():
                          exportselection='False',#可以让多个选择框选择互不影响
                          height=3,  # 默认只有10行，如果选项大于10项会被遮蔽
                          yscrollcommand=environment_scrollerbar.set)#设置启用滚动条，可以滚轮滚动列表
-    environment_listbox.insert('end','测试环境')
+    environment_listbox.insert('end','非生产环境')
     environment_listbox.insert('end','生产环境')
     environment_listbox.pack(side='left',fill='both')
     environment_scrollerbar.config(command=environment_listbox.yview)#绑定滚动条给列表框的y轴view（可以鼠标点击拉动滚动条）
