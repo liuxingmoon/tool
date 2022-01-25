@@ -1,5 +1,6 @@
 #!/bin/sh
 useradd -u 500 app
+echo Scrcu@123 | passwd --stdin root
 echo App@159357 | passwd --stdin app
 echo "app     ALL=(ALL)      NOPASSWD: /usr/bin/yum" >> /etc/sudoers
 echo -e "n\np\n1\n\n\n\nw"|fdisk /dev/vdb
@@ -37,5 +38,6 @@ baseurl=http://yum.oss-cn-chengdu-scnx-d01-a.prod.cloud.scrcu-inc.com/epel/7/\$b
 gpgcheck=0
 gpgkey=http://yum.oss-cn-chengdu-scnx-d01-a.prod.cloud.scrcu-inc.com/epel/RPM-GPG-KEY-EPEL-7
 EOF
+
 
 
