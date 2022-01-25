@@ -59,12 +59,12 @@ def press_stop_1():
         try:
             while s_flag_1==1:
                 k.mouse_click()
-                time.sleep(0.02)#每秒点击50次
+                time.sleep(0.5)#每秒点击2次
         except KeyboardInterrupt:
             sys.exit()
         #全局变量s_flag_1赋值为0，监控函数又可以介入了
         s_flag_1 = 0
-        print('快速连续点击')
+        print('慢速连续点击')
         
 def press_stop_2():
     global s_flag_2
@@ -78,12 +78,12 @@ def press_stop_2():
         try:
             while s_flag_2 == 1:
                 k.mouse_click()
-                time.sleep(0.5)#每秒点击2次
+                time.sleep(0.02)#每秒点击50次
         except KeyboardInterrupt:
             sys.exit()
         #全局变量s_flag_1赋值为0，监控函数又可以介入了
         s_flag_2 = 0
-        print('慢速连续点击')
+        print('快速连续点击')
 
 def _async_raise(tid, exctype):
     """raises the exception, performs cleanup if needed"""
@@ -105,7 +105,8 @@ def stop_thread(thread):
 
 
 def start_1():
-    global flag_1,flag_2
+    """
+    global flag_1
     # 运行进程
     t1 = Listener(on_press=on_press_start_1)
     t1.daemon = True
@@ -119,6 +120,8 @@ def start_1():
         stop_thread(t1)
         stop_thread(t2)
         flag_1 = 0
+    """
+    global flag_2
     # 运行进程
     t3 = Listener(on_press=on_press_start_2)
     t3.daemon = True
