@@ -5,16 +5,15 @@ import random
 from coc_start import *
 import keyboard as k
 import threading
-import inspect
-import ctypes
 import sys
-from pynput.keyboard import Key, Listener
 import configparser
 import random
 from multiprocessing import Process
 import easygui as g
 from config_ctrl import *
 from read_config import *
+from pynput.keyboard import Key
+from thread_ctrl import *
 
 
 # 元素坐标,建立新号都是用240的
@@ -1188,7 +1187,7 @@ def levelup_3_all(startid,*args):
 
 def on_press_s(key):#监听@键作为开始
     # 监听按键`
-    global s_flag
+    global s_flag,thread_listen,thread_listen_s
     if str(key)=="'"+'@'+"'" and s_flag == 0:
         print('开始',s_flag)
         #s_flag信号量加一
@@ -1196,6 +1195,9 @@ def on_press_s(key):#监听@键作为开始
     elif str(key)=="'"+'@'+"'" and s_flag == 1:
         print("结束",s_flag)
         s_flag = 0
+    elif key == Key.esc:#关闭程序
+        stop_thread(thread_listen)
+        stop_thread(thread_listen_s)
 
 def press_s():
     global s_flag
@@ -1218,27 +1220,9 @@ def press_s():
         print('夜世界砍树')
 
 
-def _async_raise(tid, exctype):
-    """raises the exception, performs cleanup if needed"""
-    tid = ctypes.c_long(tid)
-    if not inspect.isclass(exctype):
-        exctype = type(exctype)
-        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
-    if res == 0:
-        raise ValueError("invalid thread id")
-    elif res != 1:
-        # """if it returns a number greater than one, you're in trouble,
-        # and you should call it again with exc=NULL to revert the effect"""
-        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
-        raise SystemError("PyThreadState_SetAsyncExc failed")
-
-def stop_thread(thread):
-    _async_raise(thread.ident , SystemExit)
-
-
 #移除夜世界树木
 def removeTree_night(startid):
-    global flag,flag_switch
+    global flag_switch,thread_listen,thread_listen_s
     # 分别定义a键的信号量对象
     global semaphore_flag,startport
     startport = getport(startid)
@@ -1248,21 +1232,9 @@ def removeTree_night(startid):
     # 定义全局变量作为监测线程介入的开关
     global s_flag
     s_flag = 0
-    # 定义全局变量作为整个程序的开关
-    flag = 0
     # 运行进程
-    t1 = Listener(on_press=on_press_s)
-    t1.daemon = True
-    t2 = threading.Thread(target=press_s, name='sendThreads')
-    t2.daemon = True
-    if flag == 0:
-        t1.start()
-        t2.start()
-        flag = 1
-    elif flag == 1:
-        stop_thread(t1)
-        stop_thread(t2)
-        flag = 0     
+    thread_listen = start_listener("thread_listen",on_press_Listen)
+    thread_listen_s = start_thread("thread_listen_s",press_s,'sendThreads') 
         
 #切换夜世界
 def night_world(night_attackmode,startport):

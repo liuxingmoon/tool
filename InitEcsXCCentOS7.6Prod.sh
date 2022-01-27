@@ -38,6 +38,9 @@ baseurl=http://yum.oss-cn-chengdu-scnx-d01-a.prod.xc.scrcu-inc.com/epel/7/\$base
 gpgcheck=0
 gpgkey=http://yum.oss-cn-chengdu-scnx-d01-a.prod.xc.scrcu-inc.com/epel/RPM-GPG-KEY-EPEL-7
 EOF
+cat >> /root/.ssh/authorized_keys << EOF
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMTMcxEUUdJ62KbnTomTLh32sGIwahH2ffl89OU1gDiGy2tRipjFrpSeYunq0nHdyUDPeJzOVayKba31AC079gLhdVOPY3ihceojHFAHiFWZLrcH7bKm97grANOoGVh+PugZBY5FsHuN8x/ziNRZZM2ocdmAaoM9/EqbkIjCxJV3b7WMFpJXp1Uo9OQJ5/wEntCipqSW3zXQpabb8m23gdW3HAyjYVL0luTtZx6tJ/6MMgnaQ030Q+4HAaw9SXFHYCAop2UB/rzVgBDhjrrgFb4gqju8Jv/jNdVCQO1tUT8US/O7ao1eTTgPcph8CVE29TOq25nZ60t/9XgkpZTHIR root@yum
+EOF
 
 
 

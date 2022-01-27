@@ -12,10 +12,11 @@ import coc,coc_customer
 import poweroff,odps_grant
 import translate,translate_url,thunder_sign_in
 from PIL import ImageGrab
-from pynput.keyboard import Key, Listener
+from pynput.keyboard import Key
+from thread_ctrl import *
 import netmask,stock,subprocess,time,os,sys,ali_users_create
 import wuxia_getpos as pos
-import inspect,ctypes,wifi,threading,novel,win32clipboard
+import wifi,threading,novel,win32clipboard
 import work_table as work_tb
 #import get_x86report as report
 from PIL import Image
@@ -39,7 +40,7 @@ autoclick_text = tkinter.Label(root,#放在框架1里面
 autoclick_text.grid(row=1,column=1,padx=10,pady=10)
 '''
 #开启鼠标连点
-autoclick_bt = tkinter.Button(root,text='连点"pas"长按"~"',command=ak.start,width=15)
+autoclick_bt = tkinter.Button(root,text='连点长按',command=ak.start,width=15)
 autoclick_bt.grid(row=1,column=1,
               padx=10,pady=10)
 
@@ -236,22 +237,37 @@ ps_flag = 0
 pb_flag = 0
 sl_flag = 0
 #定义全局变量作为整个程序的开关
-flag_startscreenShot = 0
 flag_startscreenocr = 0
 flag_startscreen = 0
 
-def on_press_PrintScreen(key):#监听'Print Screen'键作为开始
-    # 监听按键`
-    global ps_flag
-    print(str(key))
+def on_press_Listen(key):
+    """'Print Screen':剪切截图;'ScrollLock':截全屏;'Pause Break':OCR;
+    """
+    global ps_flag,sl_flag,pb_flag
     if key == Key.print_screen and ps_flag == 0:
-        print('开始',ps_flag)
-        #s_flag信号量加一
+        print('开始剪切截图',ps_flag)
         semaphore_flag_ps.release()
     elif key == Key.print_screen and ps_flag == 1:
-        print("结束",ps_flag)
+        print("结束剪切截图",ps_flag)
         ps_flag = 0
-
+    elif key == Key.scroll_lock and sl_flag == 0:
+        print('开始截全屏',sl_flag)
+        semaphore_flag_sl.release()
+    elif key == Key.scroll_lock and sl_flag == 1:
+        print("结束截全屏",sl_flag)
+        sl_flag = 0
+    elif key == Key.pause and pb_flag == 0:
+        print('开始识图',pb_flag)
+        semaphore_flag_pb.release()
+    elif key == Key.pause and pb_flag == 1:
+        print("结束识图",pb_flag)
+        pb_flag = 0
+    elif key == Key.esc:
+        stop_thread(thread_listen)
+        stop_thread(thread_listen_prt_screen)
+        stop_thread(thread_listen_scr_lock)
+        stop_thread(thread_listen_pause_break)
+        
 def press_PrintScreen():
     global ps_flag
     while True:
@@ -267,19 +283,7 @@ def press_PrintScreen():
             sys.exit()
         #全局变量s_flag赋值为0，监控函数又可以介入了
         ps_flag = 0
-        print('自动过滤位置')
-
-def on_press_ScrollLock(key):#监听'ScrollLock'键作为截屏
-    # 监听按键`
-    global sl_flag
-    print(str(key))
-    if key == Key.scroll_lock and sl_flag == 0:
-        print('开始截全屏',sl_flag)
-        #s_flag信号量加一
-        semaphore_flag_sl.release()
-    elif key == Key.scroll_lock and sl_flag == 1:
-        print("结束",sl_flag)
-        sl_flag = 0
+        print('剪切截屏')
 
 def press_ScrollLock():
     global sl_flag
@@ -297,18 +301,6 @@ def press_ScrollLock():
         sl_flag = 0
         print('截全屏完成')
     
-def on_press_Pause(key):#监听'Pause Break'键作为开始识图信号
-    # 监听按键`
-    global pb_flag
-    print(str(key))
-    if key == Key.pause and pb_flag == 0:
-        print('开始识图',pb_flag)
-        #s_flag信号量加一
-        semaphore_flag_pb.release()
-    elif key == Key.pause and pb_flag == 1:
-        print("结束识图",pb_flag)
-        pb_flag = 0
-
 def press_Pause():
     global pb_flag
     while True:
@@ -332,92 +324,43 @@ def press_Pause():
             sys.exit()
         #全局变量pb_flag赋值为0，监控函数又可以介入了
         pb_flag = 0
-        print('自动过滤位置')
-        
-def _async_raise(tid, exctype):
-    """raises the exception, performs cleanup if needed"""
-    print(tid)
-    tid = ctypes.c_long(tid)
-    if not inspect.isclass(exctype):
-        exctype = type(exctype)
-        res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
-    if res == 0:
-        raise ValueError("invalid thread id")
-    elif res != 1:
-        # """if it returns a number greater than one, you're in trouble,
-        # and you should call it again with exc=NULL to revert the effect"""
-        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
-        raise SystemError("PyThreadState_SetAsyncExc failed")
-
-def stop_thread(threadid):
-    tid = threadid.ident
-    print(tid)
-    _async_raise( tid , SystemExit)
+        print('OCR')
 
 
 def startscreenShot():#截屏后剪切
-    global flag_startscreenShot
-    # 运行进程
-    t1 = Listener(on_press=on_press_PrintScreen)
-    t1.daemon = True
-    t2 = threading.Thread(target=press_PrintScreen, name='screenShot')
-    t2.daemon = True
-    if flag_startscreenShot == 0:
-        t1.start()
-        t2.start()
-        flag_startscreenShot = 1
-    elif flag_startscreenShot == 1:
-        #stop_thread(t1)
-        #stop_thread(t2)
-        flag_startscreenShot = 0
+    global thread_listen,thread_listen_prt_screen
+    thread_listen = start_listener("thread_listen",on_press_Listen)
+    thread_listen_prt_screen = start_thread("thread_listen_prt_screen",press_PrintScreen,'screenShot')
         
 def startscreen():#只截全屏
-    global flag_startscreen
-    # 运行进程
-    t3 = Listener(on_press=on_press_ScrollLock)
-    t3.daemon = True
-    t4 = threading.Thread(target=press_ScrollLock, name='screen')
-    t4.daemon = True
-    if flag_startscreen == 0:
-        t3.start()
-        t4.start()
-        flag_startscreen = 1
-    elif flag_startscreen == 1:
-        #stop_thread(t3)
-        #stop_thread(t4)
-        flag_startscreen = 0
+    global thread_listen_scr_lock
+    thread_listen_scr_lock = start_thread("thread_listen_scr_lock",press_ScrollLock,'screen')
         
 def startscreenocr():#截屏后剪切再ocr识图
-    global flag_startscreenocr
-    # 运行进程
-    t5 = Listener(on_press=on_press_Pause)
-    t5.daemon = True
-    t6 = threading.Thread(target=press_Pause, name='ocr')
-    t6.daemon = True
-    if flag_startscreenocr == 0:
-        t5.start()
-        t6.start()
-        flag_startscreenocr = 1
-    elif flag_startscreenocr == 1:
-        #stop_thread(t1)
-        #stop_thread(t2)
-        flag_startscreenocr = 0
+    global thread_listen_pause_break
+    thread_listen_pause_break = start_thread("thread_listen_pause_break",press_Pause,'ocr')
 
 def start_printScreen():
     startscreenShot()
     startscreen()
-    
-def start_ocr():
     startscreenocr()
     
-screenShot_bt = tkinter.Button(root,text='截屏"Print Screen"',command=start_printScreen,width=15)
+    
+    
+screenShot_bt = tkinter.Button(root,text='截屏识图',command=start_printScreen,width=15)
 screenShot_bt.grid(row=2,column=1,
               padx=10,pady=10)
-              
+
+'''
 ocr_bt = tkinter.Button(root,text='识图"Pause Break"',command=start_ocr,width=15)
 ocr_bt.grid(row=3,column=1,
               padx=10,pady=10)
-              
+'''
+#部落冲突脚本
+coc_bt = tkinter.Button(root,text='部落冲突',command=coc.start,width=15)
+coc_bt.grid(row=3,column=1,
+              padx=10,pady=10)
+
 #开启过滤侠客风云传位置
 pos_bt = tkinter.Button(root,text='侠客位置"·"',command=pos.start,width=15)
 pos_bt.grid(row=4,column=1,
@@ -443,9 +386,10 @@ thundertask_bt = tkinter.Button(root,text='迅雷任务',command=tdtask.start,wi
 thundertask_bt.grid(row=5,column=1,
               padx=10,pady=10)
 '''
-#部落冲突脚本
-coc_bt = tkinter.Button(root,text='部落冲突',command=coc.start,width=15)
-coc_bt.grid(row=5,column=1,
+
+#ASCM账号
+ali_users_create_bt = tkinter.Button(root,text='ASCM账号',command=ali_users_create.start,width=15)
+ali_users_create_bt.grid(row=5,column=1,
               padx=10,pady=10)
               
 #ODPS授权
@@ -458,10 +402,7 @@ statistics_dev_bt = tkinter.Button(root,text='故障设备',command=statistics_d
 statistics_dev_bt.grid(row=7,column=1,
               padx=10,pady=10)
               
-#ASCM账号
-ali_users_create_bt = tkinter.Button(root,text='ASCM账号',command=ali_users_create.start,width=15)
-ali_users_create_bt.grid(row=8,column=1,
-              padx=10,pady=10)
+
               
               
 #视频下载
