@@ -1,9 +1,8 @@
 #阿里云创建辅助
 from xlsx_ctrl import *
 import win32gui,subprocess
-from clip_ctrl import clip
 import easygui as g
-from pynput.keyboard import Key
+from pynput.keyboard import Key, Controller
 from thread_ctrl import *
 
 def get_info():#获取excel文档信息
@@ -18,7 +17,9 @@ def get_info():#获取excel文档信息
             data_new.append(m[4])
     return (data_new)
     
-
+def key_input(str=''):
+    keyboard = Controller()
+    keyboard.type(str)
         
 def on_press(key):#按下
     pass
@@ -31,7 +32,7 @@ def on_release_insert(key):#松开insert
                 g.msgbox(msg='我是有底线的！',title="创建ASCM账号")
                 stop_thread(thread_listener)
                 return ("已结束创建账号")
-            clip(data[0])
+            key_input(data[0])
             data.pop(0)
     except IndexError:
         g.msgbox(msg='我是有底线的！',title="创建ASCM账号")

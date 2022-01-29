@@ -21,7 +21,7 @@ VK_CODE = {
   'pause':0x13,
   'caps_lock':0x14,
   'esc':0x1B,
-  'space':0x20,
+  ' ':0x20,
   'page_up':0x21,
   'page_down':0x22,
   'end':0x23,
@@ -148,17 +148,44 @@ VK_CODE = {
   '+':0xBB,
   ',':0xBC,
   '-':0xBD,
+  '=':187,
   '.':0xBE,
   '/':0xBF,
   '`':0xC0,
   ';':0xBA,
   '[':0xDB,
+  '\'':222,
   '\\':0xDC,
   ']':0xDD,
   "'":0xDE,
   '`':0xC0
   }
 
+VK_Mapping = {
+  '~':'`',
+  '!':'1',
+  '@':'2',
+  '#':'3',
+  '$':'4',
+  '%':'5',
+  '^':'6',
+  '&':'7',
+  '*':'8',
+  '(':'9',
+  ')':'0',
+  '_':'-',
+  '+':'=',
+  '{':'[',
+  '}':']',
+  ':':';',
+  '"':'\'',
+  '|':'\\',
+  '<':',',
+  '>':'.',
+  '?':'/'
+}
+  
+  
 class POINT(Structure):
   _fields_ = [("x", c_ulong),("y", c_ulong)]
 
@@ -207,8 +234,15 @@ def mouse_move(x,y):
 #输入字符串
 def key_input(str=''):
   for c in str:
-    win32api.keybd_event(VK_CODE[c],0,0,0)
-    win32api.keybd_event(VK_CODE[c],0,win32con.KEYEVENTF_KEYUP,0)
+    if c in VK_Mapping:#需要按下划线的按键
+        c = VK_Mapping[c]#转换为可以识别字符
+        win32api.keybd_event(VK_CODE['shift'],0,0,0)
+        win32api.keybd_event(VK_CODE[c],0,0,0)
+        win32api.keybd_event(VK_CODE[c],0,win32con.KEYEVENTF_KEYUP,0)
+        win32api.keybd_event(VK_CODE['shift'],0,win32con.KEYEVENTF_KEYUP,0)
+    else:
+        win32api.keybd_event(VK_CODE[c],0,0,0)
+        win32api.keybd_event(VK_CODE[c],0,win32con.KEYEVENTF_KEYUP,0)
     time.sleep(0.01)
 
 #输入键盘一个键
@@ -223,7 +257,7 @@ def advanced_key_input(word):  # 输入并点enter单一一句话(我自己加�
     for items in a:
         key_input(items)
         time.sleep(0.1)
-        press_key('space')
+        press_key(' ')
         time.sleep(0.1)
         press_key(',')
     press_key('enter')
