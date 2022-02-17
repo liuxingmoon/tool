@@ -426,7 +426,6 @@ def restartdonate(donateids):
         for n in range(donate_num):
             play_donate(donateids)
     restart_server()
-    
 
     
 #开始操作
@@ -512,6 +511,20 @@ if __name__ == "__main__":
         print('============================= 当前的捐兵号id和名字如下 ===============================\n%s' %(donatenames))
     except:
         print('============================= 当前的自用捐兵号不全 ===============================')
+    rewait_ids = [ x for x in QQlists if x in donateids_for_paid ]#获取重启的模拟器id列表
+    rewait_names = {}
+    try:
+        for rewait_id in rewait_ids:
+            donateconfig = r'D:\Program Files\DundiEmu\DundiData\avd\dundi%s\config.ini' %(rewait_id)
+            with open(donateconfig,'r') as donatefile:
+                configlines = donatefile.readlines()
+                for configline in configlines:
+                    if 'EmulatorTitleName' in configline:
+                        donatename = configline.split('=')[-1].rstrip('\n')
+                        rewait_names[rewait_id] = donatename
+        print('============================= 当前的重启号id和名字如下 ===============================\n%s' %(rewait_names))
+    except:
+        print('============================= 当前的重启号不全 ===============================')
 
     #查看捐兵号的开关是否打开，打开就跳过该id
     skipids.extend(donateids_for_paid)#添加捐兵的id到跳过id列表中
