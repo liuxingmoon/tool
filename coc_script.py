@@ -405,27 +405,45 @@ def restartplay(wait_time):
                 pass
         play(wait_time,skipids)
         wait_time += 5
+        
+#启动模拟器并打开脚本但是不启动脚本     
+def start_emu_wait(start_id,wait_time):
+    startport = getport(int(start_id))
+    action = r'"D:\Program Files\DundiEmu\\DunDiEmu.exe" -multi %d -disable_audio  -fps 40' %(int(start_id))
+    #action = r'"D:\Program Files\DundiEmu\dundi_helper.exe" --index %d --start' %(int(start_id))
+    start(action,startport,wait_time)
+    print(r'============================= 启动实例（%d）模拟器完成 ==============================='%(int(start_id)))
+    timewait(1)
+    print(startport)
+    coc_script(startport,5)
 
+#只点击脚本    
+def start_script_wait(start_id):
+    startport = getport(int(start_id))
+    restart_server()
+    #重启并连接连接
+    connect(startport)
+    time.sleep(3)
+    click(pos['start_script'][0],pos['start_script'][1],startport,5)
+    print(r'============================= 启动实例（%d）脚本完成 ==============================='%(int(start_id)))
+    
         
 #重启捐兵号
-def restartdonate(donateids):
+def restartdonate(rewait_ids,rewait_names):
     global donatetime_start
     # 大于4小时就关闭捐兵号，并重新启动捐兵号
     donatetime_end = datetime.datetime.now()
-    starttime = donatetime_end - donatetime_start
-    
+    starttime = donatetime_end - donatetime_start    
     if (starttime.seconds / 3600) >= restart_time:
-        close_emu_all(donatenames)
-        if donate_mode == "A":
-            print(r'============================= 运行捐兵号超过4小时，下线15分钟！ ===============================')
-            timewait(15)
-        else:
-            print(r'============================= 当前使用的是轮循捐兵模式，不用等待15分钟！ ===============================')
+        close_emu_all(rewait_names)#关闭所有重启捐兵号
+        for rewait_id in rewait_ids:
+            start_emu_wait(int(rewait_id),30)#启动模拟器并打开脚本但是不点击
+        print(r'============================= 运行捐兵号超过4小时，下线15分钟！ ===============================')
+        timewait(15)
+        for rewait_id in rewait_ids:
+            start_script_wait(int(rewait_id))#只点击脚本
         donatetime_start = datetime.datetime.now()
         print(r'============================= 已经下线15分钟，开始捐兵！ ===============================')
-        for n in range(donate_num):
-            play_donate(donateids)
-    restart_server()
 
     
 #开始操作
@@ -834,6 +852,7 @@ if __name__ == "__main__":
             #现在时间段
             time_status = result[2]
             if donate_for_paid_switch in ['True','1','T'] or donate_switch in ['True','1','T']:
+                restartdonate(rewait_ids,rewait_names)#4小时强制下线
                 if (time_status == '白天' and donate_status == 'play') or (time_status == '凌晨' and donate_status == 'donate'):#到了早上还没切换捐兵，或者到了凌晨还没切换打资源，跳过等待循环立刻切换
                     break
                 else:
