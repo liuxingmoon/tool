@@ -434,16 +434,16 @@ def restartdonate(rewait_ids,rewait_names):
     # 大于4小时就关闭捐兵号，并重新启动捐兵号
     donatetime_end = datetime.datetime.now()
     starttime = donatetime_end - donatetime_start    
-    if (starttime.seconds / 3600) >= restart_time:
+    if (starttime.seconds / 3600) >= (restart_time - 0.2):
         close_emu_all(rewait_names)#关闭所有重启捐兵号
         for rewait_id in rewait_ids:
             start_emu_wait(int(rewait_id),30)#启动模拟器并打开脚本但是不点击
-        print(r'============================= 运行捐兵号超过4小时，下线15分钟！ ===============================')
-        timewait(15)
+        print(r'============================= 运行捐兵号超过4小时，下线20分钟！ ===============================')
+        timewait(25)
         for rewait_id in rewait_ids:
             start_script_wait(int(rewait_id))#只点击脚本
         donatetime_start = datetime.datetime.now()
-        print(r'============================= 已经下线15分钟，开始捐兵！ ===============================')
+        print(r'============================= 已经下线20分钟，开始捐兵！ ===============================')
 
     
 #开始操作
