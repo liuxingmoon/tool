@@ -6,7 +6,6 @@ from win32.lib import win32con
 from config_ctrl import *
 from read_config import *
 
-
 #元素坐标
 pos = {
     'coc_script':[500,680],
@@ -37,6 +36,10 @@ pos = {
     'login_jiuyou1': [1000, 300],
     'login_jiuyou2': [650, 200],
     'login_jiuyou3': [1000, 300],
+    'login_qq1': [280, 490],
+    'login_qq2': [780, 430],
+    'login_qq3': [370, 1110],
+    'login_qq4': [370, 1110],
     'login_baidu1': [440, 545],
     'login_baidu2': [500, 460],
     'store_build': [300, 100],
@@ -472,7 +475,11 @@ def login_click(startid):
         click(pos['login_wandoujia2'][0], pos['login_wandoujia2'][1], startport,3)
     #elif str(startid) not in notplaylist:#双重否定表肯定，在轮循打资源列表中的id
     elif str(startid) in QQlists:#QQ
-        click(pos['start_script'][0],pos['start_script'][1],startport,5)
+        click(pos['start_script'][0],pos['start_script'][1],startport,40)
+        click(pos['login_qq1'][0],pos['login_qq1'][1],startport,1)
+        click(pos['login_qq2'][0],pos['login_qq2'][1],startport,10)
+        click(pos['login_qq3'][0],pos['login_qq3'][1],startport,3)
+        click(pos['login_qq4'][0],pos['login_qq4'][1],startport,3)
     elif str(startid) in baidulists:#baidu
         click(pos['start_script'][0],pos['start_script'][1],startport,5)
         click(pos['login_baidu1'][0],pos['login_baidu1'][1],startport,5)

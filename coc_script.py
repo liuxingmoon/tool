@@ -12,28 +12,13 @@ import coc_template
 import os
 import AutoClick as ak
 import keyboard as k
-from coc_start import connect,login_click,close_emu_err,close_windows,getport,click,close,kill_adb,kill_server,start_server,restart_server,start_emu_convert,close_emu_id
+from coc_start import connect,login_click,close_emu_err,close_windows,getport,click,close,kill_adb,kill_server,start_server,restart_server,start_emu_convert,close_emu_id,pos
 from multiprocessing import Process
 import file_ctrl as fc
 from config_ctrl import *
 from readfile import *
 from read_config import *
 
-#元素坐标
-pos = {
-  'coc_script':[500,680],
-  'start_script':[200,1070],
-  'login_wandoujia1': [640, 300],
-  'login_wandoujia2': [640, 500],
-  'login_jiuyou': [640, 250],
-  'login_jiuyou1': [1000, 300],
-  'login_jiuyou2': [650, 200],
-  'login_jiuyou3': [1000, 300],
-  'login_baidu1': [440, 545],
-  'login_baidu2': [500, 460],
-  'cancel': [1200, 50],
-  'sure':[360,935]
-  }
 
 #日志路径
 Coclog = r'coclog.txt'
@@ -434,16 +419,16 @@ def restartdonate(rewait_ids,rewait_names):
     # 大于4小时就关闭捐兵号，并重新启动捐兵号
     donatetime_end = datetime.datetime.now()
     starttime = donatetime_end - donatetime_start    
-    if (starttime.seconds / 3600) >= (restart_time - 0.2):
+    if (starttime.seconds / 3600) >= (restart_time - 0.3):
         close_emu_all(rewait_names)#关闭所有重启捐兵号
         for rewait_id in rewait_ids:
             start_emu_wait(int(rewait_id),30)#启动模拟器并打开脚本但是不点击
-        print(r'============================= 运行捐兵号超过4小时，下线20分钟！ ===============================')
-        timewait(25)
+        print(r'============================= 运行捐兵号超过4小时，下线30分钟！ ===============================')
+        timewait(28)
         for rewait_id in rewait_ids:
             start_script_wait(int(rewait_id))#只点击脚本
         donatetime_start = datetime.datetime.now()
-        print(r'============================= 已经下线20分钟，开始捐兵！ ===============================')
+        print(r'============================= 已经下线30分钟，开始捐兵！ ===============================')
 
     
 #开始操作
@@ -837,7 +822,7 @@ if __name__ == "__main__":
             restartplay(90)
 
         #确认登录捐兵号，点击登录按钮
-        logincheck_lists = [ x for x in donateids_for_paid if x not in QQlists ]
+        logincheck_lists = [ x for x in donateids_for_paid ]
         for logincheckid in logincheck_lists:
             login_click(logincheckid)
             
